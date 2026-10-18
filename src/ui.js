@@ -650,28 +650,87 @@ function handEnd(res){
 }
 
 /* ================= endings ================= */
-/* ================= boss send-off: a freeze-frame title card, the way a gunfighter film would close the book on them ================= */
-const EPITAPHS={pete:'Bet the bar tab. Lost the bar.',ma:'Evicted from her own saloon.',iron:'Finally folded. Permanently.',under:'Dug his own grave. Lay right down in it.',
-  snake:'Got out-cheated. Hated every second.',banker:'Account closed. Insufficient funds.',vesper:'Her luck ran out. Took her with it.',bicah:'Said he always comes back. He won\'t.'};
+/* ================= boss send-off =================
+   A freeze-frame title card per boss, in the spirit of a comic-book boss intro but closing the book on them:
+   their own colours, prop, particles, stamp word and a one-line epitaph. */
+const BOSS_FX={
+  pete:  {acc:'#e8a536',deep:'#4a2306',ang:-7, side:'r',prop:'bottle', fx:'glass', stamp:'Cut Off',  epi:'Bet the bar tab. Lost the bar.'},
+  ma:    {acc:'#d0608e',deep:'#3a0c22',ang:6,  side:'l',prop:'key',    fx:'dust',  stamp:'Evicted',  epi:'Thrown out of her own saloon.'},
+  iron:  {acc:'#a9c2d6',deep:'#16222c',ang:-9, side:'r',prop:'anvil',  fx:'sparks',stamp:'Broken',   epi:'Never folded. Finally did.'},
+  under: {acc:'#9cc27e',deep:'#0e1a0b',ang:8,  side:'l',prop:'coffin', fx:'dirt',  stamp:'Buried',   epi:'Dug his own grave. Lay right down in it.'},
+  snake: {acc:'#6fd07a',deep:'#08200f',ang:-6, side:'r',prop:'snake',  fx:'cards', stamp:'Dealt Out',epi:'Got out-cheated. Hated every second.'},
+  banker:{acc:'#e2c264',deep:'#2a2208',ang:7,  side:'l',prop:'bag',    fx:'bills', stamp:'Bankrupt', epi:'Account closed. Insufficient funds.'},
+  vesper:{acc:'#e0435f',deep:'#33060f',ang:-8, side:'r',prop:'rose',   fx:'petals',stamp:'Unlucky',  epi:'Her luck ran out. Took her with it.'},
+  bicah: {acc:'#ef3a1d',deep:'#220403',ang:9,  side:'l',prop:'rat',    fx:'smoke', stamp:'Dead',     epi:'Said he always comes back. He won\'t.'}
+};
+const BOSS_PROPS={
+  bottle:'<path d="M43 4h14v7l-2 2v13c0 5 13 9 13 23v41c0 4-3 6-6 6H38c-3 0-6-2-6-6V49c0-14 13-18 13-23V13l-2-2z"/><rect x="36" y="56" width="28" height="22" rx="2" class="p2"/><text x="50" y="71" class="pt">XXX</text>',
+  key:'<circle cx="27" cy="50" r="17" fill="none" stroke-width="9"/><rect x="42" y="45" width="52" height="10" rx="2"/><rect x="70" y="53" width="7" height="14"/><rect x="84" y="53" width="7" height="19"/>',
+  anvil:'<path d="M6 30h68c9 0 17 4 20 11-9 0-15 2-19 6-6 6-8 11-8 17v5h9v11H24V69h9v-5c0-9-5-15-13-19C14 42 9 37 6 30z"/>',
+  coffin:'<path d="M36 3h28l16 25-14 69H34L20 28z"/><rect x="47" y="22" width="6" height="40" class="p2"/><rect x="38" y="32" width="24" height="6" class="p2"/>',
+  snake:'<path d="M14 88C40 98 74 84 58 64S18 44 38 26 78 16 86 8" fill="none" stroke-width="13" stroke-linecap="round"/><ellipse cx="86" cy="9" rx="9" ry="6" transform="rotate(-35 86 9)"/><path d="M93 4l6-3M93 4l5 3" fill="none" stroke-width="2" class="p3"/>',
+  bag:'<path d="M38 22l-7-12h38l-7 12c17 8 29 26 29 45 0 19-15 30-41 30S9 86 9 67c0-19 12-37 29-45z"/><rect x="34" y="20" width="32" height="6" rx="3" class="p2"/><text x="50" y="74" class="pt big">$</text>',
+  rose:'<path d="M50 52c3 16 0 30-4 44" fill="none" stroke-width="5"/><path d="M48 76c-12-6-20-2-24 4 10 4 18 2 24-4z"/><circle cx="50" cy="34" r="17"/><circle cx="38" cy="28" r="11"/><circle cx="62" cy="28" r="11"/><circle cx="50" cy="20" r="11"/><path d="M42 34c4-8 12-8 16 0" fill="none" stroke-width="3" class="p3"/>',
+  rat:'<ellipse cx="46" cy="60" rx="30" ry="18"/><path d="M70 52l22 8-20 10z"/><circle cx="68" cy="44" r="9"/><path d="M18 64C4 70 6 88 22 90s28 2 34 8" fill="none" stroke-width="5" stroke-linecap="round"/><circle cx="84" cy="58" r="2.5" class="p3"/>'
+};
+function boFx(type,ov){
+  if(REDUCED) return;
+  const W=innerWidth, H=parseFloat(getComputedStyle(ov).height)||innerHeight, n={glass:26,dust:30,sparks:36,dirt:28,cards:18,bills:20,petals:26,smoke:14}[type]||20;
+  const ox=W*0.5, oy=H*0.56;
+  for(let k=0;k<n;k++){
+    const e=document.createElement('i'); e.className='bp bp-'+type; ov.appendChild(e);
+    const rnd=(a,b)=>a+Math.random()*(b-a), ang=rnd(0,6.283), sp=rnd(.35,1);
+    let kf, dur=rnd(1300,2400), delay=rnd(0,250);
+    if(type==='glass'||type==='sparks'||type==='cards'){
+      const dx=Math.cos(ang)*W*.55*sp, dy=Math.sin(ang)*H*.32*sp, g=type==='sparks'?H*.05:H*.35;
+      if(type==='cards'){e.textContent=['♠︎','♥︎','♦︎','♣︎'][k%4]; if(k%4===1||k%4===2) e.classList.add('red')}
+      if(type==='sparks') e.style.rotate=(ang*57.3)+'deg';
+      kf=[{transform:`translate(${ox}px,${oy}px) rotate(0deg) scale(.6)`,opacity:1},{transform:`translate(${ox+dx}px,${oy+dy*.6}px) rotate(${rnd(-400,400)}deg) scale(1)`,opacity:1,offset:.45},
+          {transform:`translate(${ox+dx*1.3}px,${oy+dy+g}px) rotate(${rnd(-720,720)}deg) scale(.9)`,opacity:0}];
+      if(type==='sparks') dur=rnd(500,900);
+    } else if(type==='dirt'){
+      const x=rnd(0,W); kf=[{transform:`translate(${x}px,-30px)`,opacity:1},{transform:`translate(${x+rnd(-30,30)}px,${H*rnd(.55,.95)}px)`,opacity:1,offset:.8},{transform:`translate(${x+rnd(-40,40)}px,${H*rnd(.55,.95)-12}px)`,opacity:0}];
+      dur=rnd(900,1500); e.style.width=e.style.height=rnd(4,11)+'px';
+    } else if(type==='bills'||type==='petals'){
+      const x=rnd(0,W), sw=rnd(30,80); kf=[{transform:`translate(${x}px,-40px) rotate(0deg)`,opacity:0},{opacity:1,offset:.1},
+        {transform:`translate(${x+sw}px,${H*.4}px) rotate(${rnd(90,260)}deg)`,offset:.5},{transform:`translate(${x-sw}px,${H+40}px) rotate(${rnd(300,600)}deg)`,opacity:.9}];
+      dur=rnd(2600,4200); delay=rnd(0,1400);
+    } else if(type==='dust'||type==='smoke'){
+      const x=rnd(-.1,1.1)*W, y=rnd(.3,.9)*H, s=type==='smoke'?rnd(80,180):rnd(3,8);
+      e.style.width=e.style.height=s+'px';
+      kf=[{transform:`translate(${x}px,${y}px) scale(.3)`,opacity:0},{opacity:type==='smoke'?.35:.8,offset:.3},{transform:`translate(${x+rnd(-60,60)}px,${y-rnd(60,180)}px) scale(1.4)`,opacity:0}];
+      dur=rnd(2200,3800); delay=rnd(0,900);
+    }
+    e.animate(kf,{duration:dur,delay,easing:type==='dirt'?'cubic-bezier(.5,0,.9,.5)':'cubic-bezier(.15,.7,.3,1)',fill:'both'}).onfinish=()=>e.remove();
+  }
+}
 function bossOut(next){
-  const bd=BOSSES[R.level-1], sg=$('sGame');
-  let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; ov.className='bo'; document.body.appendChild(ov)}
-  const splat=Array.from({length:14},(_,i)=>{const a=i/14*6.283, d=30+Math.random()*28, r=6+Math.random()*16; return `<circle cx="${50+Math.cos(a)*d*.9}" cy="${50+Math.sin(a)*d*.45}" r="${r}"/>`}).join('')
-    +Array.from({length:10},()=>`<circle cx="${8+Math.random()*84}" cy="${15+Math.random()*70}" r="${1.5+Math.random()*4}"/>`).join('');
-  ov.innerHTML=`<div class="bo-band"></div>
-    <div class="bo-portrait">${bossPortrait(bd)}<div class="bo-stamp">Busted</div></div>
-    <svg class="bo-splat" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="20"/>${splat}</svg>
-    <div class="bo-text"><div class="bo-kicker">${TOWNS[R.level-1]} · Boss busted</div>
-      <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${bd.name}</div>
-      <div class="bo-tag">${EPITAPHS[bd.key]||bd.title}</div></div>
+  const bd=BOSSES[R.level-1], th=BOSS_FX[bd.key]||BOSS_FX.pete, sg=$('sGame');
+  let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; document.body.appendChild(ov)}
+  ov.className='bo side-'+th.side+' bo-'+bd.key;
+  ov.style.cssText=`--acc:${th.acc};--deep:${th.deep};--ang:${th.ang}deg`;
+  const letters=bd.name.split(' ').map((w,wi,arr)=>`<span class="bo-word">${[...w].map((ch,ci)=>`<span class="bo-l" style="--d:${(arr.slice(0,wi).join('').length+ci)*45}ms">${ch}</span>`).join('')}</span>`).join(' ');
+  ov.innerHTML=`<div class="bo-rays"></div>
+    <div class="bo-ghost">${bd.title.toUpperCase()}</div>
+    <svg class="bo-prop" viewBox="0 0 100 100" aria-hidden="true">${BOSS_PROPS[th.prop]||''}</svg>
+    <div class="bo-portrait"><div class="bo-paper">${bossPortrait(bd)}</div><div class="bo-stamp"><span>${th.stamp}</span></div></div>
+    <div class="bo-stripe"></div><div class="bo-band"></div>
+    <div class="bo-text">
+      <div class="bo-kicker"><b>${TOWNS[R.level-1]}</b><i></i><span>Boss busted</span></div>
+      <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${letters}</div>
+      <div class="bo-tag"><span id="boTag"></span><em class="bo-caret"></em></div>
+    </div>
     <div class="bo-tap">Tap to collect the bounty</div>`;
-  ov.hidden=false; ov.classList.remove('go'); void ov.offsetWidth;
+  ov.hidden=false; void ov.offsetWidth; ov.classList.add('go');
   sg.classList.add('frozen'); sfx('gun'); shake(true);
-  ov.classList.add('go');
-  later(()=>{sfx('stamp'); shake(false)},1250);
-  later(()=>sfx('bigwin'),1500);
-  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out'); sg.classList.remove('frozen')},420); next()};
-  setTimeout(()=>{ov.onclick=close},900);
+  if(bd.key==='bicah'){later(()=>sfx('gun'),320); later(()=>sfx('gun'),560)}
+  later(()=>{sfx('boss'); boFx(th.fx,ov)},520);
+  // epitaph types itself out like a telegraph tape
+  later(()=>{const el=$('boTag'); if(!el) return; let i=0; const t=th.epi; const step=()=>{if(!el.isConnected) return; el.textContent=t.slice(0,++i); if(i%2===0) sfx('tick',0,1.6); if(i<t.length) setTimeout(step,28)}; step()},1150);
+  later(()=>{sfx('stamp'); shake(false); ov.classList.add('stamped')},1900);
+  later(()=>sfx('bigwin'),2150);
+  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped'); sg.classList.remove('frozen')},420); next()};
+  setTimeout(()=>{ov.onclick=close},1200);
 }
 function showPaid(){
   const bd=BOSSES[R.level-1];

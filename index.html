@@ -981,53 +981,102 @@ html.tall .intro,html.tall .chapter-bg,html.tall .vignette,html.tall .tint,html.
 #sTitle{justify-content:center}
 html.tall #sTitle{min-height:calc(var(--appH) - env(safe-area-inset-top,0px) - 40px)}
 
-/* ================= boss send-off card ================= */
-#sGame.frozen{filter:grayscale(.9) sepia(.35) contrast(1.15) brightness(.5);transition:filter .18s}
-.bo{position:fixed;inset:0;z-index:120;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* ================= boss send-off ================= */
+#sGame.frozen{filter:none}
+.bo{position:fixed;inset:0;z-index:120;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent;isolation:isolate}
 html.tall .bo{bottom:auto;height:var(--appH)}
 .bo[hidden]{display:none}
-.bo-band{position:absolute;left:-10%;right:-10%;top:47%;height:34%;transform:translateX(-120%) skewY(-7deg);
-  background:linear-gradient(90deg,rgba(14,7,4,.95),rgba(44,14,8,.96) 40%,rgba(14,7,4,.95)),var(--noise);border-top:3px solid var(--brass);border-bottom:3px solid var(--brass);
-  box-shadow:0 0 0 6px rgba(0,0,0,.4),0 30px 60px rgba(0,0,0,.7)}
-.bo.go .bo-band{animation:boBand .45s .05s cubic-bezier(.2,.9,.2,1) forwards}
-@keyframes boBand{to{transform:translateX(0) skewY(-7deg)}}
-.bo-portrait{position:absolute;right:-4%;top:6%;width:min(66vw,46vh);aspect-ratio:1;border-radius:50%;overflow:visible;transform:translateX(140%) rotate(18deg);
-  filter:drop-shadow(0 20px 40px rgba(0,0,0,.8))}
-.bo-portrait svg{width:100%;height:100%;border-radius:50%;box-shadow:0 0 0 6px #120804,0 0 0 9px var(--blood),0 0 0 12px #120804;filter:contrast(1.15) saturate(1.1)}
-.bo.go .bo-portrait{animation:boPort .55s .18s cubic-bezier(.2,1.25,.4,1) forwards}
-@keyframes boPort{to{transform:translateX(0) rotate(-6deg)}}
-.bo-stamp{position:absolute;left:4%;bottom:12%;font-family:var(--f-poster);font-size:clamp(26px,9vw,54px);color:#c8281a;border:5px solid #c8281a;border-radius:6px;padding:2px 14px;
-  background:rgba(240,225,190,.9);transform:rotate(-16deg) scale(3);opacity:0;box-shadow:inset 0 0 0 2px rgba(200,40,26,.4)}
-.bo.go .bo-stamp{animation:boStamp .28s 1.2s cubic-bezier(.3,1.6,.5,1) forwards}
-@keyframes boStamp{to{transform:rotate(-16deg) scale(1);opacity:.95}}
-.bo-splat{position:absolute;left:-6%;top:44%;width:80%;height:40%;fill:#8e1b10;opacity:0;transform:scale(.2) rotate(-7deg);transform-origin:40% 50%;mix-blend-mode:multiply}
-.bo.go .bo-splat{animation:boSplat .3s .55s ease-out forwards}
-@keyframes boSplat{to{opacity:.9;transform:scale(1) rotate(-7deg)}}
-.bo-text{position:absolute;left:6%;right:6%;top:50%;transform:rotate(-7deg);transform-origin:left center;display:flex;flex-direction:column;gap:6px}
-.bo-kicker{font-family:var(--f-label);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:clamp(11px,3vw,15px);color:var(--brass-hi);opacity:0}
-.bo.go .bo-kicker{animation:boFade .3s .5s forwards}
-.bo-name{font-size:calc(clamp(44px,13vw,118px) * var(--fs,1));line-height:.92;color:#f7efdc;text-wrap:balance;opacity:0;transform:scale(2.4);transform-origin:left center;
-  -webkit-text-stroke:2px #1a0a05;paint-order:stroke fill;text-shadow:0 4px 0 #1a0a05,0 8px 24px rgba(0,0,0,.8),0 0 40px rgba(200,40,26,.45)}
-.bo.go .bo-name{animation:boName .38s .62s cubic-bezier(.2,1.5,.4,1) forwards}
-@keyframes boName{60%{opacity:1}to{opacity:1;transform:scale(1)}}
-.bo-tag{font-family:var(--f-type);font-size:clamp(14px,4.2vw,22px);color:var(--gold);letter-spacing:.02em;opacity:0;transform:translateX(-20px)}
-.bo.go .bo-tag{animation:boTag .4s .95s ease-out forwards}
-@keyframes boTag{to{opacity:1;transform:none}}
+.bo::before{content:"";position:absolute;inset:0;z-index:-2;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--deep) 55%,transparent),rgba(0,0,0,.86));
+  -webkit-backdrop-filter:grayscale(1) contrast(1.1) brightness(.4);backdrop-filter:grayscale(1) contrast(1.1) brightness(.4);opacity:0}
+.bo.go::before{animation:boFade .18s forwards}
+/* speed rays behind everything */
+.bo-rays{position:absolute;inset:-40%;z-index:-1;opacity:0;
+  background:repeating-conic-gradient(from 0deg at 50% 42%,color-mix(in srgb,var(--acc) 28%,transparent) 0 4deg,transparent 4deg 13deg);
+  -webkit-mask:radial-gradient(circle at 50% 42%,transparent 8%,#000 40%);mask:radial-gradient(circle at 50% 42%,transparent 8%,#000 40%)}
+.bo.go .bo-rays{animation:boFade .3s .08s forwards,boSpin 24s linear infinite}
+@keyframes boSpin{to{rotate:360deg}}
+/* huge outlined title behind the portrait */
+.bo-ghost{position:absolute;left:-4%;right:-4%;top:4%;text-align:center;font-family:var(--f-poster);font-size:clamp(46px,17vw,170px);line-height:.86;letter-spacing:-.01em;
+  color:transparent;-webkit-text-stroke:2px color-mix(in srgb,var(--acc) 55%,transparent);rotate:var(--ang);opacity:0;translate:0 -30px;white-space:normal;text-wrap:balance}
+.bo.go .bo-ghost{animation:boGhost .6s .1s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes boGhost{to{opacity:1;translate:0 0}}
+/* prop silhouette */
+.bo-prop{position:absolute;top:24%;width:min(46vw,34vh);fill:var(--acc);stroke:var(--deep);stroke-width:2;filter:drop-shadow(0 10px 0 var(--deep)) drop-shadow(0 18px 30px rgba(0,0,0,.7));opacity:0}
+.bo-prop .p2{fill:#efe2c0;stroke:none}.bo-prop .p3{stroke:#1a0805;fill:#1a0805}
+.bo-prop .pt{font-family:var(--f-poster);font-size:12px;text-anchor:middle;fill:var(--deep);stroke:none}.bo-prop .pt.big{font-size:34px;fill:var(--deep)}
+.bo.side-r .bo-prop{left:-6%;transform:rotate(-24deg) translate(-120%,0)}
+.bo.side-l .bo-prop{right:-6%;transform:rotate(22deg) translate(120%,0)}
+.bo.go .bo-prop{animation:boProp .55s .45s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes boProp{to{opacity:1;transform:rotate(var(--ang)) translate(0,0)}}
+/* portrait on torn paper */
+.bo-portrait{position:absolute;top:9%;width:min(64vw,44vh);aspect-ratio:1;opacity:0}
+.bo.side-r .bo-portrait{right:4%;transform:translateX(130%) rotate(16deg)}
+.bo.side-l .bo-portrait{left:4%;transform:translateX(-130%) rotate(-16deg)}
+.bo.go .bo-portrait{animation:boPort .5s .18s cubic-bezier(.2,1.3,.4,1) forwards}
+@keyframes boPort{to{opacity:1;transform:translateX(0) rotate(calc(var(--ang) * -.8))}}
+.bo-paper{width:100%;height:100%;padding:5%;background:var(--noise),linear-gradient(160deg,#efe3c4,#d6c39a);
+  clip-path:polygon(2% 4%,12% 0,24% 3%,36% 0,48% 4%,61% 1%,73% 4%,86% 0,98% 3%,100% 15%,97% 28%,100% 41%,97% 55%,100% 68%,97% 81%,100% 95%,88% 100%,75% 96%,62% 100%,49% 97%,36% 100%,23% 96%,10% 100%,0 96%,3% 83%,0 70%,3% 56%,0 43%,3% 30%,0 17%);
+  filter:drop-shadow(0 0 0 #000)}
+.bo-paper svg{width:100%;height:100%;display:block;filter:contrast(1.2) saturate(1.15)}
+.bo-portrait::after{content:"";position:absolute;inset:-3%;z-index:-1;background:var(--acc);clip-path:inherit;transform:translate(10px,12px);opacity:.9;
+  clip-path:polygon(2% 4%,12% 0,24% 3%,36% 0,48% 4%,61% 1%,73% 4%,86% 0,98% 3%,100% 15%,97% 28%,100% 41%,97% 55%,100% 68%,97% 81%,100% 95%,88% 100%,75% 96%,62% 100%,49% 97%,36% 100%,23% 96%,10% 100%,0 96%,3% 83%,0 70%,3% 56%,0 43%,3% 30%,0 17%)}
+/* stamp word, per boss */
+.bo-stamp{position:absolute;left:50%;top:62%;translate:-50% -50%;rotate:-14deg;scale:3.2;opacity:0;
+  font-family:var(--f-poster);font-size:clamp(24px,8.4vw,52px);line-height:1;color:#c3261a;white-space:nowrap;padding:4px 16px;border:5px double #c3261a;border-radius:6px;
+  background:rgba(239,226,196,.9);box-shadow:0 6px 20px rgba(0,0,0,.5)}
+.bo-stamp span{display:block;-webkit-mask:var(--noise);mask:var(--noise);-webkit-mask-size:220px;mask-size:220px}
+.bo.stamped .bo-stamp{animation:boStamp .26s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes boStamp{to{scale:1;opacity:1}}
+/* slashed band: accent stripe + halftone panel */
+.bo-stripe,.bo-band{position:absolute;left:-12%;right:-12%;rotate:var(--ang);transform:translateX(-130%)}
+.bo-stripe{top:calc(53% - 14px);height:10px;background:var(--acc);box-shadow:0 0 18px color-mix(in srgb,var(--acc) 60%,transparent)}
+.bo-band{top:53%;height:27%;border-top:2px solid color-mix(in srgb,var(--acc) 70%,#000);border-bottom:2px solid color-mix(in srgb,var(--acc) 70%,#000);
+  background:radial-gradient(circle,color-mix(in srgb,var(--acc) 22%,transparent) 1.3px,transparent 1.8px) 0 0/8px 8px,linear-gradient(90deg,rgba(8,4,2,.97),color-mix(in srgb,var(--deep) 92%,#000) 45%,rgba(8,4,2,.97));
+  box-shadow:0 30px 60px rgba(0,0,0,.7)}
+.bo.go .bo-stripe{animation:boBand .38s .26s cubic-bezier(.2,.9,.2,1) forwards}
+.bo.go .bo-band{animation:boBand .42s .32s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes boBand{to{transform:translateX(0)}}
+/* name, kicker, epitaph */
+.bo-text{position:absolute;left:7%;right:7%;top:56%;rotate:var(--ang);transform-origin:left center;display:flex;flex-direction:column;gap:8px}
+.bo.side-l .bo-text{text-align:right;align-items:flex-end;transform-origin:right center}
+.bo-kicker{display:flex;align-items:center;gap:10px;font-family:var(--f-label);font-weight:700;letter-spacing:.28em;text-transform:uppercase;font-size:clamp(10.5px,2.9vw,14px);opacity:0}
+.bo-kicker b{color:var(--acc)} .bo-kicker span{color:#efe2c0} .bo-kicker i{width:22px;height:2px;background:var(--acc)}
+.bo.go .bo-kicker{animation:boFade .3s .55s forwards}
+.bo-name{font-size:calc(clamp(42px,12.5vw,112px) * var(--fs,1));line-height:.9;color:#fbf3df;text-wrap:balance}
+.bo-word{white-space:nowrap;display:inline-block}
+.bo-l{display:inline-block;opacity:0;-webkit-text-stroke:2px #120804;paint-order:stroke fill;
+  text-shadow:1px 1px 0 var(--deep),2px 2px 0 var(--deep),3px 3px 0 var(--deep),4px 4px 0 var(--deep),5px 5px 0 var(--deep),6px 6px 0 var(--deep),8px 10px 18px rgba(0,0,0,.7),0 0 34px color-mix(in srgb,var(--acc) 45%,transparent)}
+.bo.go .bo-l{animation:boLetter .34s calc(.64s + var(--d)) cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes boLetter{0%{opacity:0;transform:translateY(-60%) scale(2.2) rotate(-12deg)}60%{opacity:1}100%{opacity:1;transform:none}}
+.bo-tag{font-family:var(--f-type);font-size:clamp(14px,4.3vw,22px);color:var(--acc);min-height:1.3em;letter-spacing:.01em;text-shadow:0 2px 0 rgba(0,0,0,.8)}
+.bo-caret{display:inline-block;width:.55em;height:1em;vertical-align:-.12em;margin-left:2px;background:var(--acc);opacity:0}
+.bo.go .bo-caret{animation:boFade .1s 1.1s forwards,caretBlink .8s 1.2s steps(1) infinite}
+@keyframes caretBlink{50%{opacity:0}}
+.bo-tap{position:absolute;left:0;right:0;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 14px));text-align:center;font-family:var(--f-label);font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:12px;color:#efe2c0;opacity:0}
+.bo.go .bo-tap{animation:boFade .4s 2.4s forwards,tapPulse 2.2s 2.8s ease-in-out infinite}
 @keyframes boFade{to{opacity:1}}
-.bo-tap{position:absolute;left:0;right:0;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 14px));text-align:center;font-family:var(--f-label);font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:12px;color:var(--brass-hi);opacity:0}
-.bo.go .bo-tap{animation:boFade .4s 1.9s forwards,tapPulse 2.2s 2.3s ease-in-out infinite}
 .bo.out{animation:boOut .4s ease forwards}
 @keyframes boOut{to{opacity:0}}
-@media (orientation:landscape){.bo-portrait{width:min(40vw,62vh);top:8%;right:4%}.bo-text{right:44%}}
+/* particles */
+.bp{position:absolute;left:0;top:0;pointer-events:none;z-index:3}
+.bp-glass{width:14px;height:18px;background:linear-gradient(135deg,rgba(255,220,150,.95),rgba(200,120,30,.6));clip-path:polygon(50% 0,100% 70%,20% 100%)}
+.bp-sparks{width:22px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#ffd27a,#fff6d8);box-shadow:0 0 8px #ffb040}
+.bp-dirt{width:8px;height:8px;border-radius:40%;background:#3b2a1a}
+.bp-cards{width:24px;height:34px;border-radius:3px;background:#fbf3e2;color:#1b120c;font-size:15px;line-height:34px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.5)}
+.bp-cards.red{color:#a3241a}
+.bp-bills{width:34px;height:17px;border-radius:2px;background:linear-gradient(#5f8f5a,#3f6b3c);box-shadow:inset 0 0 0 2px #a8cf98,0 2px 5px rgba(0,0,0,.5)}
+.bp-petals{width:14px;height:20px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 40% 30%,#ff7d93,#a3122e)}
+.bp-dust{border-radius:50%;background:#ead7b4}
+.bp-smoke{border-radius:50%;background:radial-gradient(circle,rgba(200,190,180,.6),transparent 70%);filter:blur(6px)}
+/* landscape: portrait and prop to the sides, text centered */
+@media (orientation:landscape){.bo-portrait{width:min(34vw,58vh);top:8%}.bo-prop{width:min(24vw,40vh);top:12%}.bo-text{left:8%;right:40%}.bo.side-l .bo-text{left:40%;right:8%}.bo-band{top:56%}.bo-stripe{top:calc(56% - 14px)}.bo-text{top:59%}}
 @media (prefers-reduced-motion:reduce){.bo *{animation-duration:.01s!important;animation-delay:0s!important}}
-/* freeze-frame: wash the table out behind the card instead of filtering the screen (screen animations override filters) */
-#sGame.frozen{filter:none}
-.bo::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(30,10,4,.35),rgba(0,0,0,.78));
-  -webkit-backdrop-filter:grayscale(1) sepia(.4) contrast(1.1) brightness(.55);backdrop-filter:grayscale(1) sepia(.4) contrast(1.1) brightness(.55);opacity:0;transition:opacity .2s}
-.bo.go::before{opacity:1}
-.bo-band{top:45%;height:24%}
-.bo-splat{top:41%;height:32%;left:-8%;width:78%}
-.bo-text{top:48.5%}
+/* send-off refinements: crisp stamp off the face, ghost title fills the empty bottom, tighter band */
+.bo-stamp{top:84%;left:50%;background:#efe2c4;color:#b81f12;border-color:#b81f12;font-size:clamp(22px,7.4vw,46px);padding:2px 14px 4px}
+.bo-stamp span{-webkit-mask:none;mask:none}
+.bo-band{height:21%}
+.bo-ghost{top:auto;bottom:9%;font-size:clamp(44px,15vw,150px);-webkit-text-stroke:2px color-mix(in srgb,var(--acc) 65%,transparent);translate:0 30px}
+html.tall .bo-ghost{bottom:11%}
 
 </style>
 </head>
@@ -2840,28 +2889,87 @@ function handEnd(res){
 }
 
 /* ================= endings ================= */
-/* ================= boss send-off: a freeze-frame title card, the way a gunfighter film would close the book on them ================= */
-const EPITAPHS={pete:'Bet the bar tab. Lost the bar.',ma:'Evicted from her own saloon.',iron:'Finally folded. Permanently.',under:'Dug his own grave. Lay right down in it.',
-  snake:'Got out-cheated. Hated every second.',banker:'Account closed. Insufficient funds.',vesper:'Her luck ran out. Took her with it.',bicah:'Said he always comes back. He won\'t.'};
+/* ================= boss send-off =================
+   A freeze-frame title card per boss, in the spirit of a comic-book boss intro but closing the book on them:
+   their own colours, prop, particles, stamp word and a one-line epitaph. */
+const BOSS_FX={
+  pete:  {acc:'#e8a536',deep:'#4a2306',ang:-7, side:'r',prop:'bottle', fx:'glass', stamp:'Cut Off',  epi:'Bet the bar tab. Lost the bar.'},
+  ma:    {acc:'#d0608e',deep:'#3a0c22',ang:6,  side:'l',prop:'key',    fx:'dust',  stamp:'Evicted',  epi:'Thrown out of her own saloon.'},
+  iron:  {acc:'#a9c2d6',deep:'#16222c',ang:-9, side:'r',prop:'anvil',  fx:'sparks',stamp:'Broken',   epi:'Never folded. Finally did.'},
+  under: {acc:'#9cc27e',deep:'#0e1a0b',ang:8,  side:'l',prop:'coffin', fx:'dirt',  stamp:'Buried',   epi:'Dug his own grave. Lay right down in it.'},
+  snake: {acc:'#6fd07a',deep:'#08200f',ang:-6, side:'r',prop:'snake',  fx:'cards', stamp:'Dealt Out',epi:'Got out-cheated. Hated every second.'},
+  banker:{acc:'#e2c264',deep:'#2a2208',ang:7,  side:'l',prop:'bag',    fx:'bills', stamp:'Bankrupt', epi:'Account closed. Insufficient funds.'},
+  vesper:{acc:'#e0435f',deep:'#33060f',ang:-8, side:'r',prop:'rose',   fx:'petals',stamp:'Unlucky',  epi:'Her luck ran out. Took her with it.'},
+  bicah: {acc:'#ef3a1d',deep:'#220403',ang:9,  side:'l',prop:'rat',    fx:'smoke', stamp:'Dead',     epi:'Said he always comes back. He won\'t.'}
+};
+const BOSS_PROPS={
+  bottle:'<path d="M43 4h14v7l-2 2v13c0 5 13 9 13 23v41c0 4-3 6-6 6H38c-3 0-6-2-6-6V49c0-14 13-18 13-23V13l-2-2z"/><rect x="36" y="56" width="28" height="22" rx="2" class="p2"/><text x="50" y="71" class="pt">XXX</text>',
+  key:'<circle cx="27" cy="50" r="17" fill="none" stroke-width="9"/><rect x="42" y="45" width="52" height="10" rx="2"/><rect x="70" y="53" width="7" height="14"/><rect x="84" y="53" width="7" height="19"/>',
+  anvil:'<path d="M6 30h68c9 0 17 4 20 11-9 0-15 2-19 6-6 6-8 11-8 17v5h9v11H24V69h9v-5c0-9-5-15-13-19C14 42 9 37 6 30z"/>',
+  coffin:'<path d="M36 3h28l16 25-14 69H34L20 28z"/><rect x="47" y="22" width="6" height="40" class="p2"/><rect x="38" y="32" width="24" height="6" class="p2"/>',
+  snake:'<path d="M14 88C40 98 74 84 58 64S18 44 38 26 78 16 86 8" fill="none" stroke-width="13" stroke-linecap="round"/><ellipse cx="86" cy="9" rx="9" ry="6" transform="rotate(-35 86 9)"/><path d="M93 4l6-3M93 4l5 3" fill="none" stroke-width="2" class="p3"/>',
+  bag:'<path d="M38 22l-7-12h38l-7 12c17 8 29 26 29 45 0 19-15 30-41 30S9 86 9 67c0-19 12-37 29-45z"/><rect x="34" y="20" width="32" height="6" rx="3" class="p2"/><text x="50" y="74" class="pt big">$</text>',
+  rose:'<path d="M50 52c3 16 0 30-4 44" fill="none" stroke-width="5"/><path d="M48 76c-12-6-20-2-24 4 10 4 18 2 24-4z"/><circle cx="50" cy="34" r="17"/><circle cx="38" cy="28" r="11"/><circle cx="62" cy="28" r="11"/><circle cx="50" cy="20" r="11"/><path d="M42 34c4-8 12-8 16 0" fill="none" stroke-width="3" class="p3"/>',
+  rat:'<ellipse cx="46" cy="60" rx="30" ry="18"/><path d="M70 52l22 8-20 10z"/><circle cx="68" cy="44" r="9"/><path d="M18 64C4 70 6 88 22 90s28 2 34 8" fill="none" stroke-width="5" stroke-linecap="round"/><circle cx="84" cy="58" r="2.5" class="p3"/>'
+};
+function boFx(type,ov){
+  if(REDUCED) return;
+  const W=innerWidth, H=parseFloat(getComputedStyle(ov).height)||innerHeight, n={glass:26,dust:30,sparks:36,dirt:28,cards:18,bills:20,petals:26,smoke:14}[type]||20;
+  const ox=W*0.5, oy=H*0.56;
+  for(let k=0;k<n;k++){
+    const e=document.createElement('i'); e.className='bp bp-'+type; ov.appendChild(e);
+    const rnd=(a,b)=>a+Math.random()*(b-a), ang=rnd(0,6.283), sp=rnd(.35,1);
+    let kf, dur=rnd(1300,2400), delay=rnd(0,250);
+    if(type==='glass'||type==='sparks'||type==='cards'){
+      const dx=Math.cos(ang)*W*.55*sp, dy=Math.sin(ang)*H*.32*sp, g=type==='sparks'?H*.05:H*.35;
+      if(type==='cards'){e.textContent=['♠︎','♥︎','♦︎','♣︎'][k%4]; if(k%4===1||k%4===2) e.classList.add('red')}
+      if(type==='sparks') e.style.rotate=(ang*57.3)+'deg';
+      kf=[{transform:`translate(${ox}px,${oy}px) rotate(0deg) scale(.6)`,opacity:1},{transform:`translate(${ox+dx}px,${oy+dy*.6}px) rotate(${rnd(-400,400)}deg) scale(1)`,opacity:1,offset:.45},
+          {transform:`translate(${ox+dx*1.3}px,${oy+dy+g}px) rotate(${rnd(-720,720)}deg) scale(.9)`,opacity:0}];
+      if(type==='sparks') dur=rnd(500,900);
+    } else if(type==='dirt'){
+      const x=rnd(0,W); kf=[{transform:`translate(${x}px,-30px)`,opacity:1},{transform:`translate(${x+rnd(-30,30)}px,${H*rnd(.55,.95)}px)`,opacity:1,offset:.8},{transform:`translate(${x+rnd(-40,40)}px,${H*rnd(.55,.95)-12}px)`,opacity:0}];
+      dur=rnd(900,1500); e.style.width=e.style.height=rnd(4,11)+'px';
+    } else if(type==='bills'||type==='petals'){
+      const x=rnd(0,W), sw=rnd(30,80); kf=[{transform:`translate(${x}px,-40px) rotate(0deg)`,opacity:0},{opacity:1,offset:.1},
+        {transform:`translate(${x+sw}px,${H*.4}px) rotate(${rnd(90,260)}deg)`,offset:.5},{transform:`translate(${x-sw}px,${H+40}px) rotate(${rnd(300,600)}deg)`,opacity:.9}];
+      dur=rnd(2600,4200); delay=rnd(0,1400);
+    } else if(type==='dust'||type==='smoke'){
+      const x=rnd(-.1,1.1)*W, y=rnd(.3,.9)*H, s=type==='smoke'?rnd(80,180):rnd(3,8);
+      e.style.width=e.style.height=s+'px';
+      kf=[{transform:`translate(${x}px,${y}px) scale(.3)`,opacity:0},{opacity:type==='smoke'?.35:.8,offset:.3},{transform:`translate(${x+rnd(-60,60)}px,${y-rnd(60,180)}px) scale(1.4)`,opacity:0}];
+      dur=rnd(2200,3800); delay=rnd(0,900);
+    }
+    e.animate(kf,{duration:dur,delay,easing:type==='dirt'?'cubic-bezier(.5,0,.9,.5)':'cubic-bezier(.15,.7,.3,1)',fill:'both'}).onfinish=()=>e.remove();
+  }
+}
 function bossOut(next){
-  const bd=BOSSES[R.level-1], sg=$('sGame');
-  let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; ov.className='bo'; document.body.appendChild(ov)}
-  const splat=Array.from({length:14},(_,i)=>{const a=i/14*6.283, d=30+Math.random()*28, r=6+Math.random()*16; return `<circle cx="${50+Math.cos(a)*d*.9}" cy="${50+Math.sin(a)*d*.45}" r="${r}"/>`}).join('')
-    +Array.from({length:10},()=>`<circle cx="${8+Math.random()*84}" cy="${15+Math.random()*70}" r="${1.5+Math.random()*4}"/>`).join('');
-  ov.innerHTML=`<div class="bo-band"></div>
-    <div class="bo-portrait">${bossPortrait(bd)}<div class="bo-stamp">Busted</div></div>
-    <svg class="bo-splat" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="20"/>${splat}</svg>
-    <div class="bo-text"><div class="bo-kicker">${TOWNS[R.level-1]} · Boss busted</div>
-      <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${bd.name}</div>
-      <div class="bo-tag">${EPITAPHS[bd.key]||bd.title}</div></div>
+  const bd=BOSSES[R.level-1], th=BOSS_FX[bd.key]||BOSS_FX.pete, sg=$('sGame');
+  let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; document.body.appendChild(ov)}
+  ov.className='bo side-'+th.side+' bo-'+bd.key;
+  ov.style.cssText=`--acc:${th.acc};--deep:${th.deep};--ang:${th.ang}deg`;
+  const letters=bd.name.split(' ').map((w,wi,arr)=>`<span class="bo-word">${[...w].map((ch,ci)=>`<span class="bo-l" style="--d:${(arr.slice(0,wi).join('').length+ci)*45}ms">${ch}</span>`).join('')}</span>`).join(' ');
+  ov.innerHTML=`<div class="bo-rays"></div>
+    <div class="bo-ghost">${bd.title.toUpperCase()}</div>
+    <svg class="bo-prop" viewBox="0 0 100 100" aria-hidden="true">${BOSS_PROPS[th.prop]||''}</svg>
+    <div class="bo-portrait"><div class="bo-paper">${bossPortrait(bd)}</div><div class="bo-stamp"><span>${th.stamp}</span></div></div>
+    <div class="bo-stripe"></div><div class="bo-band"></div>
+    <div class="bo-text">
+      <div class="bo-kicker"><b>${TOWNS[R.level-1]}</b><i></i><span>Boss busted</span></div>
+      <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${letters}</div>
+      <div class="bo-tag"><span id="boTag"></span><em class="bo-caret"></em></div>
+    </div>
     <div class="bo-tap">Tap to collect the bounty</div>`;
-  ov.hidden=false; ov.classList.remove('go'); void ov.offsetWidth;
+  ov.hidden=false; void ov.offsetWidth; ov.classList.add('go');
   sg.classList.add('frozen'); sfx('gun'); shake(true);
-  ov.classList.add('go');
-  later(()=>{sfx('stamp'); shake(false)},1250);
-  later(()=>sfx('bigwin'),1500);
-  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out'); sg.classList.remove('frozen')},420); next()};
-  setTimeout(()=>{ov.onclick=close},900);
+  if(bd.key==='bicah'){later(()=>sfx('gun'),320); later(()=>sfx('gun'),560)}
+  later(()=>{sfx('boss'); boFx(th.fx,ov)},520);
+  // epitaph types itself out like a telegraph tape
+  later(()=>{const el=$('boTag'); if(!el) return; let i=0; const t=th.epi; const step=()=>{if(!el.isConnected) return; el.textContent=t.slice(0,++i); if(i%2===0) sfx('tick',0,1.6); if(i<t.length) setTimeout(step,28)}; step()},1150);
+  later(()=>{sfx('stamp'); shake(false); ov.classList.add('stamped')},1900);
+  later(()=>sfx('bigwin'),2150);
+  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped'); sg.classList.remove('frozen')},420); next()};
+  setTimeout(()=>{ov.onclick=close},1200);
 }
 function showPaid(){
   const bd=BOSSES[R.level-1];
