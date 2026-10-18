@@ -110,6 +110,7 @@
       <div class="hud-right">
         <div class="charm-icons" id="charmRow"></div>
         <div class="goldchip" id="goldchip" title="Gold"><span class="coin"></span><b id="gold">0</b></div>
+        <button class="handsbtn" id="ranksBtn" aria-label="Poker hand rankings">Hands</button>
         <button class="iconbtn" id="menuBtn" aria-label="Pause menu"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -188,6 +189,16 @@
     <div class="pline" id="posterLine"></div>
     <div class="reward">Bounty <b id="posterReward"></b></div>
     <button class="btn raise big" id="posterBtn">Take a seat</button>
+  </div>
+</div>
+
+<!-- ============ HAND RANKINGS ============ -->
+<div class="modal" id="ranksModal" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="ranksTitle">
+    <h3 id="ranksTitle" class="sheet-title">Poker Hands</h3>
+    <p class="hint" style="margin:0 0 8px;text-align:center">Best at the top. Your best five cards from your two plus the board.</p>
+    <div class="rklist" id="ranksList"></div>
+    <div class="row"><button class="btn gold" id="ranksClose" style="flex:1">Back to the table</button></div>
   </div>
 </div>
 

@@ -937,6 +937,19 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
 .tut-row .btn{margin-left:auto}
 .tut-skip{background:none;border:0;color:var(--muted);font-family:var(--f-label);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:11.5px;cursor:pointer;padding:6px 0}
 
+/* hand rankings button + sheet */
+.handsbtn{height:42px;padding:0 12px;border-radius:12px;cursor:pointer;font-family:var(--f-label);font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:12px;
+  color:var(--brass-hi);background:linear-gradient(#3a2618,#22150c);border:1px solid var(--brass-lo);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.handsbtn:active{transform:translateY(2px)}
+.rklist{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.rk{display:grid;grid-template-columns:22px auto 1fr;gap:10px;align-items:baseline;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,.03)}
+.rk i{font-style:normal;font-family:var(--f-display);color:var(--muted);font-size:13px}
+.rk b{font-family:var(--f-label);font-weight:700;color:var(--brass-hi);letter-spacing:.04em;white-space:nowrap}
+.rk span{color:var(--muted);font-size:14px;text-align:right}
+.rk.mine{background:rgba(244,203,92,.14);box-shadow:inset 0 0 0 1px var(--gold)}
+.rk.mine b{color:var(--gold)}
+@media (max-width:640px){#sGame .charm-icons{display:none}}
+
 </style>
 </head>
 <body>
@@ -1052,6 +1065,7 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
       <div class="hud-right">
         <div class="charm-icons" id="charmRow"></div>
         <div class="goldchip" id="goldchip" title="Gold"><span class="coin"></span><b id="gold">0</b></div>
+        <button class="handsbtn" id="ranksBtn" aria-label="Poker hand rankings">Hands</button>
         <button class="iconbtn" id="menuBtn" aria-label="Pause menu"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -1130,6 +1144,16 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
     <div class="pline" id="posterLine"></div>
     <div class="reward">Bounty <b id="posterReward"></b></div>
     <button class="btn raise big" id="posterBtn">Take a seat</button>
+  </div>
+</div>
+
+<!-- ============ HAND RANKINGS ============ -->
+<div class="modal" id="ranksModal" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="ranksTitle">
+    <h3 id="ranksTitle" class="sheet-title">Poker Hands</h3>
+    <p class="hint" style="margin:0 0 8px;text-align:center">Best at the top. Your best five cards from your two plus the board.</p>
+    <div class="rklist" id="ranksList"></div>
+    <div class="row"><button class="btn gold" id="ranksClose" style="flex:1">Back to the table</button></div>
   </div>
 </div>
 
@@ -3037,8 +3061,8 @@ function renderControls(){
   od.hidden=true;
   if(G.turn!==0||G.street==='done'||G.street==='idle') closeRaise();
   const one=(cls,label,id)=>`<div class="actrow" style="--cols:1"><button class="btn ${cls}" id="${id}">${label}</button></div>`;
-  if(G.street==='idle'){st.textContent='Pulling up a chair…'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn call" disabled>Call</button><button class="btn raise" disabled>Raise</button></div>`; return}
-  if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn call" disabled>Call</button><button class="btn raise" disabled>Raise</button></div>`; return}
+  if(G.street==='idle'){st.textContent='Pulling up a chair…'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
+  if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='done'){
     if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is busted.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
     if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('raise','Read the Gazette','nextBtn'); $('nextBtn').onclick=runOver; return}
@@ -3052,7 +3076,7 @@ function renderControls(){
   if(G.turn!==0){
     const p=G.players[G.turn];
     st.innerHTML=`<span class="dots">${p?`${me.folded?'You folded · ':''}${shortName(p)} is thinking`:'Dealing'}</span>`;
-    ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn call" disabled>Call</button><button class="btn raise" disabled>Raise</button></div>`;
+    ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`;
     return;
   }
   const toCall=G.currentBet-me.bet, pot=potTotal();
@@ -3074,7 +3098,7 @@ function renderControls(){
     +(canFlask?`<button class="chipbtn trickbtn" id="flaskBtn" title="${CHARMS.flask.desc}"><span class="ti">${CHARMS.flask.icon}\uFE0E</span>Flask</button>`:'')
     +(canDyn?`<button class="chipbtn trickbtn" id="dynBtn" title="${CHARMS.dynamite.desc}"><span class="ti">${CHARMS.dynamite.icon}\uFE0E</span>Dynamite</button>`:'');
   ac2.innerHTML=`${canSwap||canAce||trickBtns?`<div class="swaprow">${canSwap?'<button class="chipbtn" data-swap="0">Swap left</button><button class="chipbtn" data-swap="1">Swap right</button>':''}${canAce?'<button class="chipbtn" id="aceBtn">Ace in the Sleeve</button>':''}${trickBtns}</div>`:''}
-    <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button><button class="btn call" id="bCall">${callTxt}</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}</div>`;
+    <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}<button class="btn call" id="bCall">${callTxt}</button></div>`;
   ac2.querySelectorAll('[data-swap]').forEach(b=>b.onclick=()=>{
     const k=+b.dataset.swap, old=me.hand[k], c=draw(); c.order=0; me.hand[k]=c; G.mechSwaps--; sfx('card');
     log(`You swap out the ${SG[old.r]} of ${SUITN[old.s]}.`); render();
@@ -3138,6 +3162,13 @@ function setTab(name){
 document.querySelectorAll('#menu .tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 function closeMenu(){$('menu').hidden=true; PAUSED=false}
 $('menuBtn').onclick=openMenu;
+$('ranksBtn').onclick=openRanks;
+function openRanks(){
+  const me=human(), cat=G.board&&G.board.length>=3&&me&&me.inHand&&!me.folded?CAT_SHORT[handCat(evalHand(me.hand.concat(G.board)))]:'';
+  $('ranksList').innerHTML=HAND_RANKS.map(([a,b],i)=>`<div class="rk${cat&&CAT_SHORT[9-i]===cat?' mine':''}"><i>${i+1}</i><b>${a}</b><span>${b}</span></div>`).join('');
+  PAUSED=true; $('ranksModal').hidden=false; sfx('card');
+}
+$('ranksClose').onclick=()=>{$('ranksModal').hidden=true; PAUSED=false};
 $('resumeBtn').onclick=closeMenu;
 $('quitBtn').onclick=()=>{closeMenu(); renderTitle()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('menu').hidden) closeMenu()});

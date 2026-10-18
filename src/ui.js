@@ -954,8 +954,8 @@ function renderControls(){
   od.hidden=true;
   if(G.turn!==0||G.street==='done'||G.street==='idle') closeRaise();
   const one=(cls,label,id)=>`<div class="actrow" style="--cols:1"><button class="btn ${cls}" id="${id}">${label}</button></div>`;
-  if(G.street==='idle'){st.textContent='Pulling up a chair…'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn call" disabled>Call</button><button class="btn raise" disabled>Raise</button></div>`; return}
-  if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn call" disabled>Call</button><button class="btn raise" disabled>Raise</button></div>`; return}
+  if(G.street==='idle'){st.textContent='Pulling up a chair…'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
+  if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='done'){
     if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is busted.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
     if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('raise','Read the Gazette','nextBtn'); $('nextBtn').onclick=runOver; return}
@@ -969,7 +969,7 @@ function renderControls(){
   if(G.turn!==0){
     const p=G.players[G.turn];
     st.innerHTML=`<span class="dots">${p?`${me.folded?'You folded · ':''}${shortName(p)} is thinking`:'Dealing'}</span>`;
-    ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn call" disabled>Call</button><button class="btn raise" disabled>Raise</button></div>`;
+    ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`;
     return;
   }
   const toCall=G.currentBet-me.bet, pot=potTotal();
@@ -991,7 +991,7 @@ function renderControls(){
     +(canFlask?`<button class="chipbtn trickbtn" id="flaskBtn" title="${CHARMS.flask.desc}"><span class="ti">${CHARMS.flask.icon}\uFE0E</span>Flask</button>`:'')
     +(canDyn?`<button class="chipbtn trickbtn" id="dynBtn" title="${CHARMS.dynamite.desc}"><span class="ti">${CHARMS.dynamite.icon}\uFE0E</span>Dynamite</button>`:'');
   ac2.innerHTML=`${canSwap||canAce||trickBtns?`<div class="swaprow">${canSwap?'<button class="chipbtn" data-swap="0">Swap left</button><button class="chipbtn" data-swap="1">Swap right</button>':''}${canAce?'<button class="chipbtn" id="aceBtn">Ace in the Sleeve</button>':''}${trickBtns}</div>`:''}
-    <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button><button class="btn call" id="bCall">${callTxt}</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}</div>`;
+    <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}<button class="btn call" id="bCall">${callTxt}</button></div>`;
   ac2.querySelectorAll('[data-swap]').forEach(b=>b.onclick=()=>{
     const k=+b.dataset.swap, old=me.hand[k], c=draw(); c.order=0; me.hand[k]=c; G.mechSwaps--; sfx('card');
     log(`You swap out the ${SG[old.r]} of ${SUITN[old.s]}.`); render();
@@ -1055,6 +1055,13 @@ function setTab(name){
 document.querySelectorAll('#menu .tabs button').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
 function closeMenu(){$('menu').hidden=true; PAUSED=false}
 $('menuBtn').onclick=openMenu;
+$('ranksBtn').onclick=openRanks;
+function openRanks(){
+  const me=human(), cat=G.board&&G.board.length>=3&&me&&me.inHand&&!me.folded?CAT_SHORT[handCat(evalHand(me.hand.concat(G.board)))]:'';
+  $('ranksList').innerHTML=HAND_RANKS.map(([a,b],i)=>`<div class="rk${cat&&CAT_SHORT[9-i]===cat?' mine':''}"><i>${i+1}</i><b>${a}</b><span>${b}</span></div>`).join('');
+  PAUSED=true; $('ranksModal').hidden=false; sfx('card');
+}
+$('ranksClose').onclick=()=>{$('ranksModal').hidden=true; PAUSED=false};
 $('resumeBtn').onclick=closeMenu;
 $('quitBtn').onclick=()=>{closeMenu(); renderTitle()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('menu').hidden) closeMenu()});
