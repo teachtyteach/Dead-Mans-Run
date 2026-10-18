@@ -1045,7 +1045,7 @@ html.tall #sTitle{min-height:calc(var(--appH) - env(safe-area-inset-top,0px) - 4
     </div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
-    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div><p class="hint" id="dimsLine" style="text-align:center;opacity:.5"></p></div>
+    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>
     <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
   </div>
 </div>
@@ -2370,7 +2370,6 @@ function renderTitle(){
   show('sTitle');
 }
 function openMore(tab){
-  {const el=$('dimsLine'); if(el) el.textContent=window.__dims?'Screen '+window.__dims.join(' · '):'';}
   const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
