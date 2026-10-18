@@ -934,3 +934,8 @@ html:has(#sGame:not([hidden])) .vignette{opacity:.6}
 #sGame .where .lvl{color:var(--brass-hi);opacity:1;font-weight:700}
 #sGame .where b{text-shadow:0 1px 0 rgba(0,0,0,.8)}
 #sGame .topbar{position:relative;z-index:45}
+/* action pills: always fully legible, never on top of a name or chip count */
+@keyframes pillLife{0%{opacity:0;translate:-50% 4px;scale:.9}8%{opacity:1;translate:-50% 0;scale:1}100%{opacity:1}}
+.pill{bottom:auto;top:calc(100% + 5px);background:linear-gradient(#3a2618,#1d120a);border:1px solid var(--brass-lo);color:var(--ivory);box-shadow:0 2px 6px rgba(0,0,0,.6)}
+.pill.fold{color:var(--muted);border-color:rgba(255,255,255,.12);background:#1a110b}
+.seat.top .pill{top:50%;bottom:auto;left:calc(100% + 6px);translate:0 -50%;animation:none}
