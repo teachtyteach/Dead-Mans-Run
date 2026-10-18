@@ -183,12 +183,12 @@ const TIPS={
   turn:'<b>Your turn.</b> Fold, call, or raise.'
 };
 let COACH=null;
-function tip(k){if(!meta.tips[k]&&!COACH) COACH=k}
+function tip(k){if(TUT) return; if(!meta.tips[k]&&!COACH) COACH=k}
 function renderCoach(){
   const el=$('coach');
   if(!COACH||meta.tips[COACH]||!$('raiseSheet').hidden){el.hidden=true; return}
   el.hidden=false;
-  {const h=document.querySelector('#sGame .hud'); if(h){const b=h.getBoundingClientRect().bottom; if(b>0) el.style.top=(b+6)+'px'}}
+  {const con=document.querySelector('#sGame .console'); if(con&&el.parentNode!==con) con.insertBefore(el,con.firstChild)}
   el.innerHTML=`<div style="flex:1">${TIPS[COACH]}</div><button class="btn small" id="coachOk">Got it</button>`;
   $('coachOk').onclick=()=>{meta.tips[COACH]=true; saveMeta(); COACH=null; renderCoach()};
 }
@@ -224,6 +224,7 @@ function renderTitle(){
     return tarot(k,'','',false,`${c.price}g`);
   }).join('');
   document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>openMore(b.dataset.more));
+  $('tutBtn').onclick=()=>{ac(); startTutorial(false)};
   show('sTitle');
 }
 function openMore(tab){
@@ -235,8 +236,9 @@ function openMore(tab){
 }
 
 /* ================= run flow ================= */
-function saveRun(phase){if(!R) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
+function saveRun(phase){if(!R||R.tutorial) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
 function startRun(){
+  if(!meta.tutDone){startTutorial(true); return}
   R={level:1,gold:0,charms:[],lv:{},deeds:[],tricks:[],curse:null,phase:'pick',heat:Math.min(meta.heatPick||0,maxHeat()),temp:null};
   meta.runs++; saveMeta(); sset(RUN_KEY,null);
   openShop('pick');
@@ -583,12 +585,18 @@ function step(){
     return;
   }
   const p=G.players[G.turn];
+  if(p.isHuman&&TUT) later(tutTurn,Math.max(350,G.dealUntil-performance.now()+300));
+  if(!p.isHuman&&TUT){
+    const t=G.turn; later(()=>{if(G.turn!==t) return; const toCall=G.currentBet-p.bet; doAct(t,toCall>0?(t===1&&G.street!=='preflop'?'fold':'call'):'check')},900*speedMul());
+    return;
+  }
   if(!p.isHuman){
     const t=G.turn, base=((human().folded||human().allIn||!human().inHand?320:820)+(p.bossDef?520:0))*speedMul();
     later(()=>{if(G.turn!==t) return; const d=aiDecide(t); if(d.tell||d.line) say(d.line||'',d.tell||''); doAct(t,d.type,d.to)}, Math.max(base,G.dealUntil-performance.now()+120));
   }
 }
 function doAct(i,type,to){
+  if(i===0&&TUT) tutHide();
   const p=G.players[i];
   const put=applyAction(i,type,to);
   step();
@@ -636,6 +644,7 @@ function handEnd(res){
   procChain(ev.bonus||[],where[0]||[50,85],1500);
   if(ev.challenge){later(()=>{stampAt(50,30,'Challenge!','#f4cb5c',28); sfx('win'); bumpGold()},ev.kos.length?2000:900)}
   if(ev.wind) later(()=>{stampAt(50,60,'Second Wind','#7fcf8f',30); sfx('bigwin')},700);
+  if(TUT){later(tutFinale,2600); return}
   if(!G.outcome){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
   renderCoach();
 }
@@ -848,7 +857,7 @@ function render(){
   const L=R.level, bd=BOSSES[L-1], bp=boss(), me=human();
   const toRise=G.riseEvery-(G.tableHands%G.riseEvery);
   $('lvl').textContent=`Saloon ${L} of 8`;
-  $('town').textContent=TOWNS[L-1];
+  $('town').textContent=R.tutorial?'Practice Table':TOWNS[L-1]; if(R.tutorial) $('lvl').textContent='No boss · just practice';
   $('gold').innerHTML=roll('gold',R.gold,'s',num);
   if(bp){
     $('bountyPortrait').innerHTML=portraitFor(bp);
@@ -1002,7 +1011,7 @@ function renderControls(){
   $('bFold').onclick=()=>{closeRaise(); doAct(0,'fold')};
   $('bCall').onclick=()=>{closeRaise(); doAct(0,toCall===0?'check':'call')};
   if(!canRaise) return;
-  $('bRaise').onclick=()=>{RAISE_OPEN=!RAISE_OPEN; if(RAISE_OPEN) raiseVal=minTo; renderRaise(minTo,maxTo,toCall,pot,label); renderCoach()};
+  $('bRaise').onclick=()=>{RAISE_OPEN=!RAISE_OPEN; if(RAISE_OPEN) raiseVal=minTo; renderRaise(minTo,maxTo,toCall,pot,label); renderCoach(); if(TUT&&RAISE_OPEN) tutRaise()};
   if(RAISE_OPEN) renderRaise(minTo,maxTo,toCall,pot,label);
 }
 function renderRaise(minTo,maxTo,toCall,pot,label){
@@ -1022,7 +1031,7 @@ function renderRaise(minTo,maxTo,toCall,pot,label){
   setV(raiseVal);
   sl.oninput=()=>setV(+sl.value);
   rs.querySelectorAll('[data-qv]').forEach(b=>b.onclick=()=>{setV(+b.dataset.qv); sfx('chip')});
-  $('rsCancel').onclick=()=>{closeRaise(); renderCoach()};
+  $('rsCancel').onclick=()=>{closeRaise(); renderCoach(); if(TUT&&TUT.back) tutStep(TUT.back)};
   go.onclick=()=>{const v=raiseVal; closeRaise(); doAct(0,'raise',v)};
 }
 
@@ -1053,6 +1062,100 @@ $('againBtn').onclick=()=>{ac(); startRun()};
 $('homeBtn').onclick=renderTitle;
 let rz; addEventListener('resize',()=>{clearTimeout(rz); rz=setTimeout(()=>{if(!$('sGame').hidden) render()},120)});
 renderTitle();
+
+/* ================= tutorial: one guided hand at a practice table =================
+   Two easy drifters, no boss, a scripted deal (you hold pocket Kings and flop a set).
+   Plays automatically before the very first run, and any time from the Tutorial link. */
+let TUT=null;
+const TUT_SCRIPT={
+  preflop:[
+    {t:'.seat.human .cards',txt:'These are your two cards. Only you can see them. A pair of Kings is a great start.'},
+    {t:'#potrow',txt:'Every bet goes into the pot. Win the hand and the pot is yours.'},
+    {t:'#bCall',wait:true,txt:'Tap <b>Call</b> to match the bet and see more cards.'}
+  ],
+  flop:[
+    {t:'#board',txt:'The flop: three shared cards everyone can use. Your hand is the best five cards from your two plus these.'},
+    {t:'.seat.human .handname',txt:'You made <b>Three of a Kind</b>. That is a very strong hand.'},
+    {t:'#bRaise',wait:'raise',txt:'Tap <b>Bet</b> to put chips in and grow the pot.'}
+  ],
+  turn:[
+    {t:'#board .card:nth-child(4)',txt:'The turn: a fourth shared card.'},
+    {t:['#bCall','#bRaise'],wait:true,txt:'Your move. <b>Check</b> to stay in for free, or <b>Bet</b> again.'}
+  ],
+  river:[
+    {t:'#board .card:nth-child(5)',txt:'The river: the last card. After this, everyone still in shows their hand.'},
+    {t:['#bCall','#bRaise'],wait:true,txt:'Last move. Check or bet.'}
+  ]
+};
+const RAISE_STEP={t:'#raiseSheet',wait:true,txt:'Pick an amount, then tap the red button.'};
+function startTutorial(thenRun){
+  TOKEN++; hideReveal(); closeRaise();
+  TUT={thenRun,seen:{},q:[],i:0,back:null};
+  R={level:1,gold:0,charms:[],lv:{},deeds:[],tricks:[],curse:null,phase:'table',heat:0,temp:null,tutorial:true};
+  const st=Object.keys(STYLES)[0];
+  G.players=[{name:'You',isHuman:true,chips:1000,tilt:0},{name:'Slim',tier:'d',style:st,chips:600,tilt:0},{name:'Ada',fem:true,tier:'d',style:st,chips:600,tilt:0}];
+  G.players.forEach(p=>{p.out=false; p.hand=[]; p.bet=0; p.total=0});
+  Object.assign(G,{curse:null,lineup:['d','d'],bb:20,riseEvery:999,start:1000,tempWind:false,bossStart:1,dealer:1,tableHands:0,flaskUsed:false,dynUsed:false,windUsed:0,
+    vesperUsed:false,horseUsed:false,aceUsed:false,streak:0,koGold:0,outcome:null,log:[],handLog:[],lastHandLog:[],board:[],street:'idle',seen:new Map(),
+    winCards:new Set(),lastWinners:[],challenge:null,challengeDone:false,bounty:0});
+  // pop order: you, Slim, Ada, you, Slim, Ada, flop x3, turn, river   (suits: 0♠ 1♥ 2♦ 3♣)
+  G.rigDeck=[[13,0],[12,3],[7,2],[13,1],[9,2],[3,3],[13,2],[8,3],[2,1],[9,0],[4,2]];
+  show('sGame'); renderToggles(); quote(''); render();
+  tutShow(null,'<b>Practice table.</b> No boss here, just two easy drifters. Let\'s play one hand together.',false,'Deal me in',()=>{tutHide(); newHand()});
+}
+function tutTurn(){
+  if(!TUT||G.turn!==0||G.street==='done') return;
+  const s=G.street;
+  if(!TUT.seen[s]){TUT.seen[s]=true; TUT.q=(TUT_SCRIPT[s]||[]).slice(); TUT.i=0}
+  if(TUT.i<TUT.q.length) tutStep(TUT.q[TUT.i]);
+}
+function tutStep(st){
+  if(!TUT) return;
+  if(!st.wait){tutShow(st.t,st.txt,false,'Next',()=>{TUT.i++; tutHide(); tutTurn()}); return}
+  TUT.back=st.wait==='raise'?st:TUT.back;
+  tutShow(st.t,st.txt,true);
+}
+function tutRaise(){if(!TUT) return; requestAnimationFrame(()=>requestAnimationFrame(()=>tutShow(RAISE_STEP.t,RAISE_STEP.txt,true)))}
+function tutRect(t){
+  const els=(Array.isArray(t)?t:[t]).map(s=>document.querySelector(s)).filter(Boolean);
+  if(!els.length) return null;
+  let l=1e9,tp=1e9,r=-1e9,b=-1e9; els.forEach(e=>{const q=e.getBoundingClientRect(); l=Math.min(l,q.left); tp=Math.min(tp,q.top); r=Math.max(r,q.right); b=Math.max(b,q.bottom)});
+  const pad=8; return {l:l-pad,t:tp-pad,r:r+pad,b:b+pad};
+}
+function tutShow(target,html,wait,btn,onNext){
+  const ov=$('tut'), ring=$('tutRing'), block=$('tutBlock'), bub=$('tutBubble');
+  ov.hidden=false; ov.classList.toggle('waiting',!!wait);
+  $('tutText').innerHTML=html;
+  const nb=$('tutNext'); nb.hidden=!!wait; nb.textContent=btn||'Next'; nb.onclick=()=>{sfx('card'); onNext&&onNext()};
+  const sk=$('tutSkip'); sk.textContent=TUT&&TUT.done?'Main menu':'Skip tutorial'; sk.hidden=!sk.textContent; sk.onclick=tutSkip;
+  const place=()=>{
+    const r=target?tutRect(target):null, W=innerWidth, H=innerHeight;
+    if(!r){ring.hidden=true; block.style.clipPath='none'; block.classList.add('dim');
+      bub.style.left=Math.max(12,(W-bub.offsetWidth)/2)+'px'; bub.style.top=Math.max(20,(H-bub.offsetHeight)/2)+'px'; return}
+    block.classList.remove('dim'); ring.hidden=false;
+    Object.assign(ring.style,{left:r.l+'px',top:r.t+'px',width:(r.r-r.l)+'px',height:(r.b-r.t)+'px'});
+    block.style.clipPath=wait?`path(evenodd,'M0 0H${W}V${H}H0Z M${r.l} ${r.t}H${r.r}V${r.b}H${r.l}Z')`:'none';
+    const bw=bub.offsetWidth, bh=bub.offsetHeight;
+    let top=r.b+14; if(top+bh>H-12) top=r.t-14-bh; if(top<12) top=Math.min(H-bh-12,r.b+14);
+    bub.style.left=Math.max(12,Math.min(W-bw-12,(r.l+r.r)/2-bw/2))+'px'; bub.style.top=top+'px';
+  };
+  place(); TUT&&(TUT.place=place);
+}
+addEventListener('resize',()=>{if(TUT&&TUT.place&&!$('tut').hidden) TUT.place()});
+function tutHide(){const ov=$('tut'); if(ov) ov.hidden=true}
+function tutEnd(goRun){
+  const thenRun=TUT&&TUT.thenRun; TUT=null; tutHide(); TOKEN++; R=null;
+  meta.tutDone=true; saveMeta();
+  if(goRun&&thenRun!==null) startRun(); else renderTitle();
+}
+function tutSkip(){const thenRun=TUT&&TUT.thenRun; if(TUT&&TUT.done){tutEnd(false); return} tutEnd(!!thenRun)}
+function tutFinale(){
+  if(!TUT) return; TUT.done=true;
+  const won=human().winner;
+  const msg=(won?'<b>You won the pot!</b> The best five cards always win.':'<b>That\'s a hand.</b> The best five cards always win.')+
+    '<br><br>In a real run, every saloon has a <b>boss</b>. Take all of their chips to ride on. Between saloons, spend gold on charms that help every hand.';
+  tutShow(null,msg,false,TUT.thenRun?'Start the run':'Play for real',()=>tutEnd(true));
+}
 
 /* ================= opening sequence =================
    Synced to the menu song's first three hits (measured from the track): ~0.03s, 0.42s, 0.84s.

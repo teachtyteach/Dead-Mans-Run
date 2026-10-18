@@ -175,6 +175,8 @@ function startHand(){
   G.winCards=new Set(); G.outcome=null; G.seen=new Map(); G.lastWinners=[];
   G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0}));
   G.board=[]; G.deck=shuffle(FULL.map(c=>Object.assign({},c)));
+  // a scripted deal (tutorial): rigDeck lists [rank,suit] in the order cards come off the deck
+  if(G.rigDeck){const pick=G.rigDeck.map(([r,s])=>G.deck.find(c=>c.r===r&&c.s===s)); G.deck=G.deck.filter(c=>!pick.includes(c)).concat(pick.reverse()); G.rigDeck=null}
   G.dealer=nextIn(G.dealer);
   const count=G.players.filter(p=>p.inHand).length;
   const bp=boss();
