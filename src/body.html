@@ -1,0 +1,195 @@
+<div class="intro" id="intro">
+  <div class="in-prompt" id="inPrompt"><div class="in-back"></div><span>Tap to deal in</span></div>
+  <div class="in-stage">
+    <div class="in-flash" id="inFlash"></div>
+    <div class="in-card" id="inCard"><div class="card in-ace"><div class="ix"><b>A</b><i>♠</i></div><div class="in-pip">♠</div></div><div class="in-hole" id="inHole"></div></div>
+    <div class="in-half l" id="inHalfL"><div class="card in-ace"><div class="ix"><b>A</b><i>♠</i></div><div class="in-pip">♠</div></div></div>
+    <div class="in-half r" id="inHalfR"><div class="card in-ace"><div class="ix"><b>A</b><i>♠</i></div><div class="in-pip">♠</div></div></div>
+    <h1 class="brass in-logo" id="inLogo">Dead Man's Run</h1>
+  </div>
+</div>
+<canvas id="dust" aria-hidden="true"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+<div class="tint" aria-hidden="true"></div>
+<div class="bolt" id="bolt" aria-hidden="true"></div>
+<div class="film" aria-hidden="true"></div>
+
+<!-- ============ TITLE ============ -->
+<section class="screen" id="sTitle">
+  <div class="hero">
+    <div class="fan" id="fan"></div>
+    <div class="est">A Hold'em Roguelite</div>
+    <h1 class="brass">Dead Man's Run</h1>
+    <p class="sub">Eight saloons. Eight bosses. Every table fills up a little more, and every outlaw gets a little meaner.</p>
+  </div>
+  <div class="plaques" id="metaPlaques"></div>
+  <div class="row" id="titleActions"></div>
+  <div class="heat" id="heatPick"></div>
+  <div class="row audio-toggles"></div>
+  <div class="howto">
+    <div><b>Bust the boss</b><span>Every saloon has a boss. Take all their chips to clear the table.</span></div>
+    <div><b>Tables fill up</b><span>It starts with a boss and two drifters. By saloon five the table is full, then the outlaws get tougher.</span></div>
+    <div><b>Charms and curses</b><span>Buy charms at the general store between saloons. Take a curse for extra gold if you dare.</span></div>
+    <div><b>Unlocks</b><span>Beat Iron Jack and Banker Ellsworth to unlock new charms for every future run.</span></div>
+  </div>
+  <details class="fold">
+    <summary>Lifetime stats</summary>
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="row" style="margin-top:12px"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div>
+  </details>
+  <details class="fold">
+    <summary>Charm codex</summary>
+    <div class="codex" id="codex"></div>
+  </details>
+</section>
+
+<!-- ============ CHAPTER CARD ============ -->
+<div class="chapter-bg" id="chapterBg" aria-hidden="true"></div>
+<section class="screen center" id="sChapter" hidden>
+  <div class="chapter" role="button" tabindex="0" aria-label="Continue">
+    <span class="ch-corner tl"></span><span class="ch-corner tr"></span><span class="ch-corner bl"></span><span class="ch-corner br"></span>
+    <div class="ch-num" id="chNum">Chapter I</div>
+    <div id="chInk"></div>
+    <div class="ch-rule"><i></i></div>
+    <div class="ch-sub" id="chSub"></div>
+  </div>
+  <div class="ch-tap">Tap to continue</div>
+</section>
+
+<!-- ============ GENERAL STORE ============ -->
+<section class="screen center" id="sShop" hidden>
+  <div class="sign"><div class="est" id="shopEst">General Store</div><h2 class="brass" id="shopTitle">General Store</h2></div>
+  <div class="mapwrap" id="shopMap"></div>
+  <div class="banner" id="shopBanner"></div>
+  <div class="section-label" id="offerLabel">Charms for sale</div>
+  <div class="tabs shoptabs" id="shopTabs" role="tablist" hidden></div>
+  <div class="deal-grid"><div class="dc" id="offers"></div><div class="dc" id="curseOffer"></div></div>
+  <div class="row" id="shopActions"></div>
+</section>
+
+<!-- ============ TELEGRAM ============ -->
+<section class="screen center" id="sEvent" hidden>
+  <div class="telegram">
+    <div class="tg-head"><b>Territorial Telegraph Co.</b><span id="tgStamp">RECD 4:12 PM</span></div>
+    <div class="tg-title" id="evTitle">Telegram</div>
+    <div class="tg-body" id="evText"></div>
+    <div class="tg-choices" id="evChoices"></div>
+    <div class="tg-result" id="evResult" hidden></div>
+  </div>
+  <div class="goldline">Gold <b id="evGold">0</b></div>
+  <div class="row"><button class="btn gold big" id="evRide" hidden>Ride on</button></div>
+</section>
+
+<!-- ============ TABLE ============ -->
+<section class="screen" id="sGame" hidden>
+  <div class="hud">
+    <div class="topbar">
+      <div class="where"><span class="lvl" id="lvl">Saloon 1 of 8</span><b id="town">Dry Creek</b></div>
+      <div class="trail" id="trail" aria-label="Run progress"></div>
+      <div class="hud-right">
+        <div class="charm-icons" id="charmRow"></div>
+        <div class="goldchip" id="goldchip" title="Gold"><span class="coin"></span><b id="gold">0</b></div>
+        <button class="iconbtn" id="menuBtn" aria-label="Pause menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="bossbar" id="bossbar">
+      <span class="medal" id="bountyPortrait"></span>
+      <div class="meter-col">
+        <div class="meter-label"><b id="bountyName">Boss</b><span id="bountyChips"></span></div>
+        <div class="meter" aria-label="Boss chip stack"><div class="meter-fill" id="meterFill"></div></div>
+        <div class="quote" id="bossQuote" aria-live="polite"></div>
+      </div>
+    </div>
+    <div class="ribbon" id="ribbon"><div class="challenge" id="challenge"></div><div class="rib-q" id="ribbonQuote" aria-live="polite"></div></div>
+  </div>
+
+  <div class="table-wrap" id="tableWrap">
+    <div class="table" id="table">
+      <div class="rail"><div class="felt"><div class="lamp"></div></div></div>
+      <div class="beam" aria-hidden="true"></div>
+      <div class="center">
+        <div class="potrow" id="potrow"></div>
+        <div class="sidepots" id="sidepots"></div>
+        <div class="board" id="board"></div>
+        <div class="print" id="print">Dry Creek Saloon</div>
+      </div>
+      <div id="seats"></div>
+      <div class="fx" id="fx"></div>
+      <div class="reveal" id="reveal" hidden><div class="rv-hand" id="rvHand"></div><div class="rv-who" id="rvWho"></div><div class="rv-amt" id="rvAmt"></div></div>
+      <div class="coach" id="coach" hidden></div>
+      <div class="raisesheet" id="raiseSheet" hidden></div>
+    </div>
+  </div>
+
+  <div class="console">
+    <div class="status" id="status">Shuffling up…</div>
+    <div class="odds" id="odds" hidden></div>
+    <div id="actions"></div>
+  </div>
+</section>
+
+<!-- ============ RUN END: THE GAZETTE ============ -->
+<section class="screen center" id="sEnd" hidden>
+  <div class="paper" id="paper">
+    <div class="np-top"><span>Est. 1871</span><span id="endDate">Vol. XII · No. 1</span><span>Price 5 Cents</span></div>
+    <div class="np-mast"><span class="np-orn">❦</span>The Territory Gazette<span class="np-orn r">❦</span></div>
+    <div class="np-motto">Wired Daily from Dry Creek to Graves End</div>
+    <div class="np-date"><span id="npDate">Sunday Morning</span><b class="np-extra">Extra</b><span id="npWeather">Fair &amp; Dusty</span></div>
+    <div class="np-head">
+      <div class="np-kicker" id="npKicker">Late Dispatch</div>
+      <h1 class="np-hl" id="endTitle">Rider Busted</h1>
+      <div class="np-rule"><i></i></div>
+      <div class="np-deck" id="endSub"></div>
+    </div>
+    <div class="np-body">
+      <figure class="np-fig"><div class="np-cut" id="npCut"></div><div class="np-stamp" id="npStamp">Busted</div><figcaption id="npCap"></figcaption></figure>
+      <div class="np-story" id="npStory"></div>
+    </div>
+    <div class="np-foot">
+      <div class="np-record"><div class="np-label">The Record</div><div id="endPlaques"></div></div>
+      <div class="np-ad" id="npAd"></div>
+    </div>
+  </div>
+  <div class="row"><button class="btn gold big" id="againBtn">Ride again</button><button class="btn dark" id="homeBtn">Title</button></div>
+</section>
+
+<!-- ============ WANTED POSTER ============ -->
+<div class="modal" id="poster" hidden>
+  <div class="poster" role="dialog" aria-labelledby="posterName">
+    <div class="w1">Wanted</div>
+    <div class="w2">Dead or Alive</div>
+    <div class="stamp" id="stamp" hidden>Paid</div>
+    <div class="pframe" id="posterPortrait"></div>
+    <div class="pname" id="posterName"></div>
+    <div class="ptitle" id="posterTitle"></div>
+    <div class="pquote" id="posterQuote"></div>
+    <div class="ptwist" id="posterTwist"></div>
+    <div class="pline" id="posterLine"></div>
+    <div class="reward">Bounty <b id="posterReward"></b></div>
+    <button class="btn raise big" id="posterBtn">Take a seat</button>
+  </div>
+</div>
+
+<!-- ============ PAUSE MENU ============ -->
+<div class="modal" id="menu" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="menuTitle">
+    <h3 id="menuTitle" class="sheet-title">Dry Creek</h3>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="table" aria-selected="true">Table</button>
+      <button role="tab" data-tab="hand" aria-selected="false">Last hand</button>
+      <button role="tab" data-tab="ranks" aria-selected="false">Hands</button>
+      <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    </div>
+    <div class="pane" data-pane="table">
+      <div class="sheet-boss" id="menuBoss"></div>
+      <div class="mini-label">Your charms</div>
+      <div class="charm-row" id="menuCharms"></div>
+      <div class="mini-label">Ledger</div>
+      <div class="ledger" id="ledger"></div>
+    </div>
+    <div class="pane" data-pane="hand" hidden><div class="ledger" id="lastHand"></div></div>
+    <div class="pane" data-pane="ranks" hidden><div class="ranks" id="ranks"></div><p class="hint">Highest at the top. Best five cards from your two plus the board.</p></div>
+    <div class="pane" data-pane="settings" hidden><div class="row audio-toggles"></div><p class="hint">Your run saves after every hand.</p></div>
+    <div class="row"><button class="btn gold" id="resumeBtn" style="flex:1">Resume</button><button class="btn dark" id="quitBtn" style="flex:1">Quit to title</button></div>
+  </div>
+</div>

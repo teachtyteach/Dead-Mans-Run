@@ -1,0 +1,5 @@
+d.js
+dist/
+*.wav
+__pycache__/
+test*.html
