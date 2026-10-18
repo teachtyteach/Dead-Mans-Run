@@ -2,7 +2,7 @@
 
 A Texas Hold'em roguelite set in the Old West. Ride through eight saloons, bust each boss at the table, and collect charms, tricks and deeds along the way.
 
-**Play on your phone:** see "Run it on iPhone" below.
+**Play:** https://teachtyteach.github.io/dead-mans-run/ — on iPhone open it in Safari, then Share → Add to Home Screen. It works offline after the first load.
 
 ## How it's built
 
