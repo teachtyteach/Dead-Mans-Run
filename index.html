@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0805">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}@media (display-mode:standalone),(display-mode:fullscreen){:root{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}</style>
-<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,h=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);if(h>innerHeight){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
+<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width),h=Math.max(sh,innerHeight),ch=d.clientHeight;window.__dims=[sh,innerHeight,ch,(visualViewport||{}).height|0];if(h>ch+2){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta charset="utf-8">
@@ -1045,7 +1045,7 @@ html.tall #sTitle{min-height:calc(var(--appH) - env(safe-area-inset-top,0px) - 4
     </div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
-    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>
+    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div><p class="hint" id="dimsLine" style="text-align:center;opacity:.5"></p></div>
     <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
   </div>
 </div>
@@ -2370,6 +2370,7 @@ function renderTitle(){
   show('sTitle');
 }
 function openMore(tab){
+  {const el=$('dimsLine'); if(el) el.textContent=window.__dims?'Screen '+window.__dims.join(' · '):'';}
   const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);

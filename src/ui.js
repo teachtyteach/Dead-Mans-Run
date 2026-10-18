@@ -228,6 +228,7 @@ function renderTitle(){
   show('sTitle');
 }
 function openMore(tab){
+  {const el=$('dimsLine'); if(el) el.textContent=window.__dims?'Screen '+window.__dims.join(' · '):'';}
   const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
