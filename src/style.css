@@ -8,6 +8,8 @@
   --brass:#c9a24e; --brass-hi:#f4dc94; --brass-lo:#7d6230;
   --felt:#1d4a30; --felt-hi:#2e6a46; --felt-lo:#0d2619;
   --ivory:#f7efdc; --ivory-lo:#e2d3b1;
+  --wear:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -9 0 0 0 5.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
+  --wear2:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.32' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -12 0 0 0 8.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
   --parch:#e8d4a2; --parch-ink:#3e2410;
   --ink:#1b120c; --red:#a3241a; --blood:#b8321e; --ember:#e8653f;
   --text:#f0e4c8; --muted:#a6937a; --gold:#f4cb5c; --curse:#9142b4; --sky:#7fb6e6;
@@ -986,25 +988,60 @@ html.tall .bo{bottom:auto;height:var(--appH)}
 .bo.side-l .bo-prop{right:-6%;transform:rotate(22deg) translate(120%,0)}
 .bo.go .bo-prop{animation:boProp .55s .45s cubic-bezier(.2,1.4,.4,1) forwards}
 @keyframes boProp{to{opacity:1;transform:rotate(var(--ang)) translate(0,0)}}
-/* portrait on torn paper */
-.bo-portrait{position:absolute;top:9%;width:min(64vw,44vh);aspect-ratio:1;opacity:0}
-.bo.side-r .bo-portrait{right:4%;transform:translateX(130%) rotate(16deg)}
-.bo.side-l .bo-portrait{left:4%;transform:translateX(-130%) rotate(-16deg)}
+/* busted poster: an inked wanted bill nailed up, shot through and stamped */
+.bo-portrait{position:absolute;top:6.5%;width:min(66vw,41vh);aspect-ratio:3/4;container-type:size;opacity:0;filter:drop-shadow(0 18px 26px rgba(0,0,0,.7))}
+.bo.side-r .bo-portrait{right:6%;transform:translateX(130%) rotate(16deg)}
+.bo.side-l .bo-portrait{left:6%;transform:translateX(-130%) rotate(-16deg)}
 .bo.go .bo-portrait{animation:boPort .5s .18s cubic-bezier(.2,1.3,.4,1) forwards}
-@keyframes boPort{to{opacity:1;transform:translateX(0) rotate(calc(var(--ang) * -.8))}}
-.bo-paper{width:100%;height:100%;padding:5%;background:var(--noise),linear-gradient(160deg,#efe3c4,#d6c39a);
-  clip-path:polygon(2% 4%,12% 0,24% 3%,36% 0,48% 4%,61% 1%,73% 4%,86% 0,98% 3%,100% 15%,97% 28%,100% 41%,97% 55%,100% 68%,97% 81%,100% 95%,88% 100%,75% 96%,62% 100%,49% 97%,36% 100%,23% 96%,10% 100%,0 96%,3% 83%,0 70%,3% 56%,0 43%,3% 30%,0 17%);
-  filter:drop-shadow(0 0 0 #000)}
-.bo-paper svg{width:100%;height:100%;display:block;filter:contrast(1.2) saturate(1.15)}
-.bo-portrait::after{content:"";position:absolute;inset:-3%;z-index:-1;background:var(--acc);clip-path:inherit;transform:translate(10px,12px);opacity:.9;
-  clip-path:polygon(2% 4%,12% 0,24% 3%,36% 0,48% 4%,61% 1%,73% 4%,86% 0,98% 3%,100% 15%,97% 28%,100% 41%,97% 55%,100% 68%,97% 81%,100% 95%,88% 100%,75% 96%,62% 100%,49% 97%,36% 100%,23% 96%,10% 100%,0 96%,3% 83%,0 70%,3% 56%,0 43%,3% 30%,0 17%)}
-/* stamp word, per boss */
-.bo-stamp{position:absolute;left:50%;top:62%;translate:-50% -50%;rotate:-14deg;scale:3.2;opacity:0;
-  font-family:var(--f-poster);font-size:clamp(24px,8.4vw,52px);line-height:1;color:#c3261a;white-space:nowrap;padding:4px 16px;border:5px double #c3261a;border-radius:6px;
-  background:rgba(239,226,196,.9);box-shadow:0 6px 20px rgba(0,0,0,.5)}
-.bo-stamp span{display:block;-webkit-mask:var(--noise);mask:var(--noise);-webkit-mask-size:220px;mask-size:220px}
-.bo.stamped .bo-stamp{animation:boStamp .26s cubic-bezier(.3,1.6,.5,1) forwards}
-@keyframes boStamp{to{scale:1;opacity:1}}
+@keyframes boPort{to{opacity:1;transform:translateX(0) rotate(calc(var(--ang) * -.7))}}
+.bo-portrait::after{content:"";position:absolute;inset:-2.5%;z-index:-1;background:var(--acc);transform:translate(12px,14px) rotate(2deg);opacity:.92;clip-path:polygon(1% 3%,9% 0,18% 2.2%,27% .4%,36% 2.6%,45% .2%,54% 2%,63% .3%,72% 2.4%,81% .5%,90% 2.2%,99% 0,100% 9%,98.2% 18%,100% 27%,98.4% 36%,100% 45%,98% 54%,100% 63%,98.4% 72%,100% 81%,98.2% 90%,99.4% 99%,90% 100%,81% 98.2%,72% 100%,63% 98.4%,54% 100%,45% 98%,36% 100%,27% 98.4%,18% 100%,9% 98.2%,.6% 99.4%,1.6% 90%,0 81%,1.8% 72%,0 63%,1.6% 54%,0 45%,1.8% 36%,0 27%,1.6% 18%,0 9%)}
+.bo-sheet{position:relative;width:100%;height:100%;transform-origin:50% 3%;display:flex;flex-direction:column;align-items:center;gap:1.4cqw;padding:7cqw 7cqw 4.5cqw;color:#2a1306;
+  background:radial-gradient(circle at 80% 88%,transparent 8cqw,rgba(120,66,18,.2) 8.6cqw,transparent 10.4cqw),radial-gradient(ellipse at 12% 70%,rgba(120,70,20,.16),transparent 22cqw),
+    linear-gradient(101deg,transparent 46%,rgba(80,40,10,.12) 49.4%,rgba(255,250,232,.38) 50%,transparent 53%),linear-gradient(-6deg,transparent 61%,rgba(80,40,10,.1) 63.6%,rgba(255,250,232,.28) 64.1%,transparent 66%),
+    var(--noise),radial-gradient(ellipse at 45% 32%,#f8ebc8,#e8d3a2 52%,#c9a364);
+  box-shadow:inset 0 0 7cqw rgba(110,55,15,.55),inset 0 0 1.4cqw rgba(70,30,5,.75);clip-path:polygon(1% 3%,9% 0,18% 2.2%,27% .4%,36% 2.6%,45% .2%,54% 2%,63% .3%,72% 2.4%,81% .5%,90% 2.2%,99% 0,100% 9%,98.2% 18%,100% 27%,98.4% 36%,100% 45%,98% 54%,100% 63%,98.4% 72%,100% 81%,98.2% 90%,99.4% 99%,90% 100%,81% 98.2%,72% 100%,63% 98.4%,54% 100%,45% 98%,36% 100%,27% 98.4%,18% 100%,9% 98.2%,.6% 99.4%,1.6% 90%,0 81%,1.8% 72%,0 63%,1.6% 54%,0 45%,1.8% 36%,0 27%,1.6% 18%,0 9%)}
+.bo-nail{position:absolute;top:2.4cqw;left:50%;z-index:7;width:4.6cqw;height:4.6cqw;translate:-50% 0;border-radius:50%;
+  background:radial-gradient(circle at 36% 30%,#fbf0cf,#a8864e 40%,#3a250e 78%);box-shadow:.4cqw 1cqw 1.2cqw rgba(0,0,0,.55),inset 0 0 0 .3cqw rgba(0,0,0,.25)}
+.bo-w1{width:max-content;white-space:nowrap;font-family:var(--f-poster);font-size:16cqw;line-height:.86;letter-spacing:.02em;color:#2a1306;margin-top:2.2cqw;text-shadow:0 .3cqw 0 rgba(255,245,220,.35);
+  -webkit-mask:var(--wear) 0 0/150px;mask:var(--wear) 0 0/150px}
+.bo-w2{display:flex;align-items:center;gap:2.4cqw;width:100%;font-family:var(--f-label);font-weight:700;font-size:4.4cqw;letter-spacing:.3em;text-transform:uppercase;color:#4a2610;white-space:nowrap}
+.bo-w2 i{flex:1;height:.55cqw;background:currentColor;opacity:.75}
+.bo-frame{position:relative;width:80cqw;aspect-ratio:1;flex:none;padding:1.3cqw;background:#24120a;margin-top:1cqw;
+  box-shadow:0 0 0 .5cqw #ead8ac,0 0 0 .9cqw #2a1508,0 1.6cqw 3cqw rgba(60,25,5,.45)}
+.bo-frame svg{display:block;width:100%;height:100%;filter:contrast(1.06) saturate(1.08);transition:filter .6s}
+.bo-frame::after{content:"";position:absolute;inset:1.3cqw;background:var(--noise);mix-blend-mode:multiply;opacity:.28;pointer-events:none}
+.bo.stamped .bo-frame svg{filter:grayscale(.45) sepia(.3) contrast(1.08)}
+.bo-reward{display:flex;flex-direction:column;align-items:center;line-height:1;margin-top:auto}
+.bo-reward span{font-family:var(--f-label);font-weight:700;font-size:4.2cqw;letter-spacing:.34em;text-transform:uppercase;color:#4a2610}
+.bo-reward b{display:block;width:max-content;white-space:nowrap;font-family:var(--f-poster);font-weight:400;font-size:9cqw;color:#7a160c;letter-spacing:.02em;margin-top:.8cqw}
+/* bullet holes: punched, scorched, cracked */
+.bo-hole{position:absolute;z-index:5;width:9.5cqw;aspect-ratio:1;translate:-50% -50%;border-radius:50%;scale:0;
+  background:radial-gradient(circle,#000 0 27%,#160904 33%,rgba(58,26,8,.9) 41%,rgba(120,64,24,.4) 56%,transparent 70%)}
+.bo-hole::before{content:"";position:absolute;inset:-55%;border-radius:50%;
+  background:conic-gradient(from 14deg,transparent 0 6%,rgba(36,16,4,.6) 6.6% 7.6%,transparent 8.2% 27%,rgba(36,16,4,.55) 27.6% 28.4%,transparent 29% 47%,rgba(36,16,4,.6) 47.6% 48.6%,transparent 49.2% 69%,rgba(36,16,4,.5) 69.6% 70.4%,transparent 71% 88%,rgba(36,16,4,.55) 88.6% 89.6%,transparent 90.2%);
+  -webkit-mask:radial-gradient(circle,transparent 18%,#000 22%,transparent 56%);mask:radial-gradient(circle,transparent 18%,#000 22%,transparent 56%)}
+.bo-hole::after{content:"";position:absolute;inset:-150%;border-radius:50%;background:radial-gradient(circle,#fff6d8,rgba(255,170,60,.7) 22%,rgba(255,110,30,.25) 42%,transparent 62%);opacity:0;mix-blend-mode:screen}
+.bo.shot .bo-hole{animation:boHole .18s calc(var(--k) * .14s) cubic-bezier(.2,1.8,.4,1) forwards}
+.bo.shot .bo-hole::after{animation:boFlash .32s calc(var(--k) * .14s) ease-out}
+@keyframes boHole{0%{scale:0}60%{scale:1.35}100%{scale:1}}
+@keyframes boFlash{0%{opacity:1;scale:.4}100%{opacity:0;scale:1.3}}
+/* stamp word, per boss, in worn red ink */
+.bo-stamp{position:absolute;left:50%;top:71%;z-index:6;translate:-50% -50%;rotate:-10deg;scale:3;opacity:0;
+  font-family:var(--f-poster);font-size:14cqw;line-height:1;color:#b51a0e;white-space:nowrap;padding:1.4cqw 4.4cqw 2cqw;border:1.4cqw double #b51a0e;border-radius:2.4cqw;
+  background:rgba(248,236,206,.88);box-shadow:0 0 0 .6cqw rgba(248,236,206,.4);-webkit-mask:var(--wear2) 0 0/220px;mask:var(--wear2) 0 0/220px}
+.bo-stamp span{display:block;width:max-content;white-space:nowrap}
+.bo.stamped .bo-stamp{animation:boStamp .24s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes boStamp{to{scale:1;opacity:.96}}
+.splat{position:absolute;left:50%;top:71%;width:124cqw;translate:-50% -50%;rotate:-10deg;z-index:5;fill:#b51a0e;opacity:0;scale:.3;pointer-events:none;mix-blend-mode:multiply}
+.bo.stamped .splat{animation:boSplat .32s .04s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes boSplat{to{opacity:.78;scale:1}}
+/* idle: the bill hangs off its nail and sways; lamplight slides across it */
+.bo.go .bo-sheet{animation:boSway 3.4s .7s ease-in-out infinite alternate both,boJolt .42s 1.9s ease-out}
+@keyframes boSway{from{rotate:-1.5deg}to{rotate:1.7deg}}
+@keyframes boJolt{0%{scale:1}25%{scale:.93}60%{scale:1.035}100%{scale:1}}
+.bo-sheet::after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;background:linear-gradient(112deg,transparent 38%,rgba(255,248,222,.32) 48%,transparent 58%) 0 0/300% 100% no-repeat;mix-blend-mode:soft-light}
+.bo.go .bo-sheet::after{animation:boSheen 5.6s 2.4s ease-in-out infinite}
+@keyframes boSheen{0%,55%{background-position:0 0}100%{background-position:100% 0}}
 /* slashed band: accent stripe + halftone panel */
 .bo-stripe,.bo-band{position:absolute;left:-12%;right:-12%;rotate:var(--ang);transform:translateX(-130%)}
 .bo-stripe{top:calc(53% - 14px);height:10px;background:var(--acc);box-shadow:0 0 18px color-mix(in srgb,var(--acc) 60%,transparent)}
@@ -1047,11 +1084,48 @@ html.tall .bo{bottom:auto;height:var(--appH)}
 .bp-dust{border-radius:50%;background:#ead7b4}
 .bp-smoke{border-radius:50%;background:radial-gradient(circle,rgba(200,190,180,.6),transparent 70%);filter:blur(6px)}
 /* landscape: portrait and prop to the sides, text centered */
-@media (orientation:landscape){.bo-portrait{width:min(34vw,58vh);top:8%}.bo-prop{width:min(24vw,40vh);top:12%}.bo-text{left:8%;right:40%}.bo.side-l .bo-text{left:40%;right:8%}.bo-band{top:56%}.bo-stripe{top:calc(56% - 14px)}.bo-text{top:59%}}
+@media (orientation:landscape){.bo-portrait{width:auto;height:84vh;top:8%;z-index:2}.bo.side-r .bo-portrait{right:7%}.bo.side-l .bo-portrait{left:7%}.bo-prop{width:min(20vw,34vh);top:8%}
+  .bo-text{left:6%;right:calc(63vh + 14%);top:58%}.bo.side-l .bo-text{left:calc(63vh + 14%);right:6%}.bo-band{top:55%}.bo-stripe{top:calc(55% - 14px)}
+  .bo-name{font-size:calc(clamp(34px,min(7vw,15vh),100px) * var(--fs,1))}.bo-ghost{font-size:clamp(40px,min(11vw,22vh),150px)}}
 @media (prefers-reduced-motion:reduce){.bo *{animation-duration:.01s!important;animation-delay:0s!important}}
-/* send-off refinements: crisp stamp off the face, ghost title fills the empty bottom, tighter band */
-.bo-stamp{top:84%;left:50%;background:#efe2c4;color:#b81f12;border-color:#b81f12;font-size:clamp(22px,7.4vw,46px);padding:2px 14px 4px}
-.bo-stamp span{-webkit-mask:none;mask:none}
+/* send-off refinements: ghost title fills the empty bottom, tighter band */
 .bo-band{height:21%}
 .bo-ghost{top:auto;bottom:9%;font-size:clamp(44px,15vw,150px);-webkit-text-stroke:2px color-mix(in srgb,var(--acc) 65%,transparent);translate:0 30px}
 html.tall .bo-ghost{bottom:11%}
+
+/* ================= living portraits: smoke drifts, embers glow, eyes blink ================= */
+.pt-live svg .pt-smoke{transform-box:fill-box;transform-origin:0 100%;animation:ptSmoke 3.6s ease-in-out infinite}
+.pt-live svg .pt-smoke+.pt-smoke{animation-delay:-1.8s}
+@keyframes ptSmoke{0%{stroke-opacity:0;transform:translateY(1.5px) scale(.92)}35%{stroke-opacity:1}100%{stroke-opacity:0;transform:translate(1.6px,-4.5px) scale(1.12)}}
+.pt-live svg .pt-ember{animation:ptEmber 1.4s ease-in-out infinite alternate}
+@keyframes ptEmber{from{opacity:.62}to{opacity:1}}
+.pt-live svg .pt-glow{animation:ptEmber 2.2s ease-in-out infinite alternate}
+.pt-live svg .pt-glint{transform-box:fill-box;transform-origin:center;animation:ptGlint 3.1s ease-in-out infinite}
+@keyframes ptGlint{0%,74%,100%{transform:scale(1)}84%{transform:scale(1.8)}}
+.pt-live svg .pt-lid{transform-box:fill-box;transform-origin:50% 0;animation:ptBlink 5.4s 1.2s infinite}
+@keyframes ptBlink{0%,90%,100%{opacity:0;transform:scaleY(.1)}92.5%{opacity:1;transform:scaleY(1)}95%{opacity:0;transform:scaleY(.1)}}
+.pt-live svg .pt-rays{transform-box:view-box;transform-origin:32px 22px;animation:ptSpin 70s linear infinite}
+@keyframes ptSpin{to{transform:rotate(360deg)}}
+.pt-live svg .pt-rat{animation:ptRat 2.8s ease-in-out infinite}
+@keyframes ptRat{0%,52%,100%{transform:translate(0,0)}60%{transform:translate(.5px,-.5px)}68%{transform:translate(.2px,-.2px)}76%{transform:translate(.6px,-.4px)}}
+.pt-live svg .pt-tail{transform-box:fill-box;transform-origin:100% 0;animation:ptTail 2.4s ease-in-out infinite alternate}
+@keyframes ptTail{from{transform:rotate(-5deg)}to{transform:rotate(6deg)}}
+@media (prefers-reduced-motion:reduce){.pt-live svg *{animation:none!important}}
+
+/* ================= the wanted poster: aged bill on a nail ================= */
+.poster{background:radial-gradient(circle at 84% 90%,transparent 26px,rgba(120,66,18,.2) 28px,transparent 34px),linear-gradient(101deg,transparent 46%,rgba(80,40,10,.1) 49.4%,rgba(255,250,232,.34) 50%,transparent 53%),
+    linear-gradient(-5deg,transparent 58%,rgba(80,40,10,.09) 60.6%,rgba(255,250,232,.26) 61.1%,transparent 63%),var(--noise),radial-gradient(ellipse at 50% 36%,#f6e6bc,var(--parch) 58%,#c29a5c);
+  box-shadow:inset 0 0 44px rgba(110,55,15,.6),inset 0 0 7px rgba(70,30,5,.7),0 30px 60px rgba(0,0,0,.8);
+  transform-origin:50% 14px;overflow:hidden;animation:posterIn .6s var(--ease-pop) both,pSway 3.8s .6s ease-in-out infinite alternate}
+@keyframes pSway{from{rotate:-.8deg}to{rotate:.9deg}}
+.poster::before,.poster::after{display:none}
+.p-nail{position:absolute;top:8px;left:50%;z-index:4;width:14px;height:14px;translate:-50% 0;border-radius:50%;background:radial-gradient(circle at 36% 30%,#fbf0cf,#a8864e 40%,#3a250e 78%);box-shadow:2px 3px 4px rgba(0,0,0,.55)}
+.w1{-webkit-mask:var(--wear) 0 0/150px;mask:var(--wear) 0 0/150px;margin-top:6px}
+.pframe{padding:5px;background:#24120a;box-shadow:0 0 0 2px #ead8ac,0 0 0 4px #2a1508,0 6px 14px rgba(60,25,5,.45);position:relative}
+.pframe svg{filter:contrast(1.05) saturate(1.05)}
+.pframe::after{content:"";position:absolute;inset:5px;background:var(--noise);mix-blend-mode:multiply;opacity:.28;pointer-events:none}
+.reward b{-webkit-mask:var(--wear) 0 0/120px;mask:var(--wear) 0 0/120px}
+.stamp{-webkit-mask:var(--wear2) 0 0/220px;mask:var(--wear2) 0 0/220px;mix-blend-mode:normal;background:rgba(248,236,206,.8);border-style:double;border-width:7px}
+.psplat{top:34%;width:130%;rotate:-14deg;z-index:2}
+.poster.stamped .psplat{animation:boSplat .32s cubic-bezier(.2,1.5,.4,1) forwards}
+.poster.stamped .pframe svg{filter:grayscale(.45) sepia(.3) contrast(1.08);transition:filter .6s}

@@ -130,19 +130,7 @@ function runRolls(){
     requestAnimationFrame(stepF);
   });
 }
-const BOSS_LOOK={pete:{hat:'cowboy',fh:'beard',redNose:true,smoke:false,scar:false},ma:{fem:true,hat:'none',bun:true,hair:'#cfc6b4',glasses:true,shawl:'#4a2a3a',smoke:false,scar:false},
-  iron:{hat:'cowboy',fh:'horseshoe',jaw:1.6,scar:true,smoke:true},under:{hat:'top',fh:'none',gaunt:true,skin:['#d8cfc4','#8a8278'],smoke:false,hair:'#1a1a1a',scar:false},
-  snake:{hat:'flat',fh:'goatee',goldTooth:true,smoke:true,cigarette:true},banker:{hat:'bowler',fh:'mutton',monocle:true,smoke:true,jaw:1.2,scar:false},
-  vesper:{fem:true,hat:'none',feather:true,beautyMark:true,lips:'#a0202a',hair:'#120c08',scar:false,smoke:false},bicah:{hat:'cowboy',hatc:'#d6c8a8',fh:'stache',longHair:true,hair:'#c9a35a',skin:['#ebc7a4','#a87a58'],coat:'#2a2622',smirk:true,scar:false,smoke:false,hatband:'#3a2a1a'}};
-const HUMAN_LOOK={human:true,hat:'cowboy',mask:true,scar:false,patch:false,smoke:false,coat:'#56432e',fh:'stubble'};
 function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-family:${bd.font},var(--f-display);font-size:${bd.fs||1}em">${bd.name}</${tag}>`}
-function bossPortrait(bd){return portrait(bd.key,Object.assign({boss:true},BOSS_LOOK[bd.key]||{}))}
-function portraitFor(p){
-  if(p.isHuman) return portrait('You the rider',HUMAN_LOOK);
-  if(p.bossDef) return bossPortrait(p.bossDef);
-  return portrait(p.name,{fem:p.fem,scar:p.tier==='v'?true:undefined});
-}
-
 /* ================= trail map ================= */
 const MAPPTS=[[70,205],[170,125],[275,190],[375,100],[478,172],[572,88],[668,160],[742,78]];
 function trailMap(level,victory){
@@ -525,7 +513,8 @@ function writeHand(svg){
 
 /* ================= table start ================= */
 function posterFor(bd,mode){
-  $('posterPortrait').innerHTML=bossPortrait(bd);
+  $('posterPortrait').innerHTML=bossPortrait(bd,'square');
+  $('poster').querySelector('.poster').classList.remove('stamped');
   $('posterName').innerHTML=bossName(bd);
   $('posterTitle').textContent=bd.title;
   $('stamp').hidden=true;
@@ -704,16 +693,38 @@ function boFx(type,ov){
     e.animate(kf,{duration:dur,delay,easing:type==='dirt'?'cubic-bezier(.5,0,.9,.5)':'cubic-bezier(.15,.7,.3,1)',fill:'both'}).onfinish=()=>e.remove();
   }
 }
+// shrink a line of type until it fits a share of its poster's width
+function fitWidth(el,share){if(!el) return; el.style.fontSize=''; const box=el.closest('.bo-sheet,.poster'); if(!box) return; const w=el.scrollWidth||el.getBoundingClientRect().width, max=box.clientWidth*share; if(w>max) el.style.fontSize=(parseFloat(getComputedStyle(el).fontSize)*max/w).toFixed(2)+'px'}
+function inkSplat(seed,cls='splat'){
+  const r=rng(seed+'#ink'); let d='';
+  const f=v=>+v.toFixed(1);
+  for(let i=0;i<38;i++){
+    const a=r()*Math.PI*2, k=.72+r()*.5, x=100+Math.cos(a)*80*k, y=60+Math.sin(a)*24*k, q=.7+r()*r()*5.2;
+    d+=`<circle cx="${f(x)}" cy="${f(y)}" r="${f(q)}"/>`;
+    if(r()<.4){const l=5+r()*12, cx=x+Math.cos(a)*l*.55, cy=y+Math.sin(a)*l*.55; d+=`<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(l*.5)}" ry="${f(Math.max(.5,q*.4))}" transform="rotate(${Math.round(a*180/Math.PI)} ${f(cx)} ${f(cy)})"/>`}
+  }
+  return `<svg class="${cls}" viewBox="0 0 200 120" aria-hidden="true">${d}</svg>`;
+}
 function bossOut(next){
   const bd=BOSSES[R.level-1], th=BOSS_FX[bd.key]||BOSS_FX.pete, sg=$('sGame');
   let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; document.body.appendChild(ov)}
   ov.className='bo side-'+th.side+' bo-'+bd.key;
   ov.style.cssText=`--acc:${th.acc};--deep:${th.deep};--ang:${th.ang}deg`;
+  const hr=rng(bd.key+'#holes'), holes=[[16+hr()*16,9+hr()*7],[70+hr()*16,30+hr()*18],[22+hr()*26,52+hr()*12]];
   const letters=bd.name.split(' ').map((w,wi,arr)=>`<span class="bo-word">${[...w].map((ch,ci)=>`<span class="bo-l" style="--d:${(arr.slice(0,wi).join('').length+ci)*45}ms">${ch}</span>`).join('')}</span>`).join(' ');
   ov.innerHTML=`<div class="bo-rays"></div>
     <div class="bo-ghost">${bd.title.toUpperCase()}</div>
     <svg class="bo-prop" viewBox="0 0 100 100" aria-hidden="true">${BOSS_PROPS[th.prop]||''}</svg>
-    <div class="bo-portrait"><div class="bo-paper">${bossPortrait(bd)}</div><div class="bo-stamp"><span>${th.stamp}</span></div></div>
+    <div class="bo-portrait"><div class="bo-sheet">
+      <i class="bo-nail"></i>
+      <div class="bo-w1">Wanted</div>
+      <div class="bo-w2"><i></i><span>Dead or Alive</span><i></i></div>
+      <div class="bo-frame pt-live">${bossPortrait(bd,'square')}</div>
+      <div class="bo-reward"><span>Reward</span><b>${num(G.bounty)} gold</b></div>
+      ${holes.map(([x,y],k)=>`<i class="bo-hole" style="left:${x.toFixed(1)}%;top:${y.toFixed(1)}%;--k:${k}"></i>`).join('')}
+      ${inkSplat(bd.key)}
+      <div class="bo-stamp"><span>${th.stamp}</span></div>
+    </div></div>
     <div class="bo-stripe"></div><div class="bo-band"></div>
     <div class="bo-text">
       <div class="bo-kicker"><b>${TOWNS[R.level-1]}</b><i></i><span>Boss busted</span></div>
@@ -722,14 +733,18 @@ function bossOut(next){
     </div>
     <div class="bo-tap">Tap to collect the bounty</div>`;
   ov.hidden=false; void ov.offsetWidth; ov.classList.add('go');
+  const fitAll=()=>{if(!ov.isConnected) return; fitWidth(ov.querySelector('.bo-w1'),.86); fitWidth(ov.querySelector('.bo-reward b'),.8); fitWidth(ov.querySelector('.bo-stamp span'),.66)};
+  fitAll(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitAll);
   sg.classList.add('frozen'); sfx('gun'); shake(true);
   if(bd.key==='bicah'){later(()=>sfx('gun'),320); later(()=>sfx('gun'),560)}
   later(()=>{sfx('boss'); boFx(th.fx,ov)},520);
+  // three shots punch through the poster
+  later(()=>{ov.classList.add('shot'); [0,140,280].forEach((d,k)=>later(()=>sfx('gun',0,1.08+k*.07),d))},760);
   // epitaph types itself out like a telegraph tape
   later(()=>{const el=$('boTag'); if(!el) return; let i=0; const t=th.epi; const step=()=>{if(!el.isConnected) return; el.textContent=t.slice(0,++i); if(i%2===0) sfx('tick',0,1.6); if(i<t.length) setTimeout(step,28)}; step()},1150);
   later(()=>{sfx('stamp'); shake(false); ov.classList.add('stamped')},1900);
   later(()=>sfx('bigwin'),2150);
-  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped'); sg.classList.remove('frozen')},420); next()};
+  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped','shot'); sg.classList.remove('frozen')},420); next()};
   setTimeout(()=>{ov.onclick=close},1200);
 }
 function showPaid(){
@@ -737,7 +752,9 @@ function showPaid(){
   posterFor(bd,'paid');
   $('posterQuote').textContent=`"${bd.lines.bust}"`; $('posterTwist').textContent='';
   $('posterLine').textContent=`Busted in ${TOWNS[R.level-1]}.`;
-  const st=$('stamp'); st.hidden=false; st.classList.remove('hit'); void st.offsetWidth; st.classList.add('hit');
+  const st=$('stamp'), pp=$('poster').querySelector('.poster'); st.hidden=false; st.classList.remove('hit'); void st.offsetWidth; st.classList.add('hit');
+  let sp=pp.querySelector('.psplat'); if(!sp){pp.insertAdjacentHTML('beforeend',inkSplat('paid','splat psplat')); sp=pp.querySelector('.psplat')}
+  setTimeout(()=>pp.classList.add('stamped'),280);
   $('posterBtn').textContent='Collect the bounty'; $('posterBtn').className='btn gold big';
   $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; $('table').classList.remove('bust'); tableWon()};
   $('poster').hidden=false;
