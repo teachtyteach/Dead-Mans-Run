@@ -14,6 +14,11 @@ page=('<!doctype html>\n<html lang="en">\n<head>\n'
       '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}'
       # iOS draws a soft blur band under the status bar in home-screen apps; start the game below it so nothing important sits in the haze
       '@media (display-mode:standalone),(display-mode:fullscreen){:root{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}</style>\n'
+      # iOS home-screen apps lay out ~70pt shorter than the screen and leave a dead strip under it.
+      # Stretch the app to the real screen height and pin the scroll at the top so nothing slides under the clock.
+      "<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;"
+      "function f(){var p=innerHeight>=innerWidth,h=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);if(h>innerHeight){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}"
+      "f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY)scrollTo(0,0)},{passive:true})})();</script>\n"
       '<link rel="manifest" href="manifest.webmanifest">\n'
       '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
       +head+style+'</head>\n<body>\n'+s('body.html')+scripts+

@@ -949,3 +949,7 @@ html.locked body{padding-block:4px 0}
 .title-links{flex-wrap:wrap;justify-content:center;gap:2px 14px;max-width:360px}
 .title-links button{white-space:nowrap;padding:8px 2px}
 .title-links span{display:none}
+
+/* home-screen app on tall iPhones: use the full screen down to the home bar */
+html.tall.locked,html.tall.locked body{height:var(--appH)}
+html.tall.locked body{position:fixed;top:0;left:0;right:0;overflow:hidden}
