@@ -928,3 +928,9 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
 .rk.mine{background:rgba(244,203,92,.14);box-shadow:inset 0 0 0 1px var(--gold)}
 .rk.mine b{color:var(--gold)}
 @media (max-width:640px){#sGame .charm-icons{display:none}}
+/* crisp HUD: less film grain over the table, brighter labels */
+html:has(#sGame:not([hidden])) .film{opacity:.04}
+html:has(#sGame:not([hidden])) .vignette{opacity:.6}
+#sGame .where .lvl{color:var(--brass-hi);opacity:1;font-weight:700}
+#sGame .where b{text-shadow:0 1px 0 rgba(0,0,0,.8)}
+#sGame .topbar{position:relative;z-index:45}
