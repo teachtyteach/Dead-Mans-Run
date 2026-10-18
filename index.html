@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0805">
-<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:#0c0805}</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background:#0c0805}</style>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta charset="utf-8">
@@ -960,6 +960,10 @@ html:has(#sGame:not([hidden])) .vignette{opacity:.6}
 .pill{bottom:auto;top:calc(100% + 5px);background:linear-gradient(#3a2618,#1d120a);border:1px solid var(--brass-lo);color:var(--ivory);box-shadow:0 2px 6px rgba(0,0,0,.6)}
 .pill.fold{color:var(--muted);border-color:rgba(255,255,255,.12);background:#1a110b}
 .seat.top .pill{top:50%;bottom:auto;left:calc(100% + 6px);translate:0 -50%;animation:none}
+/* use the whole phone: taller table, no dead band under the buttons */
+html.locked body{padding-block:4px 0}
+.table.narrow{height:min(100cqh, calc(100cqw * 1.66))}
+#sGame{gap:6px}
 
 </style>
 </head>
@@ -3261,7 +3265,11 @@ function tutShow(target,html,wait,btn,onNext){
     Object.assign(ring.style,{left:r.l+'px',top:r.t+'px',width:(r.r-r.l)+'px',height:(r.b-r.t)+'px'});
     block.style.clipPath=wait?`path(evenodd,'M0 0H${W}V${H}H0Z M${r.l} ${r.t}H${r.r}V${r.b}H${r.l}Z')`:'none';
     const bw=bub.offsetWidth, bh=bub.offsetHeight;
-    let top=r.b+14; if(top+bh>H-12) top=r.t-14-bh; if(top<12) top=Math.min(H-bh-12,r.b+14);
+    // put the note on the side with more room, so it never sits on top of what it's explaining or your own seat
+    const above=(r.t+r.b)/2>H*0.5;
+    let top=above?r.t-14-bh:r.b+14;
+    if(above&&top<12) top=r.b+14; if(!above&&top+bh>H-12) top=r.t-14-bh;
+    top=Math.max(12,Math.min(H-bh-12,top));
     bub.style.left=Math.max(12,Math.min(W-bw-12,(r.l+r.r)/2-bw/2))+'px'; bub.style.top=top+'px';
   };
   place(); TUT&&(TUT.place=place);

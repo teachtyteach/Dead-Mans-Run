@@ -1143,7 +1143,11 @@ function tutShow(target,html,wait,btn,onNext){
     Object.assign(ring.style,{left:r.l+'px',top:r.t+'px',width:(r.r-r.l)+'px',height:(r.b-r.t)+'px'});
     block.style.clipPath=wait?`path(evenodd,'M0 0H${W}V${H}H0Z M${r.l} ${r.t}H${r.r}V${r.b}H${r.l}Z')`:'none';
     const bw=bub.offsetWidth, bh=bub.offsetHeight;
-    let top=r.b+14; if(top+bh>H-12) top=r.t-14-bh; if(top<12) top=Math.min(H-bh-12,r.b+14);
+    // put the note on the side with more room, so it never sits on top of what it's explaining or your own seat
+    const above=(r.t+r.b)/2>H*0.5;
+    let top=above?r.t-14-bh:r.b+14;
+    if(above&&top<12) top=r.b+14; if(!above&&top+bh>H-12) top=r.t-14-bh;
+    top=Math.max(12,Math.min(H-bh-12,top));
     bub.style.left=Math.max(12,Math.min(W-bw-12,(r.l+r.r)/2-bw/2))+'px'; bub.style.top=top+'px';
   };
   place(); TUT&&(TUT.place=place);

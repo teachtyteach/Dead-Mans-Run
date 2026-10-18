@@ -11,7 +11,7 @@ page=('<!doctype html>\n<html lang="en">\n<head>\n'
       '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
       '<meta name="theme-color" content="#0c0805">\n'
       # home-screen app runs edge to edge: keep content clear of the notch, Dynamic Island and home bar
-      '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:#0c0805}</style>\n'
+      '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background:#0c0805}</style>\n'
       '<link rel="manifest" href="manifest.webmanifest">\n'
       '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
       +head+style+'</head>\n<body>\n'+s('body.html')+scripts+
