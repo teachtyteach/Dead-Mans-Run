@@ -638,7 +638,7 @@ function handEnd(res){
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
-  if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(showPaid,1700)}
+  if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
   else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Busted','#d8341f',40); sfx('stamp')},400)}
   else if(meWon){sfx('win',250); if(res.pot>=G.bb*8){flash(); shake(false); burst(seatEl(0,'.plate'),30)}}
   procChain(ev.bonus||[],where[0]||[50,85],1500);
@@ -650,6 +650,29 @@ function handEnd(res){
 }
 
 /* ================= endings ================= */
+/* ================= boss send-off: a freeze-frame title card, the way a gunfighter film would close the book on them ================= */
+const EPITAPHS={pete:'Bet the bar tab. Lost the bar.',ma:'Evicted from her own saloon.',iron:'Finally folded. Permanently.',under:'Dug his own grave. Lay right down in it.',
+  snake:'Got out-cheated. Hated every second.',banker:'Account closed. Insufficient funds.',vesper:'Her luck ran out. Took her with it.',bicah:'Said he always comes back. He won\'t.'};
+function bossOut(next){
+  const bd=BOSSES[R.level-1], sg=$('sGame');
+  let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; ov.className='bo'; document.body.appendChild(ov)}
+  const splat=Array.from({length:14},(_,i)=>{const a=i/14*6.283, d=30+Math.random()*28, r=6+Math.random()*16; return `<circle cx="${50+Math.cos(a)*d*.9}" cy="${50+Math.sin(a)*d*.45}" r="${r}"/>`}).join('')
+    +Array.from({length:10},()=>`<circle cx="${8+Math.random()*84}" cy="${15+Math.random()*70}" r="${1.5+Math.random()*4}"/>`).join('');
+  ov.innerHTML=`<div class="bo-band"></div>
+    <div class="bo-portrait">${bossPortrait(bd)}<div class="bo-stamp">Busted</div></div>
+    <svg class="bo-splat" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="20"/>${splat}</svg>
+    <div class="bo-text"><div class="bo-kicker">${TOWNS[R.level-1]} · Boss busted</div>
+      <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${bd.name}</div>
+      <div class="bo-tag">${EPITAPHS[bd.key]||bd.title}</div></div>
+    <div class="bo-tap">Tap to collect the bounty</div>`;
+  ov.hidden=false; ov.classList.remove('go'); void ov.offsetWidth;
+  sg.classList.add('frozen'); sfx('gun'); shake(true);
+  ov.classList.add('go');
+  later(()=>{sfx('stamp'); shake(false)},1250);
+  later(()=>sfx('bigwin'),1500);
+  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out'); sg.classList.remove('frozen')},420); next()};
+  setTimeout(()=>{ov.onclick=close},900);
+}
 function showPaid(){
   const bd=BOSSES[R.level-1];
   posterFor(bd,'paid');

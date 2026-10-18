@@ -981,6 +981,54 @@ html.tall .intro,html.tall .chapter-bg,html.tall .vignette,html.tall .tint,html.
 #sTitle{justify-content:center}
 html.tall #sTitle{min-height:calc(var(--appH) - env(safe-area-inset-top,0px) - 40px)}
 
+/* ================= boss send-off card ================= */
+#sGame.frozen{filter:grayscale(.9) sepia(.35) contrast(1.15) brightness(.5);transition:filter .18s}
+.bo{position:fixed;inset:0;z-index:120;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent}
+html.tall .bo{bottom:auto;height:var(--appH)}
+.bo[hidden]{display:none}
+.bo-band{position:absolute;left:-10%;right:-10%;top:47%;height:34%;transform:translateX(-120%) skewY(-7deg);
+  background:linear-gradient(90deg,rgba(14,7,4,.95),rgba(44,14,8,.96) 40%,rgba(14,7,4,.95)),var(--noise);border-top:3px solid var(--brass);border-bottom:3px solid var(--brass);
+  box-shadow:0 0 0 6px rgba(0,0,0,.4),0 30px 60px rgba(0,0,0,.7)}
+.bo.go .bo-band{animation:boBand .45s .05s cubic-bezier(.2,.9,.2,1) forwards}
+@keyframes boBand{to{transform:translateX(0) skewY(-7deg)}}
+.bo-portrait{position:absolute;right:-4%;top:6%;width:min(66vw,46vh);aspect-ratio:1;border-radius:50%;overflow:visible;transform:translateX(140%) rotate(18deg);
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.8))}
+.bo-portrait svg{width:100%;height:100%;border-radius:50%;box-shadow:0 0 0 6px #120804,0 0 0 9px var(--blood),0 0 0 12px #120804;filter:contrast(1.15) saturate(1.1)}
+.bo.go .bo-portrait{animation:boPort .55s .18s cubic-bezier(.2,1.25,.4,1) forwards}
+@keyframes boPort{to{transform:translateX(0) rotate(-6deg)}}
+.bo-stamp{position:absolute;left:4%;bottom:12%;font-family:var(--f-poster);font-size:clamp(26px,9vw,54px);color:#c8281a;border:5px solid #c8281a;border-radius:6px;padding:2px 14px;
+  background:rgba(240,225,190,.9);transform:rotate(-16deg) scale(3);opacity:0;box-shadow:inset 0 0 0 2px rgba(200,40,26,.4)}
+.bo.go .bo-stamp{animation:boStamp .28s 1.2s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes boStamp{to{transform:rotate(-16deg) scale(1);opacity:.95}}
+.bo-splat{position:absolute;left:-6%;top:44%;width:80%;height:40%;fill:#8e1b10;opacity:0;transform:scale(.2) rotate(-7deg);transform-origin:40% 50%;mix-blend-mode:multiply}
+.bo.go .bo-splat{animation:boSplat .3s .55s ease-out forwards}
+@keyframes boSplat{to{opacity:.9;transform:scale(1) rotate(-7deg)}}
+.bo-text{position:absolute;left:6%;right:6%;top:50%;transform:rotate(-7deg);transform-origin:left center;display:flex;flex-direction:column;gap:6px}
+.bo-kicker{font-family:var(--f-label);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:clamp(11px,3vw,15px);color:var(--brass-hi);opacity:0}
+.bo.go .bo-kicker{animation:boFade .3s .5s forwards}
+.bo-name{font-size:calc(clamp(44px,13vw,118px) * var(--fs,1));line-height:.92;color:#f7efdc;text-wrap:balance;opacity:0;transform:scale(2.4);transform-origin:left center;
+  -webkit-text-stroke:2px #1a0a05;paint-order:stroke fill;text-shadow:0 4px 0 #1a0a05,0 8px 24px rgba(0,0,0,.8),0 0 40px rgba(200,40,26,.45)}
+.bo.go .bo-name{animation:boName .38s .62s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes boName{60%{opacity:1}to{opacity:1;transform:scale(1)}}
+.bo-tag{font-family:var(--f-type);font-size:clamp(14px,4.2vw,22px);color:var(--gold);letter-spacing:.02em;opacity:0;transform:translateX(-20px)}
+.bo.go .bo-tag{animation:boTag .4s .95s ease-out forwards}
+@keyframes boTag{to{opacity:1;transform:none}}
+@keyframes boFade{to{opacity:1}}
+.bo-tap{position:absolute;left:0;right:0;bottom:max(24px,calc(env(safe-area-inset-bottom,0px) + 14px));text-align:center;font-family:var(--f-label);font-weight:700;letter-spacing:.24em;text-transform:uppercase;font-size:12px;color:var(--brass-hi);opacity:0}
+.bo.go .bo-tap{animation:boFade .4s 1.9s forwards,tapPulse 2.2s 2.3s ease-in-out infinite}
+.bo.out{animation:boOut .4s ease forwards}
+@keyframes boOut{to{opacity:0}}
+@media (orientation:landscape){.bo-portrait{width:min(40vw,62vh);top:8%;right:4%}.bo-text{right:44%}}
+@media (prefers-reduced-motion:reduce){.bo *{animation-duration:.01s!important;animation-delay:0s!important}}
+/* freeze-frame: wash the table out behind the card instead of filtering the screen (screen animations override filters) */
+#sGame.frozen{filter:none}
+.bo::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(30,10,4,.35),rgba(0,0,0,.78));
+  -webkit-backdrop-filter:grayscale(1) sepia(.4) contrast(1.1) brightness(.55);backdrop-filter:grayscale(1) sepia(.4) contrast(1.1) brightness(.55);opacity:0;transition:opacity .2s}
+.bo.go::before{opacity:1}
+.bo-band{top:45%;height:24%}
+.bo-splat{top:41%;height:32%;left:-8%;width:78%}
+.bo-text{top:48.5%}
+
 </style>
 </head>
 <body>
@@ -2780,7 +2828,7 @@ function handEnd(res){
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
-  if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(showPaid,1700)}
+  if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
   else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Busted','#d8341f',40); sfx('stamp')},400)}
   else if(meWon){sfx('win',250); if(res.pot>=G.bb*8){flash(); shake(false); burst(seatEl(0,'.plate'),30)}}
   procChain(ev.bonus||[],where[0]||[50,85],1500);
@@ -2792,6 +2840,29 @@ function handEnd(res){
 }
 
 /* ================= endings ================= */
+/* ================= boss send-off: a freeze-frame title card, the way a gunfighter film would close the book on them ================= */
+const EPITAPHS={pete:'Bet the bar tab. Lost the bar.',ma:'Evicted from her own saloon.',iron:'Finally folded. Permanently.',under:'Dug his own grave. Lay right down in it.',
+  snake:'Got out-cheated. Hated every second.',banker:'Account closed. Insufficient funds.',vesper:'Her luck ran out. Took her with it.',bicah:'Said he always comes back. He won\'t.'};
+function bossOut(next){
+  const bd=BOSSES[R.level-1], sg=$('sGame');
+  let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; ov.className='bo'; document.body.appendChild(ov)}
+  const splat=Array.from({length:14},(_,i)=>{const a=i/14*6.283, d=30+Math.random()*28, r=6+Math.random()*16; return `<circle cx="${50+Math.cos(a)*d*.9}" cy="${50+Math.sin(a)*d*.45}" r="${r}"/>`}).join('')
+    +Array.from({length:10},()=>`<circle cx="${8+Math.random()*84}" cy="${15+Math.random()*70}" r="${1.5+Math.random()*4}"/>`).join('');
+  ov.innerHTML=`<div class="bo-band"></div>
+    <div class="bo-portrait">${bossPortrait(bd)}<div class="bo-stamp">Busted</div></div>
+    <svg class="bo-splat" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="42" ry="20"/>${splat}</svg>
+    <div class="bo-text"><div class="bo-kicker">${TOWNS[R.level-1]} · Boss busted</div>
+      <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${bd.name}</div>
+      <div class="bo-tag">${EPITAPHS[bd.key]||bd.title}</div></div>
+    <div class="bo-tap">Tap to collect the bounty</div>`;
+  ov.hidden=false; ov.classList.remove('go'); void ov.offsetWidth;
+  sg.classList.add('frozen'); sfx('gun'); shake(true);
+  ov.classList.add('go');
+  later(()=>{sfx('stamp'); shake(false)},1250);
+  later(()=>sfx('bigwin'),1500);
+  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out'); sg.classList.remove('frozen')},420); next()};
+  setTimeout(()=>{ov.onclick=close},900);
+}
 function showPaid(){
   const bd=BOSSES[R.level-1];
   posterFor(bd,'paid');
