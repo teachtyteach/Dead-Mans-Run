@@ -24,12 +24,7 @@
   --ease-pop:cubic-bezier(.3,1.5,.5,1);
 }
 *{box-sizing:border-box}
-html{font-synthesis:none}
-[hidden]{display:none!important}
-html,body{min-height:100%;overflow-x:hidden;max-width:100%}
-body{
-  margin:0; color:var(--text); font-family:var(--f-body); font-size:16.5px; font-variant-numeric:lining-nums;
-  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+html{font-synthesis:none;
   background:
     radial-gradient(ellipse 80% 55% at 50% 30%, rgba(226,160,70,.2), transparent 70%),
     var(--noise),
@@ -37,6 +32,13 @@ body{
     repeating-linear-gradient(88deg, rgba(255,210,150,.025) 0 3px, transparent 3px 11px),
     repeating-linear-gradient(90deg, #1c110a 0 70px, #160d07 70px 140px);
   background-color:var(--room);
+  background-attachment:fixed}
+[hidden]{display:none!important}
+html,body{min-height:100%;overflow-x:hidden;max-width:100%}
+body{
+  margin:0; color:var(--text); font-family:var(--f-body); font-size:16.5px; font-variant-numeric:lining-nums;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  background:transparent;
   padding-left:max(14px, env(safe-area-inset-left, 0px));
   padding-right:max(14px, env(safe-area-inset-right, 0px));
   padding-block:14px 28px;
@@ -944,6 +946,6 @@ html.locked body{padding-block:4px 0}
 .table.narrow{height:min(100cqh, calc(100cqw * 1.66))}
 #sGame{gap:6px}
 
-/* fill tall phones to the bottom edge */
-html.locked{height:var(--appH,100%)}
-html.locked body{height:100%;min-height:0}
+.title-links{flex-wrap:wrap;justify-content:center;gap:2px 14px;max-width:360px}
+.title-links button{white-space:nowrap;padding:8px 2px}
+.title-links span{display:none}

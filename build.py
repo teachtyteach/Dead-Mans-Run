@@ -11,11 +11,9 @@ page=('<!doctype html>\n<html lang="en">\n<head>\n'
       '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
       '<meta name="theme-color" content="#0c0805">\n'
       # home-screen app runs edge to edge: keep content clear of the notch, Dynamic Island and home bar
-      '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background:#0c0805}'
+      '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}'
       # iOS draws a soft blur band under the status bar in home-screen apps; start the game below it so nothing important sits in the haze
       '@media (display-mode:standalone),(display-mode:fullscreen){:root{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}</style>\n'
-      # iOS home-screen apps report a viewport shorter than the screen; size the app to the real screen height
-      "<script>(function(){function f(){var s=window.navigator.standalone,p=innerHeight>=innerWidth,h=s?(p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width)):innerHeight;document.documentElement.style.setProperty('--appH',h+'px')}f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,300)})})();</script>\n"
       '<link rel="manifest" href="manifest.webmanifest">\n'
       '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
       +head+style+'</head>\n<body>\n'+s('body.html')+scripts+
