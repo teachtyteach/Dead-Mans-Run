@@ -2089,12 +2089,15 @@ function startMusic(){
   SND.loops.filter(l=>/^amb/.test(l.key)&&l.key!==ak).forEach(l=>stopLoop(l,2));
   if(SND.buf[ak]&&!SND.loops.some(l=>l.key===ak)) loopTrack(ak,SND.buf[ak].duration-AMB_FADE,SND.amb,AMB_FADE);
   musicLevel();
-  if(SND.buf.menu&&!SND.holdMenu&&!SND.loops.some(l=>l.key==='menu')) loopTrack('menu',MENU_PERIOD,SND.menu,0);
+  if(SND.buf.menu&&!SND.holdMenu&&!SND.loops.some(l=>l.key==='menu')){
+    loopTrack('menu',MENU_PERIOD,SND.menu,0);
+    if(!SND.scene||SND.scene==='sTitle'){const m=SND.menu.gain; m.cancelScheduledValues(0); m.value=0.5; m.setValueAtTime(0.5,c.currentTime)}
+  }
   if(SND.buf.piano&&!SND.loops.some(l=>l.key==='piano')) loopTrack('piano',MUSIC_PERIOD,SND.mus,0);
   const bt=BOSS_TRACKS[SND.saloon];
   SND.loops.filter(l=>/^boss_/.test(l.key)&&(!bt||l.key!==bt.key)).forEach(l=>stopLoop(l,2));
   if(bt&&SND.buf[bt.key]&&!SND.loops.some(l=>l.key===bt.key)) loopTrack(bt.key,bt.period,SND.bossBus,bt.fade||0);
-  const g=SND.music.gain; g.cancelScheduledValues(c.currentTime); g.setValueAtTime(g.value,c.currentTime); g.linearRampToValueAtTime(1,c.currentTime+3);
+  const g=SND.music.gain; g.cancelScheduledValues(0); g.value=1; g.setValueAtTime(1,c.currentTime);
 }
 function stopMusic(){
   SND.want=false; if(!SND.ctx) return; (SND.evTs||[]).forEach(clearTimeout); SND.evTs=[];
@@ -3338,13 +3341,15 @@ function tutFinale(){
   }
   async function begin(){
     if(started){finish(); return}   // a second tap skips the rest
-    started=true; ov.classList.add('go');
+    started=true; if(!SND.buf.menu&&meta.music){const s=document.querySelector('#inPrompt span'); if(s) s.textContent='Loading…'} else ov.classList.add('go');
     const c=ac(); if(c&&c.state!=='running'){try{await c.resume()}catch(e){}}
     let t0=0, useAudio=false;
     if(c&&c.state==='running'&&meta.music){
-      const t1=performance.now(); while(!SND.buf.menu&&performance.now()-t1<5000) await new Promise(r=>setTimeout(r,60));
+      const t1=performance.now(); while(!SND.buf.menu&&performance.now()-t1<15000) await new Promise(r=>setTimeout(r,60));
+      ov.classList.add('go');
       if(SND.buf.menu){t0=introMusic(); useAudio=true} else SND.holdMenu=false;
     } else SND.holdMenu=false;
+    ov.classList.add('go');
     play(t0,useAudio);
   }
   ov.addEventListener('pointerdown',begin);

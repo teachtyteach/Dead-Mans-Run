@@ -1215,13 +1215,15 @@ function tutFinale(){
   }
   async function begin(){
     if(started){finish(); return}   // a second tap skips the rest
-    started=true; ov.classList.add('go');
+    started=true; if(!SND.buf.menu&&meta.music){const s=document.querySelector('#inPrompt span'); if(s) s.textContent='Loading…'} else ov.classList.add('go');
     const c=ac(); if(c&&c.state!=='running'){try{await c.resume()}catch(e){}}
     let t0=0, useAudio=false;
     if(c&&c.state==='running'&&meta.music){
-      const t1=performance.now(); while(!SND.buf.menu&&performance.now()-t1<5000) await new Promise(r=>setTimeout(r,60));
+      const t1=performance.now(); while(!SND.buf.menu&&performance.now()-t1<15000) await new Promise(r=>setTimeout(r,60));
+      ov.classList.add('go');
       if(SND.buf.menu){t0=introMusic(); useAudio=true} else SND.holdMenu=false;
     } else SND.holdMenu=false;
+    ov.classList.add('go');
     play(t0,useAudio);
   }
   ov.addEventListener('pointerdown',begin);

@@ -144,12 +144,15 @@ function startMusic(){
   SND.loops.filter(l=>/^amb/.test(l.key)&&l.key!==ak).forEach(l=>stopLoop(l,2));
   if(SND.buf[ak]&&!SND.loops.some(l=>l.key===ak)) loopTrack(ak,SND.buf[ak].duration-AMB_FADE,SND.amb,AMB_FADE);
   musicLevel();
-  if(SND.buf.menu&&!SND.holdMenu&&!SND.loops.some(l=>l.key==='menu')) loopTrack('menu',MENU_PERIOD,SND.menu,0);
+  if(SND.buf.menu&&!SND.holdMenu&&!SND.loops.some(l=>l.key==='menu')){
+    loopTrack('menu',MENU_PERIOD,SND.menu,0);
+    if(!SND.scene||SND.scene==='sTitle'){const m=SND.menu.gain; m.cancelScheduledValues(0); m.value=0.5; m.setValueAtTime(0.5,c.currentTime)}
+  }
   if(SND.buf.piano&&!SND.loops.some(l=>l.key==='piano')) loopTrack('piano',MUSIC_PERIOD,SND.mus,0);
   const bt=BOSS_TRACKS[SND.saloon];
   SND.loops.filter(l=>/^boss_/.test(l.key)&&(!bt||l.key!==bt.key)).forEach(l=>stopLoop(l,2));
   if(bt&&SND.buf[bt.key]&&!SND.loops.some(l=>l.key===bt.key)) loopTrack(bt.key,bt.period,SND.bossBus,bt.fade||0);
-  const g=SND.music.gain; g.cancelScheduledValues(c.currentTime); g.setValueAtTime(g.value,c.currentTime); g.linearRampToValueAtTime(1,c.currentTime+3);
+  const g=SND.music.gain; g.cancelScheduledValues(0); g.value=1; g.setValueAtTime(1,c.currentTime);
 }
 function stopMusic(){
   SND.want=false; if(!SND.ctx) return; (SND.evTs||[]).forEach(clearTimeout); SND.evTs=[];
