@@ -18,7 +18,7 @@ page=('<!doctype html>\n<html lang="en">\n<head>\n'
       # Stretch the app to the real screen height and pin the scroll at the top so nothing slides under the clock.
       "<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;"
       "function f(){var p=innerHeight>=innerWidth,h=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);if(h>innerHeight){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}"
-      "f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY)scrollTo(0,0)},{passive:true})})();</script>\n"
+      "f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>\n"
       '<link rel="manifest" href="manifest.webmanifest">\n'
       '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
       +head+style+'</head>\n<body>\n'+s('body.html')+scripts+

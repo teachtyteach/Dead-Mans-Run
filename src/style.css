@@ -954,3 +954,7 @@ html.locked body{padding-block:4px 0}
 html.tall.locked,html.tall.locked body{height:var(--appH)}
 html.tall.locked body{position:fixed;top:0;left:0;right:0;overflow:hidden;
   padding-top:calc(env(safe-area-inset-top,0px) + 34px);padding-bottom:calc(env(safe-area-inset-bottom,0px) * 0.6)}
+html.tall,html.tall body{min-height:var(--appH)}
+html.tall .intro,html.tall .chapter-bg,html.tall .vignette,html.tall .tint,html.tall .bolt,html.tall .modal,html.tall #dust,html.tall .tut,html.tall .tut-block{bottom:auto;height:var(--appH)}
+#sTitle{justify-content:center}
+html.tall #sTitle{min-height:calc(var(--appH) - env(safe-area-inset-top,0px) - 40px)}
