@@ -2112,9 +2112,10 @@ const MENU_TRUE_LEN=143.832;
 function introMusic(){
   const c=SND.ctx; SND.want=true; SND.holdMenu=false;
   const t=c.currentTime+0.15;
-  [SND.music.gain,SND.menu.gain].forEach((g,i)=>{g.cancelScheduledValues(0); g.setValueAtTime(i?0.5:1,c.currentTime)});
   loopTrack('menu',MENU_PERIOD,SND.menu,0,t);
   startMusic();
+  // full volume from the first beat: no fade (startMusic schedules ramps, so pin these after it)
+  [[SND.music.gain,1],[SND.menu.gain,0.5],[SND.amb.gain,0]].forEach(([g,v])=>{g.cancelScheduledValues(0); g.value=v; g.setValueAtTime(v,c.currentTime)});
   // some decoders keep the mp3 encoder's ~25ms of leading silence; account for it so the hits line up
   const pad=(SND.buf.menu.duration-MENU_TRUE_LEN)>0.02?0.025:0;
   return t+pad+(c.outputLatency||c.baseLatency||0);
