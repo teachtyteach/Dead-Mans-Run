@@ -637,7 +637,7 @@ html:has(#sChapter:not([hidden])) #dust{opacity:.5}
 }
 /* ---------- the gazette (run end) ---------- */
 .screen{width:100%}
-#sEnd{padding:max(12px,env(safe-area-inset-top,0px)) 14px max(12px,env(safe-area-inset-bottom,0px));gap:12px}
+#sEnd{padding:12px 14px 6px;gap:12px}
 #sEnd>.row{width:min(540px,100%);flex-wrap:nowrap;gap:10px}
 #sEnd>.row .btn{flex:1}
 #sEnd>.row .btn.dark{flex:0 0 auto}
@@ -943,3 +943,7 @@ html:has(#sGame:not([hidden])) .vignette{opacity:.6}
 html.locked body{padding-block:4px 0}
 .table.narrow{height:min(100cqh, calc(100cqw * 1.66))}
 #sGame{gap:6px}
+
+/* fill tall phones to the bottom edge */
+html.locked{height:var(--appH,100%)}
+html.locked body{height:100%;min-height:0}
