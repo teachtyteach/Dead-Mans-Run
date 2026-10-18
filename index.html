@@ -898,6 +898,21 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
 .in-spark{position:fixed;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:#fff2c4;box-shadow:0 0 10px #f4cb5c;pointer-events:none}
 #sTitle.under-intro h1.brass{visibility:hidden}
 
+/* ================= declutter pass ================= */
+#sTitle{gap:18px}
+#sTitle .hero .sub{max-width:28ch;text-align:center}
+.statline{font-family:var(--f-label);letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--muted)}
+.statline b{color:var(--brass-hi);font-weight:700}
+.title-links{display:flex;gap:10px;align-items:center;color:var(--muted)}
+.title-links button{background:none;border:0;color:var(--brass);font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;cursor:pointer;padding:8px 4px}
+.title-links button:hover{color:var(--brass-hi)}
+#more .sheet{max-height:min(86vh,720px);overflow:auto}
+#more .howto{grid-template-columns:1fr}
+#more .codex{max-height:46vh;overflow:auto}
+.print{display:none}
+.mchal{display:block;margin-top:4px;color:var(--brass-hi)!important;font-style:normal!important}
+#challenge{display:none!important}
+
 </style>
 </head>
 <body>
@@ -918,33 +933,44 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
 <div class="film" aria-hidden="true"></div>
 
 <!-- ============ TITLE ============ -->
-<section class="screen" id="sTitle">
+<section class="screen center" id="sTitle">
   <div class="hero">
     <div class="fan" id="fan"></div>
     <div class="est">A Hold'em Roguelite</div>
     <h1 class="brass">Dead Man's Run</h1>
-    <p class="sub">Eight saloons. Eight bosses. Every table fills up a little more, and every outlaw gets a little meaner.</p>
+    <p class="sub">Eight saloons. Eight bosses. Bust them all.</p>
   </div>
-  <div class="plaques" id="metaPlaques"></div>
   <div class="row" id="titleActions"></div>
   <div class="heat" id="heatPick"></div>
-  <div class="row audio-toggles"></div>
-  <div class="howto">
-    <div><b>Bust the boss</b><span>Every saloon has a boss. Take all their chips to clear the table.</span></div>
-    <div><b>Tables fill up</b><span>It starts with a boss and two drifters. By saloon five the table is full, then the outlaws get tougher.</span></div>
-    <div><b>Charms and curses</b><span>Buy charms at the general store between saloons. Take a curse for extra gold if you dare.</span></div>
-    <div><b>Unlocks</b><span>Beat Iron Jack and Banker Ellsworth to unlock new charms for every future run.</span></div>
+  <div class="statline" id="statLine"></div>
+  <div class="title-links">
+    <button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
   </div>
-  <details class="fold">
-    <summary>Lifetime stats</summary>
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="row" style="margin-top:12px"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div>
-  </details>
-  <details class="fold">
-    <summary>Charm codex</summary>
-    <div class="codex" id="codex"></div>
-  </details>
 </section>
+
+<!-- ============ TITLE: MORE ============ -->
+<div class="modal" id="more" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="moreTitle">
+    <h3 id="moreTitle" class="sheet-title">How to play</h3>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-mtab="howto" aria-selected="true">How to play</button>
+      <button role="tab" data-mtab="records" aria-selected="false">Records</button>
+      <button role="tab" data-mtab="charms" aria-selected="false">Charms</button>
+      <button role="tab" data-mtab="settings" aria-selected="false">Settings</button>
+    </div>
+    <div class="pane" data-mpane="howto">
+      <div class="howto">
+        <div><b>1 · Bust the boss</b><span>Every saloon has a boss. Take all their chips to win the saloon.</span></div>
+        <div><b>2 · Shop between saloons</b><span>Spend gold on charms that help every hand. Tricks are one-time moves.</span></div>
+        <div><b>3 · It gets harder</b><span>More outlaws join each table, and they get tougher. Eight saloons to the end.</span></div>
+      </div>
+    </div>
+    <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
+    <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
+    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>
+    <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
+  </div>
+</div>
 
 <!-- ============ CHAPTER CARD ============ -->
 <div class="chapter-bg" id="chapterBg" aria-hidden="true"></div>
@@ -2200,10 +2226,8 @@ document.addEventListener('click',e=>{
   saveMeta(); renderToggles();
 });
 const TIPS={
-  start:'<b>Bust the boss.</b> Take every chip from the boss to clear the saloon. Busting other outlaws pays gold.',
-  turn:'<b>Your move.</b> Fold gives up the hand. Call matches the bet. Raise opens a panel to pick your amount.',
-  flop:'<b>The flop.</b> Three shared cards. Everyone makes their best five-card hand from their two plus the board.',
-  result:'<b>Showdown.</b> Best five cards win. The menu shows every move from the last hand.'
+  start:'<b>Goal:</b> take all of the boss\'s chips.',
+  turn:'<b>Your turn.</b> Fold, call, or raise.'
 };
 let COACH=null;
 function tip(k){if(!meta.tips[k]&&!COACH) COACH=k}
@@ -2232,6 +2256,8 @@ function renderTitle(){
   if(saved) $('contBtn').onclick=()=>{ac(); continueRun(saved)};
   $('newBtn').onclick=()=>{ac(); startRun()};
   const mh=maxHeat();
+  $('heatPick').hidden=mh<1;
+  $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
   $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
   const st=meta.stats;
@@ -2244,7 +2270,15 @@ function renderTitle(){
     if(c.tier>meta.unlock) return `<div class="tarot locked"><div class="num">${NUMERALS[charmIndex(k)]}</div><div class="art"><span class="glyph">?</span></div><h3>Locked</h3><p>${TIER_NOTE[c.tier]}</p></div>`;
     return tarot(k,'','',false,`${c.price}g`);
   }).join('');
+  document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>openMore(b.dataset.more));
   show('sTitle');
+}
+function openMore(tab){
+  const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
+  document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
+  document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
+  $('moreTitle').textContent=names[tab]; renderToggles(); $('more').hidden=false;
+  $('moreClose').onclick=()=>{$('more').hidden=true};
 }
 
 /* ================= run flow ================= */
@@ -2590,7 +2624,6 @@ function step(){
         later(()=>handEnd(resolveShowdown()),1100*Math.max(.6,speedMul()));
       } else {
         G.dealUntil=performance.now()+(G.board.length===3?270:0)+450;
-        if(G.board.length===3) tip('flop');
         step();
       }
     }),650);
@@ -2650,7 +2683,6 @@ function handEnd(res){
   procChain(ev.bonus||[],where[0]||[50,85],1500);
   if(ev.challenge){later(()=>{stampAt(50,30,'Challenge!','#f4cb5c',28); sfx('win'); bumpGold()},ev.kos.length?2000:900)}
   if(ev.wind) later(()=>{stampAt(50,60,'Second Wind','#7fcf8f',30); sfx('bigwin')},700);
-  if(!me.folded&&me.inHand) tip('result');
   if(!G.outcome){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
   renderCoach();
 }
@@ -2862,7 +2894,7 @@ function render(){
   if(!R||!G.players.length) return;
   const L=R.level, bd=BOSSES[L-1], bp=boss(), me=human();
   const toRise=G.riseEvery-(G.tableHands%G.riseEvery);
-  $('lvl').textContent=`Saloon ${L} of 8 · Blinds ${num(G.bb/2)}/${num(G.bb)} · up in ${toRise}`;
+  $('lvl').textContent=`Saloon ${L} of 8`;
   $('town').textContent=TOWNS[L-1];
   $('gold').innerHTML=roll('gold',R.gold,'s',num);
   if(bp){
@@ -2877,7 +2909,7 @@ function render(){
   $('charmRow').innerHTML=R.charms.map(k=>`<span class="gl" data-k="${k}" title="${CHARMS[k].name}">${CHARMS[k].icon}︎</span>`).join('')+R.tricks.map(k=>`<span class="gl trick" title="${TRICKS[k].name}">${TRICKS[k].icon}︎</span>`).join('')+(G.curse?`<span class="gl cursed" title="${CURSES[G.curse].name}">${CURSES[G.curse].icon}︎</span>`:'');
   $('print').textContent=`${TOWNS[L-1]} Saloon`;
   const ch=$('challenge');
-  ch.className='challenge'+(G.challengeDone?' done':''); ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
+  ch.className='challenge'+(G.challengeDone?' done':''); ch.hidden=true; ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
 
   const narrow=innerWidth<640&&innerHeight>innerWidth, N=nP();
   const tb=$('table'); tb.classList.toggle('narrow',narrow); tb.classList.toggle('crowded',N>=6);
@@ -2904,10 +2936,10 @@ function render(){
       return cardHTML(c,false,has('marked')?'marked':'','h'+i,anim);
     }).join('');
     const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].join(' ');
-    const pill=p.result||p.action||'';
+    const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=p.isHuman?'':(p.bossDef?'Boss':(tilted?'On tilt':TIERS[p.tier].label));
+    const tier=tilted?'On tilt':'';
     html+=`<div class="${cls}" data-i="${i}" style="left:${x}%;top:${y}%">
       <div class="cards">${cards}</div>
       <div class="plate">
@@ -3046,7 +3078,7 @@ function openMenu(){
   const bd=BOSSES[R.level-1];
   PAUSED=true;
   $('menuTitle').textContent=TOWNS[R.level-1];
-  $('menuBoss').innerHTML=`<span class="medal">${bossPortrait(bd)}</span><div>${bossName(bd,'b')}<em>${bd.twist}</em></div>`;
+  $('menuBoss').innerHTML=`<span class="medal">${bossPortrait(bd)}</span><div>${bossName(bd,'b')}<em>${bd.twist}</em>${G.challenge?`<em class="mchal">Challenge: ${G.challenge.text} · +${G.challenge.gold}g${G.challengeDone?' ✓':''}</em>`:''}<em class="mchal">Blinds ${num(G.bb/2)}/${num(G.bb)}, rising every ${G.riseEvery} hands</em></div>`;
   $('menuCharms').innerHTML=charmPills(true)||'<span class="hint">No charms yet.</span>';
   $('ledger').innerHTML=G.log.slice(0,11).map(t=>`<div>${t}</div>`).join('');
   $('lastHand').innerHTML=(G.lastHandLog.length?G.lastHandLog:['No hands finished yet.']).slice(-14).map(t=>`<div>${t}</div>`).join('');

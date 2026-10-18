@@ -179,10 +179,8 @@ document.addEventListener('click',e=>{
   saveMeta(); renderToggles();
 });
 const TIPS={
-  start:'<b>Bust the boss.</b> Take every chip from the boss to clear the saloon. Busting other outlaws pays gold.',
-  turn:'<b>Your move.</b> Fold gives up the hand. Call matches the bet. Raise opens a panel to pick your amount.',
-  flop:'<b>The flop.</b> Three shared cards. Everyone makes their best five-card hand from their two plus the board.',
-  result:'<b>Showdown.</b> Best five cards win. The menu shows every move from the last hand.'
+  start:'<b>Goal:</b> take all of the boss\'s chips.',
+  turn:'<b>Your turn.</b> Fold, call, or raise.'
 };
 let COACH=null;
 function tip(k){if(!meta.tips[k]&&!COACH) COACH=k}
@@ -211,6 +209,8 @@ function renderTitle(){
   if(saved) $('contBtn').onclick=()=>{ac(); continueRun(saved)};
   $('newBtn').onclick=()=>{ac(); startRun()};
   const mh=maxHeat();
+  $('heatPick').hidden=mh<1;
+  $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
   $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
   const st=meta.stats;
@@ -223,7 +223,15 @@ function renderTitle(){
     if(c.tier>meta.unlock) return `<div class="tarot locked"><div class="num">${NUMERALS[charmIndex(k)]}</div><div class="art"><span class="glyph">?</span></div><h3>Locked</h3><p>${TIER_NOTE[c.tier]}</p></div>`;
     return tarot(k,'','',false,`${c.price}g`);
   }).join('');
+  document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>openMore(b.dataset.more));
   show('sTitle');
+}
+function openMore(tab){
+  const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
+  document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
+  document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
+  $('moreTitle').textContent=names[tab]; renderToggles(); $('more').hidden=false;
+  $('moreClose').onclick=()=>{$('more').hidden=true};
 }
 
 /* ================= run flow ================= */
@@ -569,7 +577,6 @@ function step(){
         later(()=>handEnd(resolveShowdown()),1100*Math.max(.6,speedMul()));
       } else {
         G.dealUntil=performance.now()+(G.board.length===3?270:0)+450;
-        if(G.board.length===3) tip('flop');
         step();
       }
     }),650);
@@ -629,7 +636,6 @@ function handEnd(res){
   procChain(ev.bonus||[],where[0]||[50,85],1500);
   if(ev.challenge){later(()=>{stampAt(50,30,'Challenge!','#f4cb5c',28); sfx('win'); bumpGold()},ev.kos.length?2000:900)}
   if(ev.wind) later(()=>{stampAt(50,60,'Second Wind','#7fcf8f',30); sfx('bigwin')},700);
-  if(!me.folded&&me.inHand) tip('result');
   if(!G.outcome){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
   renderCoach();
 }
@@ -841,7 +847,7 @@ function render(){
   if(!R||!G.players.length) return;
   const L=R.level, bd=BOSSES[L-1], bp=boss(), me=human();
   const toRise=G.riseEvery-(G.tableHands%G.riseEvery);
-  $('lvl').textContent=`Saloon ${L} of 8 · Blinds ${num(G.bb/2)}/${num(G.bb)} · up in ${toRise}`;
+  $('lvl').textContent=`Saloon ${L} of 8`;
   $('town').textContent=TOWNS[L-1];
   $('gold').innerHTML=roll('gold',R.gold,'s',num);
   if(bp){
@@ -856,7 +862,7 @@ function render(){
   $('charmRow').innerHTML=R.charms.map(k=>`<span class="gl" data-k="${k}" title="${CHARMS[k].name}">${CHARMS[k].icon}︎</span>`).join('')+R.tricks.map(k=>`<span class="gl trick" title="${TRICKS[k].name}">${TRICKS[k].icon}︎</span>`).join('')+(G.curse?`<span class="gl cursed" title="${CURSES[G.curse].name}">${CURSES[G.curse].icon}︎</span>`:'');
   $('print').textContent=`${TOWNS[L-1]} Saloon`;
   const ch=$('challenge');
-  ch.className='challenge'+(G.challengeDone?' done':''); ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
+  ch.className='challenge'+(G.challengeDone?' done':''); ch.hidden=true; ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
 
   const narrow=innerWidth<640&&innerHeight>innerWidth, N=nP();
   const tb=$('table'); tb.classList.toggle('narrow',narrow); tb.classList.toggle('crowded',N>=6);
@@ -883,10 +889,10 @@ function render(){
       return cardHTML(c,false,has('marked')?'marked':'','h'+i,anim);
     }).join('');
     const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].join(' ');
-    const pill=p.result||p.action||'';
+    const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=p.isHuman?'':(p.bossDef?'Boss':(tilted?'On tilt':TIERS[p.tier].label));
+    const tier=tilted?'On tilt':'';
     html+=`<div class="${cls}" data-i="${i}" style="left:${x}%;top:${y}%">
       <div class="cards">${cards}</div>
       <div class="plate">
@@ -1025,7 +1031,7 @@ function openMenu(){
   const bd=BOSSES[R.level-1];
   PAUSED=true;
   $('menuTitle').textContent=TOWNS[R.level-1];
-  $('menuBoss').innerHTML=`<span class="medal">${bossPortrait(bd)}</span><div>${bossName(bd,'b')}<em>${bd.twist}</em></div>`;
+  $('menuBoss').innerHTML=`<span class="medal">${bossPortrait(bd)}</span><div>${bossName(bd,'b')}<em>${bd.twist}</em>${G.challenge?`<em class="mchal">Challenge: ${G.challenge.text} · +${G.challenge.gold}g${G.challengeDone?' ✓':''}</em>`:''}<em class="mchal">Blinds ${num(G.bb/2)}/${num(G.bb)}, rising every ${G.riseEvery} hands</em></div>`;
   $('menuCharms').innerHTML=charmPills(true)||'<span class="hint">No charms yet.</span>';
   $('ledger').innerHTML=G.log.slice(0,11).map(t=>`<div>${t}</div>`).join('');
   $('lastHand').innerHTML=(G.lastHandLog.length?G.lastHandLog:['No hands finished yet.']).slice(-14).map(t=>`<div>${t}</div>`).join('');

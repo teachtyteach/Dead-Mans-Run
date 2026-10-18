@@ -15,33 +15,44 @@
 <div class="film" aria-hidden="true"></div>
 
 <!-- ============ TITLE ============ -->
-<section class="screen" id="sTitle">
+<section class="screen center" id="sTitle">
   <div class="hero">
     <div class="fan" id="fan"></div>
     <div class="est">A Hold'em Roguelite</div>
     <h1 class="brass">Dead Man's Run</h1>
-    <p class="sub">Eight saloons. Eight bosses. Every table fills up a little more, and every outlaw gets a little meaner.</p>
+    <p class="sub">Eight saloons. Eight bosses. Bust them all.</p>
   </div>
-  <div class="plaques" id="metaPlaques"></div>
   <div class="row" id="titleActions"></div>
   <div class="heat" id="heatPick"></div>
-  <div class="row audio-toggles"></div>
-  <div class="howto">
-    <div><b>Bust the boss</b><span>Every saloon has a boss. Take all their chips to clear the table.</span></div>
-    <div><b>Tables fill up</b><span>It starts with a boss and two drifters. By saloon five the table is full, then the outlaws get tougher.</span></div>
-    <div><b>Charms and curses</b><span>Buy charms at the general store between saloons. Take a curse for extra gold if you dare.</span></div>
-    <div><b>Unlocks</b><span>Beat Iron Jack and Banker Ellsworth to unlock new charms for every future run.</span></div>
+  <div class="statline" id="statLine"></div>
+  <div class="title-links">
+    <button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
   </div>
-  <details class="fold">
-    <summary>Lifetime stats</summary>
-    <div class="stats-grid" id="statsGrid"></div>
-    <div class="row" style="margin-top:12px"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div>
-  </details>
-  <details class="fold">
-    <summary>Charm codex</summary>
-    <div class="codex" id="codex"></div>
-  </details>
 </section>
+
+<!-- ============ TITLE: MORE ============ -->
+<div class="modal" id="more" hidden>
+  <div class="sheet" role="dialog" aria-labelledby="moreTitle">
+    <h3 id="moreTitle" class="sheet-title">How to play</h3>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-mtab="howto" aria-selected="true">How to play</button>
+      <button role="tab" data-mtab="records" aria-selected="false">Records</button>
+      <button role="tab" data-mtab="charms" aria-selected="false">Charms</button>
+      <button role="tab" data-mtab="settings" aria-selected="false">Settings</button>
+    </div>
+    <div class="pane" data-mpane="howto">
+      <div class="howto">
+        <div><b>1 · Bust the boss</b><span>Every saloon has a boss. Take all their chips to win the saloon.</span></div>
+        <div><b>2 · Shop between saloons</b><span>Spend gold on charms that help every hand. Tricks are one-time moves.</span></div>
+        <div><b>3 · It gets harder</b><span>More outlaws join each table, and they get tougher. Eight saloons to the end.</span></div>
+      </div>
+    </div>
+    <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
+    <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
+    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>
+    <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
+  </div>
+</div>
 
 <!-- ============ CHAPTER CARD ============ -->
 <div class="chapter-bg" id="chapterBg" aria-hidden="true"></div>
