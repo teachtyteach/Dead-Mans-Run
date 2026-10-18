@@ -190,6 +190,7 @@ function renderCoach(){
   const el=$('coach');
   if(!COACH||meta.tips[COACH]||!$('raiseSheet').hidden){el.hidden=true; return}
   el.hidden=false;
+  {const h=document.querySelector('#sGame .hud'); if(h){const b=h.getBoundingClientRect().bottom; if(b>0) el.style.top=(b+6)+'px'}}
   el.innerHTML=`<div style="flex:1">${TIPS[COACH]}</div><button class="btn small" id="coachOk">Got it</button>`;
   $('coachOk').onclick=()=>{meta.tips[COACH]=true; saveMeta(); COACH=null; renderCoach()};
 }

@@ -1,5 +1,5 @@
 // Offline support: everything the game needs is cached on first visit, so it runs with no connection afterwards.
-const CACHE='dmr-v3';
+const CACHE='dmr-v4';
 const CORE=[
 "./",
 "index.html",
