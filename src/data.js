@@ -60,7 +60,7 @@ const CHALLENGES=[
   {key:'streak',text:'Win 3 hands in a row',gold:15,test:e=>e.streak>=3},
   {key:'pocket',text:'Win with a pocket pair',gold:15,test:e=>e.won&&e.pocket},
   {key:'bluff',text:'Win a pot by making everyone fold',gold:10,test:e=>e.won&&!e.showdown&&e.raised},
-  {key:'ko',text:'Bust an outlaw yourself',gold:15,test:e=>e.ko>0&&e.won}
+  {key:'ko',text:'Tap out an outlaw yourself',gold:15,test:e=>e.ko>0&&e.won}
 ];
 const EVENTS=['shark','doctor','bandits','strongbox','peddler','rest','tent'];
 const NAMES=[['Etta Boone',1],['Clem Hargrove',0],['Ro Pike',1],['Ezekiel Marsh',0],['Hank Tolliver',0],['Josie Lark',1],['Amos Reddick',0],['Lula Sweeney',1],['Virgil Oakes',0],['Cora Whitlock',1],['Otis Bramble',0],['Wade Kittredge',0],['Mae Calloway',1],['Jeb Fenwick',0],['Gus Pettibone',0],['Nell Ashby',1],['Bo Tanner',0],['Ruth Calder',1],['Cyrus Vane',0],['Hattie Bell',1],['Moses Drury',0],['Tom Yates',0]];
@@ -79,10 +79,10 @@ const CHARMS={
   bartab:{name:'Bar Tab',icon:'¢',desc:'Get 100 free chips every time the blinds rise.',price:30,tier:0,up:'Get 250 free chips every time the blinds rise.'},
   bond:{name:'Savings Bond',icon:'§',desc:'Earn 10% interest on your gold after each saloon, up to 20.',price:35,tier:0,up:'Earn 20% interest, up to 40.'},
   mech:{name:'Card Mechanic',icon:'⇄',desc:'Swap one hole card before the flop, once per hand.',price:70,tier:1,up:'Swap both hole cards before the flop.'},
-  wind:{name:'Second Wind',icon:'↺',desc:'Once per saloon, survive busting with a quarter stack.',price:65,tier:1,up:'Survive busting twice per saloon.'},
+  wind:{name:'Second Wind',icon:'↺',desc:'Once per saloon, survive running out of chips with a quarter stack.',price:65,tier:1,up:'Survive it twice per saloon.'},
   horseshoe:{name:'Lucky Horseshoe',icon:'∩',desc:'Once per saloon, the river is redealt when you would lose a big pot.',price:70,tier:1},
   rabbit:{name:"Rabbit's Foot",icon:'❦',desc:'You are dealt pocket pairs far more often.',price:55,tier:1},
-  cashout:{name:'Cashout',icon:'¤',desc:'Earn 1 gold per 100 chips you hold when the boss busts.',price:45,tier:1},
+  cashout:{name:'Cashout',icon:'¤',desc:'Earn 1 gold per 100 chips you hold when you take down the boss.',price:45,tier:1},
   bounty:{name:'Bounty Hunter',icon:'✕',desc:'Collect 150 chips each time you knock a player out.',price:55,tier:2,up:'Collect 300 chips per knockout.'},
   teller:{name:'Fortune Teller',icon:'☾',desc:'See the next community card before it lands.',price:110,tier:2},
   silver:{name:'Silver Tongue',icon:'⁂',desc:'Talk every boss out of their special twist.',price:100,tier:2},
@@ -100,7 +100,7 @@ const CHARMS={
   dynamite:{name:'Dynamite',icon:'✷',desc:'Once per saloon, blow up the flop and deal a new one.',price:60,tier:1},
   badge:{name:"Sheriff's Badge",icon:'★',desc:'Drifters and gunhands won\'t raise into you. They call instead.',price:55,tier:1},
   rattler:{name:'Rattlesnake',icon:'∿',desc:'Win a hand after going all in and the house pays 250 chips.',price:45,tier:1},
-  shovel:{name:"Undertaker's Shovel",icon:'⚔',desc:'Every outlaw busted at your table pays you 100 chips.',price:60,tier:2},
+  shovel:{name:"Undertaker's Shovel",icon:'⚔',desc:'Every outlaw tapped out at your table pays you 100 chips.',price:60,tier:2},
   crown:{name:'Royal Crown',icon:'♛',desc:'Win with a straight or better and earn 15 gold.',price:55,tier:2},
   saddle:{name:'Saddlebags',icon:'⌂',desc:'Carry one more charm.',price:70,tier:2}
 };

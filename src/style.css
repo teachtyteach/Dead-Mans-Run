@@ -1140,7 +1140,7 @@ html.tall .lv{bottom:auto;height:var(--appH)}
 .lv.on::before{opacity:1}
 .lv::after{content:"";position:absolute;inset:0;z-index:3;background:#000;opacity:0;pointer-events:none;transition:opacity .9s ease}
 .lv.black::after{opacity:1}
-.lv-stamp{font-family:var(--f-poster);font-size:clamp(58px,19vw,150px);line-height:1;color:#c3261a;border:clamp(5px,1.6vw,10px) double #c3261a;border-radius:14px;padding:.06em .32em .14em;
+.lv-stamp{font-family:var(--f-poster);font-size:clamp(52px,17vw,140px);line-height:1;white-space:nowrap;color:#c3261a;border:clamp(5px,1.6vw,10px) double #c3261a;border-radius:14px;padding:.06em .32em .14em;
   rotate:-11deg;scale:3.2;opacity:0;-webkit-mask:var(--wear2) 0 0/260px;mask:var(--wear2) 0 0/260px;filter:drop-shadow(0 0 30px rgba(195,38,26,.35))}
 .lv.on .lv-stamp{animation:lvStamp .3s .06s cubic-bezier(.3,1.6,.5,1) forwards,lvFade 3.4s 1.2s ease forwards}
 @keyframes lvStamp{to{scale:1;opacity:.96}}

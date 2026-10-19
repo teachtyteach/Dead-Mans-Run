@@ -314,10 +314,10 @@ function finishHand(res){
     if(!p.isHuman&&!p.out&&p.chips<=0){
       p.out=true; if(me.winner) myKo++;
       ev.kos.push(i);
-      if(p.bossDef){log(`${p.name} is busted. The bounty is yours.`); ev.bossLine={i,text:p.bossDef.lines.bust}}
+      if(p.bossDef){log(`${p.name} is taken down. The bounty is yours.`); ev.bossLine={i,text:p.bossDef.lines.bust}}
       else {
         const g=Math.round(TIERS[p.tier].gold*goldMul());
-        if(me.winner){R.gold+=g; G.koGold+=g; log(`${p.name} is busted out. +${g} gold.`)} else log(`${p.name} is busted out.`);
+        if(me.winner){R.gold+=g; G.koGold+=g; log(`${p.name} is tapped out. +${g} gold.`)} else log(`${p.name} is tapped out.`);
       }
     }
   });

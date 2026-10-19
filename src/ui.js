@@ -204,7 +204,7 @@ function renderTitle(){
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
   const st=meta.stats;
   $('statsGrid').innerHTML=[['Hands played',num(st.hands)],['Hands won',num(st.won)],['Win rate',st.hands?Math.round(st.won/st.hands*100)+'%':'—'],
-    ['Biggest pot',money(st.bigPot)],['Best hand',st.bestHand?nameOf(st.bestHand):'—'],['Bosses busted',num(st.bosses)],['Challenges',num(st.challenges)],['Runs won',num(meta.wins)]]
+    ['Biggest pot',money(st.bigPot)],['Best hand',st.bestHand?nameOf(st.bestHand):'—'],['Bosses taken down',num(st.bosses)],['Challenges',num(st.challenges)],['Runs won',num(meta.wins)]]
     .map(([a,b])=>`<div class="plaque"><span>${a}</span><b>${b}</b></div>`).join('');
   $('tipsBtn').onclick=()=>{meta.tips={}; saveMeta(); $('tipsBtn').textContent='Tips will show next run'};
   $('codex').innerHTML=Object.keys(CHARMS).map(k=>{
@@ -376,7 +376,7 @@ function renderEvent(fresh){
     shark:{title:'Card shark on the trail',text:'STRANGER FANS A DECK ON A STUMP STOP SAYS HIGH CARD WINS STOP DOUBLE OR NOTHING STOP',choices:[
       {label:'Bet 20 gold',dis:g<20,fn:()=>sharkBet(20)},{label:'Bet 50 gold',dis:g<50,fn:()=>sharkBet(50)},{label:'Ride past',fn:()=>evDone('You tip your hat and keep riding.')}]},
     doctor:{title:'Traveling doctor',text:'DOCTOR WITH A WAGON OF TONICS WAVES YOU DOWN STOP ONE SIP AND YOU GET BACK UP FROM ANYTHING STOP ONCE STOP',choices:[
-      {label:'Buy a tonic · 25g',dis:g<25,fn:()=>{R.gold-=25; R.temp=Object.assign(R.temp||{},{wind:true}); sfx('chip'); evDone('You pocket the tonic. You\'ll survive busting once next saloon.')}},
+      {label:'Buy a tonic · 25g',dis:g<25,fn:()=>{R.gold-=25; R.temp=Object.assign(R.temp||{},{wind:true}); sfx('chip'); evDone('You pocket the tonic. You\'ll survive running out of chips once next saloon.')}},
       {label:'Ride past',fn:()=>evDone('"Your funeral," he mutters.')}]},
     bandits:{title:'Bandits on the pass',text:'THREE RIDERS BLOCK THE PASS STOP TOLL ROAD STRANGER STOP PAY UP OR DRAW STOP',choices:[
       {label:`Pay ${Math.min(20,g)} gold`,fn:()=>{const t=Math.min(20,R.gold); R.gold-=t; evDone(`You hand over ${t} gold. They let you pass.`)}},
@@ -616,7 +616,7 @@ function handEnd(res){
   if(res.winners.length) sfx('chips',60);
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
-  ev.kos.forEach((i,k)=>{const c=where[i]; if(c) later(()=>{stampAt(c[0],c[1],'Busted','#d8341f',G.players[i].bossDef?42:28); sfx('stamp'); shake(!!G.players[i].bossDef)},500+k*250)});
+  ev.kos.forEach((i,k)=>{const c=where[i]; if(c) later(()=>{stampAt(c[0],c[1],G.players[i].bossDef?'Taken Down':'Tapped Out','#d8341f',G.players[i].bossDef?40:26); sfx('stamp'); shake(!!G.players[i].bossDef)},500+k*250)});
   if(ev.revenge){
     const rv=ev.revenge, c=where[rv.victim], bEl=seatEl(rv.boss,'.plate');
     later(()=>{sfx('boss')},350);
@@ -633,7 +633,7 @@ function handEnd(res){
   const meWon=res.winners.some(w=>w.i===0);
   if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
   else if(G.outcome==='lose'&&!TUT){loseRun(); return}
-  else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Busted','#d8341f',40); sfx('stamp')},400)}
+  else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Dead Man','#d8341f',40); sfx('stamp')},400)}
   else if(meWon){sfx('win',250); if(res.pot>=G.bb*8){flash(); shake(false); burst(seatEl(0,'.plate'),30)}}
   procChain(ev.bonus||[],where[0]||[50,85],1500);
   if(ev.challenge){later(()=>{stampAt(50,30,'Challenge!','#f4cb5c',28); sfx('win'); bumpGold()},ev.kos.length?2000:900)}
@@ -732,7 +732,7 @@ function bossOut(next){
     </div></div>
     <div class="bo-stripe"></div><div class="bo-band"></div>
     <div class="bo-text">
-      <div class="bo-kicker"><b>${TOWNS[R.level-1]}</b><i></i><span>Boss busted</span></div>
+      <div class="bo-kicker"><b>${TOWNS[R.level-1]}</b><i></i><span>Taken down</span></div>
       <div class="bo-name" style="font-family:${bd.font},var(--f-display);--fs:${bd.fs||1}">${letters}</div>
       <div class="bo-tag"><span id="boTag"></span><em class="bo-caret"></em></div>
     </div>
@@ -756,7 +756,7 @@ function showPaid(){
   const bd=BOSSES[R.level-1];
   posterFor(bd,'paid');
   $('posterQuote').textContent=`"${bd.lines.bust}"`; $('posterTwist').textContent='';
-  $('posterLine').textContent=`Busted in ${TOWNS[R.level-1]}.`;
+  $('posterLine').textContent=`Taken down in ${TOWNS[R.level-1]}.`;
   const st=$('stamp'), pp=$('poster').querySelector('.poster'); st.hidden=false; st.classList.remove('hit'); void st.offsetWidth; st.classList.add('hit');
   let sp=pp.querySelector('.psplat'); if(!sp){pp.insertAdjacentHTML('beforeend',inkSplat('paid','splat psplat')); sp=pp.querySelector('.psplat')}
   setTimeout(()=>pp.classList.add('stamped'),280);
@@ -788,14 +788,17 @@ function tableWon(){
   if(L===8){meta.wins++; saveMeta(); sset(RUN_KEY,null); endRun(true); return}
   saveMeta();
   R.level++;
-  openShop('shop',`You busted <b>${bd.name}</b>. Bounty <b>${G.bounty}g</b>${G.koGold?`, knockouts <b>${G.koGold}g</b>`:''}.${extra}${unlockMsg}`);
+  openShop('shop',`You took down <b>${bd.name}</b>. Bounty <b>${G.bounty}g</b>${G.koGold?`, knockouts <b>${G.koGold}g</b>`:''}.${extra}${unlockMsg}`);
 }
 // losing: one bell, the world drains and goes silent, then back to the main menu
 function loseRun(){
   const sg=$('sGame'); hush(true); heartbeat(false); sfx('toll',60);
   let v=$('lossVeil'); if(!v){v=document.createElement('div'); v.id='lossVeil'; v.className='lv'; document.body.appendChild(v)}
-  v.innerHTML=`<div class="lv-stamp">Busted</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>`;
-  v.classList.remove('on','black'); v.hidden=false; void v.offsetWidth; v.classList.add('on');
+  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>`;
+  v.classList.remove('on','black'); v.hidden=false;
+  const fitStamp=()=>{const st=v.querySelector('.lv-stamp'); if(!st) return; st.style.fontSize=''; const mw=Math.min(innerWidth,v.clientWidth||innerWidth)*.84; if(st.offsetWidth>mw) st.style.fontSize=(parseFloat(getComputedStyle(st).fontSize)*mw/st.offsetWidth).toFixed(1)+'px'};
+  fitStamp(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitStamp);
+  void v.offsetWidth; v.classList.add('on');
   sg.classList.add('lost'); R.phase='over'; sset(RUN_KEY,null);
   let gone=false; const go=()=>{if(gone) return; gone=true; leaveLost()};
   setTimeout(()=>{v.onclick=go},1800);
@@ -826,18 +829,18 @@ function endRun(victory){
   if(victory){
     $('npKicker').textContent='The Territory Is Clean';
     $('endTitle').textContent='Masked Rider Takes the Territory';
-    $('endSub').textContent='Bicah Mell Falls at Graves End · Eight Saloons Busted · Bounties Paid in Full';
+    $('endSub').textContent='Bicah Mell Falls at Graves End · Eight Bosses Taken Down · Bounties Paid in Full';
     $('npCut').innerHTML=portrait('You the rider',HUMAN_LOOK);
     $('npCap').innerHTML='The Rider.<em>No name was given.</em>';
     $('npStamp').textContent='Paid'; $('npStamp').className='np-stamp paid';
-    $('npStory').innerHTML=`<p><span class="cap">G</span><span class="dl">raves End.</span> A masked stranger finished what no lawman could last night, busting Bicah Mell at the final table and riding out with ${num(R.gold)} in gold.</p><p>The rider came up the trail from Dry Creek with ${chText}, and left every boss between here and there flat broke.</p><p>Asked for comment, Mell said only <q>${bd.lines.bust}</q> Witnesses report the rider tipped a hat and said nothing at all.</p><p>The Marshal's office says the reward will be paid in full.</p>`;
+    $('npStory').innerHTML=`<p><span class="cap">G</span><span class="dl">raves End.</span> A masked stranger finished what no lawman could last night, taking down Bicah Mell at the final table and riding out with ${num(R.gold)} in gold.</p><p>The rider came up the trail from Dry Creek with ${chText}, and left every boss between here and there flat broke.</p><p>Asked for comment, Mell said only <q>${bd.lines.bust}</q> Witnesses report the rider tipped a hat and said nothing at all.</p><p>The Marshal's office says the reward will be paid in full.</p>`;
   } else {
     $('npKicker').textContent=`Trouble at ${town}`;
-    $('endTitle').textContent=`Rider Busted in ${town}`;
+    $('endTitle').textContent=`Rider Falls in ${town}`;
     $('endSub').textContent=`${bd.name} Takes the Last of the Stranger's Chips${hands?` · ${hands} Hands Played`:''}`;
     $('npCut').innerHTML=bossPortrait(bd);
     $('npCap').innerHTML=`${bossName(bd)}.<em>${bd.title}. From a sketch.</em>`;
-    $('npStamp').textContent='Busted'; $('npStamp').className='np-stamp';
+    $('npStamp').textContent='Dead Man'; $('npStamp').className='np-stamp';
     $('npStory').innerHTML=`<p><span class="cap">${town[0]}</span><span class="dl">${town.slice(1)}.</span> A masked stranger who rode in with ${chText} was sent packing last night by ${bd.name}, ${bd.title.toLowerCase()} of the ${town} saloon.</p><p>${bd.name.split(' ')[0]} took the last of the rider's chips${hands?` after ${hands} hands`:''}, and was heard to remark <q>${quip}</q></p><p>The rider made it ${L} saloon${L>1?'s':''} down the trail and leaves town with ${num(R.gold)} gold. Regulars say the stranger will be back. They always come back.</p>`;
   }
   const rows=[['Saloons ridden',victory?'8 of 8':`${L} of 8`],['Gold in pocket',num(R.gold)],['Charms carried',R.charms.length],['Best ride',meta.wins?`Won ×${meta.wins}`:`Saloon ${meta.best}`]];
@@ -892,6 +895,9 @@ function stampAt(xPct,yPct,text,color,size){
   s.style.left=xPct+'%'; s.style.top=yPct+'%';
   s.style.setProperty('--sc',color||'#d8341f'); s.style.setProperty('--sz',(size||30)+'px'); s.style.setProperty('--rot',(-10+Math.random()*8)+'deg');
   $('fx').appendChild(s); setTimeout(()=>s.remove(),1800);
+  const W=$('fx').clientWidth, w=s.offsetWidth;
+  if(W&&w){if(w>W-12) s.style.setProperty('--sz',((size||30)*(W-12)/w).toFixed(1)+'px');
+    const ww=Math.min(w,W-12), cx=Math.max(ww/2+6,Math.min(W-ww/2-6,xPct/100*W)); s.style.left=cx+'px'}
 }
 function floatNum(xPct,yPct,text,neg,delay){
   setTimeout(()=>{const s=document.createElement('div'); s.className='floatnum'+(neg?' neg':''); s.textContent=text; s.style.left=xPct+'%'; s.style.top=yPct+'%'; $('fx').appendChild(s); setTimeout(()=>s.remove(),1600)},delay||0);
@@ -1089,8 +1095,8 @@ function renderControls(){
   if(G.street==='idle'){st.textContent='Pulling up a chair…'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='done'){
-    if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is busted.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
-    if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('dark','Main menu','nextBtn'); $('nextBtn').onclick=leaveLost; return}
+    if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is taken down.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
+    if(G.outcome==='lose'){st.innerHTML='<b>Dead man.</b> The run ends here.'; ac2.innerHTML=one('dark','Main menu','nextBtn'); $('nextBtn').onclick=leaveLost; return}
     const auto=me.folded&&!me.winner;
     st.innerHTML=me.winner?`<b>You ${me.result.toLowerCase().replace(/^wins\b/,'win').replace(/^splits\b/,'split')}</b>`:(auto?'<span class="dots">Next hand deals in a moment</span>':(me.handName?`You had ${me.handName}`:'Hand over'));
     ac2.innerHTML=one('gold','Deal next hand','nextBtn'); $('nextBtn').onclick=newHand;
