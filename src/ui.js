@@ -257,7 +257,7 @@ function openShop(mode,summary){
     SHOP.tricks=shuffle(Object.keys(TRICKS)).slice(0,3);
     const dl=Object.keys(DEEDS).filter(k=>!R.deeds.includes(k)); SHOP.deed=dl.length?dl[Math.floor(Math.random()*dl.length)]:null;
   }
-  SHOP.curseTaken=!!R.curse; SHOP.anim='slap';
+  SHOP.curseTaken=!!R.curse; SHOP.anim='slap'; SHOP.gridH=0;
   SHOP.summary=summary||'';
   if(mode==='shop') saveRun('shop');
   renderShop(); show('sShop');
@@ -307,6 +307,9 @@ function renderShop(){
     if(!html) html='<p class="sub">Your saddlebags are empty.</p>';
   }
   $('offers').innerHTML=html; $('curseOffer').innerHTML=curseHtml; $('curseOffer').hidden=!curseHtml;
+  // keep the store the same height across tabs so nothing jumps when you switch
+  const dg=document.querySelector('#sShop .deal-grid');
+  if(pick||SHOP.tab==='charms'){dg.style.minHeight=''; if(!pick) requestAnimationFrame(()=>{SHOP.gridH=dg.offsetHeight})} else if(SHOP.gridH) dg.style.minHeight=SHOP.gridH+'px';
   if(SHOP.anim&&!REDUCED){const cl=SHOP.anim; [...$('offers').children,...$('curseOffer').children].forEach((t,k)=>{t.classList.add(cl); t.style.setProperty('--sd',(k*130)+'ms'); sfx('card',120+k*130); if(cl==='slap') sfx('stamp',260+k*130)})}
   SHOP.anim=null;
   $('offers').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
@@ -335,7 +338,7 @@ function renderShop(){
     saveRun('shop'); renderShop();
   };
   const rc=rerollCost();
-  $('shopActions').innerHTML=pick?'':`${tab==='charms'?`<button class="btn small" id="rerollBtn" ${R.gold<rc||!unlockedPool().length?'disabled':''}>Reroll · ${rc}g</button>`:''}<button class="btn gold big" id="rideBtn">Ride to ${TOWNS[L-1]}</button>`;
+  $('shopActions').innerHTML=pick?'':`${tab==='charms'?`<button class="btn small" id="rerollBtn" ${R.gold<rc||!unlockedPool().length?'disabled':''}>Reroll · ${rc}g</button>`:`<button class="btn small" style="visibility:hidden" tabindex="-1" aria-hidden="true">Reroll · ${rc}g</button>`}<button class="btn gold big" id="rideBtn">Ride to ${TOWNS[L-1]}</button>`;
   if(!pick){
     if($('rerollBtn')) $('rerollBtn').onclick=()=>{if(R.gold<rc) return; R.gold-=rc; SHOP.offers=shuffle(unlockedPool()).slice(0,3); SHOP.anim='reflip'; sfx('whoosh'); saveRun('shop'); renderShop()};
     $('rideBtn').onclick=()=>{ac(); openEvent()};
@@ -1022,7 +1025,7 @@ function render(){
       <div class="cards">${cards}</div>
       <div class="plate">
         <span class="medal">${portraitFor(p)}</span>
-        <div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):(narrow&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
+        <div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
           <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
         ${G.dealer===i&&G.street!=='idle'?'<div class="dealer" title="Dealer">D</div>':''}
