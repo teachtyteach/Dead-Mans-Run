@@ -1186,3 +1186,59 @@ html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavio
 .swaprow .chipbtn:not(.trickbtn){padding:4px 12px}
 .swaprow .trickbtn .ti{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:13px;color:#0f2a36;
   background:radial-gradient(circle at 40% 35%,#e6f5fb,#7fb2c6 70%,#4f7f94);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.5)}
+.plate>.pr{display:contents}
+
+/* ================= finish v2: fewer frames, clearer type, one material throughout =================
+   Panels are walnut with a lit top edge and a faint brass hairline; brass rings are kept for state
+   (your turn, selected, winner). Buttons are solid and pressable, with no outlines. */
+:root{--muted:#bba886;--panel:linear-gradient(180deg,#2b1b10,#160d07);
+  --edge:inset 0 1px 0 rgba(255,228,175,.09),inset 0 0 0 1px rgba(201,162,78,.17);--lift:0 12px 28px rgba(0,0,0,.5)}
+/* HUD */
+.topbar{background:var(--noise),var(--panel);border:0;box-shadow:var(--edge),var(--lift);padding:6px 6px 6px 16px}
+.goldchip{height:38px;padding:0 12px 0 5px;background:rgba(0,0,0,.34);border:0;box-shadow:inset 0 0 0 1px rgba(244,203,92,.24),inset 0 1px 3px rgba(0,0,0,.5)}
+.handsbtn,.iconbtn{height:38px;border:0;background:linear-gradient(#3a271a,#22160e);box-shadow:inset 0 1px 0 rgba(255,228,175,.12),inset 0 0 0 1px rgba(201,162,78,.24),0 2px 0 rgba(0,0,0,.5);transition:transform .12s var(--ease-pop),filter .2s}
+.iconbtn{width:38px}
+.handsbtn:active,.iconbtn:active{transform:translateY(2px) scale(.96)}
+/* console: one panel, no frame inside a frame */
+.console{background:var(--noise),var(--panel);border:0;box-shadow:var(--edge),0 -8px 24px rgba(0,0,0,.3),var(--lift);padding:12px;gap:9px}
+.console::before{display:none}
+.console .coach{background:rgba(111,160,105,.11);border:0;box-shadow:inset 0 0 0 1px rgba(150,205,140,.2)!important;color:#e6f0e0}
+.status{font-size:15.5px;color:var(--ivory-lo)}
+.odds{font-size:13.5px}
+/* buttons: solid, no outlines, a real press */
+.btn{border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -2px 0 rgba(0,0,0,.22),0 4px 0 rgba(0,0,0,.55),0 10px 20px rgba(0,0,0,.35)}
+.btn.gold,.btn.call{box-shadow:inset 0 1px 0 rgba(255,250,225,.75),inset 0 -2px 0 rgba(110,72,18,.35),0 4px 0 #5a4115,0 10px 20px rgba(0,0,0,.4)}
+.btn.raise{box-shadow:inset 0 1px 0 rgba(255,190,170,.35),inset 0 -2px 0 rgba(0,0,0,.3),0 4px 0 #360b07,0 10px 20px rgba(0,0,0,.4)}
+.btn.dark,.btn.fold{background:linear-gradient(#4a3222,#2a1b11);color:var(--ivory-lo);box-shadow:inset 0 1px 0 rgba(255,228,175,.14),inset 0 0 0 1px rgba(201,162,78,.2),0 4px 0 rgba(0,0,0,.6),0 10px 20px rgba(0,0,0,.35)}
+.btn:not(:disabled):active{transform:translateY(3px) scale(.97);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 1px 0 rgba(0,0,0,.6),0 4px 10px rgba(0,0,0,.35)}
+.btn:disabled{opacity:.34;filter:grayscale(.55);box-shadow:inset 0 0 0 1px rgba(201,162,78,.12)}
+.actrow .btn{min-height:54px;border-radius:14px;font-size:15.5px}
+.btn.small{border:0;box-shadow:inset 0 0 0 1px rgba(201,162,78,.28),0 2px 0 rgba(0,0,0,.5)}
+/* name plates: sized to their contents, a single hairline, brass rings only for state */
+.plate{width:auto;max-width:100%;min-width:min(100%,7.2em);border:0;padding:3px 14px 3px 3px;
+  background:linear-gradient(180deg,rgba(44,29,18,.97),rgba(18,11,6,.97));box-shadow:inset 0 1px 0 rgba(255,228,175,.12),inset 0 0 0 1px rgba(201,162,78,.34),0 6px 14px rgba(0,0,0,.55)}
+.seat.human .plate{padding:5px 18px 5px 5px;background:linear-gradient(180deg,#3d2817,#1a0f08);box-shadow:inset 0 1px 0 rgba(255,228,175,.16),inset 0 0 0 1px rgba(242,216,143,.55),0 8px 18px rgba(0,0,0,.55)}
+.seat.boss .plate{box-shadow:inset 0 1px 0 rgba(255,190,170,.14),inset 0 0 0 1px #c0503f,0 6px 16px rgba(0,0,0,.55),0 0 18px rgba(184,50,30,.25)}
+.seat.turn .plate{box-shadow:inset 0 0 0 1.5px var(--brass-hi),0 0 22px rgba(242,216,143,.45),0 6px 14px rgba(0,0,0,.6)}
+.seat.winner .plate{box-shadow:inset 0 0 0 1.5px var(--gold),0 0 30px rgba(244,203,92,.6),0 6px 14px rgba(0,0,0,.6)}
+.bet{gap:5px;font-size:clamp(11px,2.1cqw,13px)}
+/* panels, tabs and store rows share the same material */
+.banner,.sheet,.sheet-boss{border:0;box-shadow:var(--edge),var(--lift)}
+.banner{background:var(--noise),var(--panel)}
+.sheet{background:var(--noise),var(--panel);box-shadow:var(--edge),0 30px 60px rgba(0,0,0,.8)}
+.tabs{padding:4px;border-radius:13px;background:rgba(0,0,0,.32);box-shadow:inset 0 1px 3px rgba(0,0,0,.55)}
+.tabs button{font-size:13px;letter-spacing:.08em;color:var(--muted);transition:color .2s,background .2s}
+.tabs button[aria-selected="true"]{background:linear-gradient(#5a3b21,#34210f);color:var(--brass-hi);box-shadow:inset 0 1px 0 rgba(255,228,175,.16),0 2px 6px rgba(0,0,0,.45)}
+@media (max-width:640px){
+  .deal-grid .tarot:not(.curse){box-shadow:inset 0 1px 0 rgba(255,228,175,.08),inset 0 0 0 1px rgba(201,162,78,.3),0 6px 14px rgba(0,0,0,.4)}
+  .deal-grid .tarot.trick:not(.curse){box-shadow:inset 0 1px 0 rgba(220,240,250,.08),inset 0 0 0 1px rgba(127,178,198,.35),0 6px 14px rgba(0,0,0,.4)}
+  .deal-grid .tarot.deed:not(.curse){box-shadow:inset 0 1px 0 rgba(236,244,214,.08),inset 0 0 0 1px rgba(150,190,110,.35),0 6px 14px rgba(0,0,0,.4)}
+}
+/* screens arrive with a clean fade, no sepia flash */
+@keyframes screenIn{from{opacity:0;filter:brightness(.55)}to{opacity:1;filter:none}}
+.screen.enter{animation:screenIn .42s var(--ease-out) both}
+/* your turn: the buttons rise to meet you */
+.actrow.rise .btn{animation:btnRise .38s var(--ease-pop) both}
+.actrow.rise .btn:nth-child(2){animation-delay:.04s}.actrow.rise .btn:nth-child(3){animation-delay:.08s}
+@keyframes btnRise{from{transform:translateY(10px);opacity:.3}}
+@media (prefers-reduced-motion:reduce){.actrow.rise .btn{animation:none}}

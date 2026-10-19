@@ -1005,9 +1005,13 @@ function render(){
   const blindfold=G.curse==='blind'&&G.board.length<3&&G.street!=='showdown'&&G.street!=='done';
   const snakeOn=bp&&twistOn('snake')&&bp.inHand&&!bp.folded;
   const madeName=G.board.length>=3&&!me.folded&&me.inHand&&!blindfold?nameOf(evalHand(me.hand.concat(G.board))):'';
-  let html='';
+  // seats are kept between renders and only the parts that changed are rebuilt, so portraits, glows,
+  // deals and number rolls never restart mid-animation
+  const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
+  let bets='';
   G.players.forEach((p,i)=>{
     if(p.out) return;
+    live.add(i);
     const [x,y]=pos[i], fx=(50-x)/100*W, fy=(48-y)/100*H;
     const cards=(p.hand||[]).map((c,k)=>{
       const anim={fx,fy,delay:(c.order||0)*70};
@@ -1016,43 +1020,51 @@ function render(){
       if(p.peek===k) return cardHTML(c,true,'peek','h'+i,anim);
       return cardHTML(c,false,has('marked')?'marked':'','h'+i,anim);
     }).join('');
-    const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].join(' ');
+    const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
     const tier=tilted?'On tilt':'';
-    html+=`<div class="${cls}" data-i="${i}" style="left:${x}%;top:${y}%">
-      <div class="cards">${cards}</div>
-      <div class="plate">
-        <span class="medal">${portraitFor(p)}</span>
-        <div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
+    const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
           <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
         ${G.dealer===i&&G.street!=='idle'?'<div class="dealer" title="Dealer">D</div>':''}
         ${p.bossDef?`<div class="bossmeter"><i style="width:${Math.max(0,Math.min(100,p.chips/G.bossStart*100))}%"></i></div>`:''}
-        ${pill?`<div class="pill ${pcls}"${pillLife(i,pill,!!p.result||pcls==='allin')}>${pill}</div>`:''}
-      </div>
-    </div>`;
+        ${pill?`<div class="pill ${pcls}"${pillLife(i,pill,!!p.result||pcls==='allin')}>${pill}</div>`:''}`;
+    let m=SM.get(i);
+    if(m&&!m.el.isConnected){SM.delete(i); m=null}
+    if(!m){const el=document.createElement('div'); el.dataset.i=i; el.innerHTML='<div class="cards"></div><div class="plate"><span class="medal"></span><span class="pr"></span></div>'; seatsEl.appendChild(el);
+      m={el,cardsEl:el.firstElementChild,medalEl:el.querySelector('.medal'),restEl:el.querySelector('.pr'),cards:null,medal:null,rest:null}; SM.set(i,m)}
+    if(m.el.className!==cls) m.el.className=cls;
+    m.el.style.left=x+'%'; m.el.style.top=y+'%';
+    const cq=quiet(cards); if(m.cards!==cq){m.cards=cq; m.cardsEl.innerHTML=cards}
+    const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier; if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
+    const rq=rest.replace(/ style="animation-delay:[^"]*"/g,''); if(m.rest!==rq){m.rest=rq; m.restEl.innerHTML=rest}
     if(p.bet>0){
       let bx=x+(50-x)*0.5, by=y+(48-y)*0.5;
       if(y<35){bx=x+(x<=50?16:-16); by=y+15}
       if(p.isHuman){bx=50; by=y-(narrow?25:24)}
       const landed=BETV[i]!==p.bet; BETV[i]=p.bet;
-      html+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
+      bets+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
     }
   });
-  $('seats').innerHTML=html;
-  $('seats').querySelectorAll('.seat').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
+  SM.forEach((m,i)=>{if(!live.has(i)){m.el.remove(); SM.delete(i)}});
+  seatsEl.querySelectorAll('.bet').forEach(b=>b.remove());
+  if(bets) seatsEl.insertAdjacentHTML('beforeend',bets);  seatsEl.querySelectorAll('.seat').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
   const tellerOn=has('teller')&&['preflop','flop','turn'].includes(G.street)&&G.deck.length;
-  let b='';
+  const bparts=[];
   for(let k=0;k<5;k++){
+    let b='';
     if(G.board[k]) b+=cardHTML(G.board[k],true,'','b',{fx:0,fy:-50,delay:k<3?k*90:0});
     else if(G.street!=='done'&&G.street!=='showdown'&&k>=G.board.length&&k<G.board.length+Math.max(tellerOn?1:0,G.mirror||0)&&G.deck.length>k-G.board.length) b+=cardHTML(G.deck[G.deck.length-1-(k-G.board.length)],true,'ghost');
     else b+='<div class="slot"></div>';
+    bparts.push(b);
   }
-  $('board').innerHTML=b;
+  const boardEl=$('board'), bq=bparts.map(quiet);
+  if(boardEl.children.length!==5||!boardEl._q){boardEl.innerHTML=bparts.join(''); boardEl._q=bq}
+  else bq.forEach((q,k)=>{if(boardEl._q[k]!==q){boardEl._q[k]=q; boardEl.children[k].outerHTML=bparts[k]}});
   const pot=G.street==='done'?(G.lastPot||0):potTotal();
-  $('potrow').innerHTML=(pot>0?chipStack(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`;
+  const potH=(pot>0?chipStack(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
   const sp=G.street!=='done'&&G.street!=='idle'&&G.players.some(p=>p.allIn&&p.inHand)?pots():[];
   $('sidepots').innerHTML=sp.length>1?sp.map((x,k)=>`${k?'Side':'Main'} <b>${money(x.amt)}</b>`).join(' · '):'';
   renderControls();
@@ -1068,8 +1080,9 @@ $('seats').addEventListener('click',e=>{
 /* ================= controls ================= */
 let raiseVal=0, RAISE_OPEN=false;
 function closeRaise(){RAISE_OPEN=false; const rs=$('raiseSheet'); rs.classList.remove('open'); rs.hidden=true}
+let WASMY=false;
 function renderControls(){
-  const me=human(), st=$('status'), ac2=$('actions'), od=$('odds');
+  const me=human(), st=$('status'), ac2=$('actions'), od=$('odds'), wasMy=WASMY; WASMY=false;
   od.hidden=true;
   if(G.turn!==0||G.street==='done'||G.street==='idle') closeRaise();
   const one=(cls,label,id)=>`<div class="actrow" style="--cols:1"><button class="btn ${cls}" id="${id}">${label}</button></div>`;
@@ -1111,6 +1124,7 @@ function renderControls(){
     +(canDyn?`<button class="chipbtn trickbtn" id="dynBtn" title="${CHARMS.dynamite.desc}"><span class="ti">${CHARMS.dynamite.icon}\uFE0E</span>Dynamite</button>`:'');
   ac2.innerHTML=`${canSwap||canAce||trickBtns?`<div class="swaprow">${canSwap?'<button class="chipbtn" data-swap="0">Swap left</button><button class="chipbtn" data-swap="1">Swap right</button>':''}${canAce?'<button class="chipbtn" id="aceBtn">Ace in the Sleeve</button>':''}${trickBtns}</div>`:''}
     <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}<button class="btn call" id="bCall">${callTxt}</button></div>`;
+  WASMY=true; if(!wasMy){const r=ac2.querySelector('.actrow'); if(r) r.classList.add('rise')}
   ac2.querySelectorAll('[data-swap]').forEach(b=>b.onclick=()=>{
     const k=+b.dataset.swap, old=me.hand[k], c=draw(); c.order=0; me.hand[k]=c; G.mechSwaps--; sfx('card');
     log(`You swap out the ${SG[old.r]} of ${SUITN[old.s]}.`); render();
