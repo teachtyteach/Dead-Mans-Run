@@ -594,7 +594,7 @@ function doAct(i,type,to){
   const put=applyAction(i,type,to);
   step();
   if(put>0){
-    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx('chip');
+    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip');
     if(p.allIn){const c=centerOfSeat(i); if(c) stampAt(c[0],c[1],'All in','#d8341f',p.isHuman?34:26); sfx('stamp',80); shake(false)}
   }
 }
@@ -613,7 +613,7 @@ function handEnd(res){
   render();
   const me=human(), potEl=$('potrow');
   res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(10,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt)));
-  if(res.winners.length) sfx('chip',60);
+  if(res.winners.length) sfx('chips',60);
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
   ev.kos.forEach((i,k)=>{const c=where[i]; if(c) later(()=>{stampAt(c[0],c[1],'Busted','#d8341f',G.players[i].bossDef?42:28); sfx('stamp'); shake(!!G.players[i].bossDef)},500+k*250)});
@@ -624,7 +624,7 @@ function handEnd(res){
       sfx('gun'); flash(true); shake(true);
       if(c){stampAt(c[0],c[1],'Shot Dead','#d8341f',34);
         const ghost=document.createElement('div'); ghost.style.cssText=`position:absolute;left:${c[0]}%;top:${c[1]}%;width:2px;height:2px`; $('fx').appendChild(ghost);
-        later(()=>{fly(ghost,bEl,10,700,chipCls(rv.amt)); sfx('chip',150); setTimeout(()=>ghost.remove(),1200)},500)}
+        later(()=>{fly(ghost,bEl,10,700,chipCls(rv.amt)); sfx('chips',150); setTimeout(()=>ghost.remove(),1200)},500)}
       say(ev.bossLine.text);
     },1300);
   } else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);

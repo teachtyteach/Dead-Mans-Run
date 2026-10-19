@@ -1496,7 +1496,7 @@ html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavio
   </div>
 </div>
 
-<script>window.__DMR_SND_KEYS=["amb1", "amb2", "amb3", "amb4", "amb5", "amb6", "amb7", "amb8", "bigwin", "boss", "boss_banker", "boss_bicah", "boss_iron", "boss_ma", "boss_pete", "boss_snake", "boss_under", "boss_vesper", "card0", "card1", "card2", "card3", "chip0", "chip1", "chip2", "chip3", "chip4", "door", "gun0", "gun1", "gun2", "heart", "lose", "menu", "paid", "pen", "piano", "stamp", "tick", "toll", "whoosh", "win"];</script>
+<script>window.__DMR_SND_KEYS=["amb1", "amb2", "amb3", "amb4", "amb5", "amb6", "amb7", "amb8", "bigwin", "boss", "boss_banker", "boss_bicah", "boss_iron", "boss_ma", "boss_pete", "boss_snake", "boss_under", "boss_vesper", "card0", "card1", "card2", "card3", "chip0", "chip1", "chip2", "chip3", "chip4", "chipd0", "chipd1", "chipd2", "chipd3", "chipt", "door", "gun0", "gun1", "gun2", "heart", "lose", "menu", "paid", "pen", "piano", "stamp", "tick", "toll", "whoosh", "win"];</script>
 <script>
 (function(){
 const SUITS=['♠︎','♥︎','♦︎','♣︎'];
@@ -2541,11 +2541,11 @@ function portraitFor(p,frame){
 }
 
 // Licensed recordings are stored encrypted (AES-256-GCM) under hashed names; decrypted in memory only.
-const VAULT={n:{"menu": "b2c485a1f7515257e722", "boss_pete": "be3571a96f8e18b8044b", "boss_ma": "ac1f1ddbdf0149e8d66e", "boss_iron": "11b9187a24ce2143c9d2", "boss_under": "c8bf61ca23cc1ae7ac13", "boss_snake": "a26dc9357e939be2ac4d", "boss_banker": "de770a7fd09676186c37", "boss_vesper": "db2f62e78c08d58235ac", "boss_bicah": "34310f8947d6116b8841", "amb1": "4af8f70dc8c118e3bbe8", "amb2": "5b300d695260f005b043", "amb3": "1751dd3347f62bc4e847", "amb4": "1229c3cfbb22c7f4e4c0", "amb5": "c3f613a225625a513a1f", "amb6": "8e20f5612df92f388407", "amb7": "41af0f2bc944c4d2b2d0", "amb8": "f0d4d1a841aa40f851b9", "gun0": "68dc3ec56e64993c37fb", "gun1": "a057c079bb9134b096d1", "gun2": "2ecba41a4da2b1413675", "toll": "3e7908f9aae05dd99e59"},a:[21, 25, 137, 183, 47, 175, 117, 248, 218, 161, 26, 70, 180, 250, 124, 179, 206, 243, 80, 162, 210, 147, 126, 88, 147, 74, 9, 237, 187, 10, 232, 229],b:[146, 47, 195, 200, 133, 103, 183, 173, 122, 4, 169, 23, 32, 23, 178, 44, 217, 200, 71, 200, 245, 249, 211, 186, 233, 113, 228, 111, 56, 41, 165, 9]};
+const VAULT={n:{"menu": "b2c485a1f7515257e722", "boss_pete": "be3571a96f8e18b8044b", "boss_ma": "ac1f1ddbdf0149e8d66e", "boss_iron": "11b9187a24ce2143c9d2", "boss_under": "c8bf61ca23cc1ae7ac13", "boss_snake": "a26dc9357e939be2ac4d", "boss_banker": "de770a7fd09676186c37", "boss_vesper": "db2f62e78c08d58235ac", "boss_bicah": "34310f8947d6116b8841", "amb1": "4af8f70dc8c118e3bbe8", "amb2": "5b300d695260f005b043", "amb3": "1751dd3347f62bc4e847", "amb4": "1229c3cfbb22c7f4e4c0", "amb5": "c3f613a225625a513a1f", "amb6": "8e20f5612df92f388407", "amb7": "41af0f2bc944c4d2b2d0", "amb8": "f0d4d1a841aa40f851b9", "gun0": "68dc3ec56e64993c37fb", "gun1": "a057c079bb9134b096d1", "gun2": "2ecba41a4da2b1413675", "chipt": "34d9f8d5a63d96c29e59", "chipd3": "fd94bfb601d17fc2ebfa", "chipd2": "9b475cb280df6e884fce", "chipd1": "0cfcad71ac27f0287802", "chipd0": "72eba37664dd2e9ce989", "toll": "3e7908f9aae05dd99e59"},a:[21, 25, 137, 183, 47, 175, 117, 248, 218, 161, 26, 70, 180, 250, 124, 179, 206, 243, 80, 162, 210, 147, 126, 88, 147, 74, 9, 237, 187, 10, 232, 229],b:[146, 47, 195, 200, 133, 103, 183, 173, 122, 4, 169, 23, 32, 23, 178, 44, 217, 200, 71, 200, 245, 249, 211, 186, 233, 113, 228, 111, 56, 41, 165, 9]};
 
 /* ================= audio: recorded-style score, rain, real foley ================= */
 const SND={ctx:null,buf:{},decoding:false,want:false,loops:[],holdMenu:true};
-const SFX_GAIN={toll:1,card:.5,chip:.55,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
+const SFX_GAIN={toll:1,card:.5,chip:.62,chips:.72,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
 // a boss can bring their own song to their table; it replaces the room piano there
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
@@ -2612,13 +2612,15 @@ function sfx(type,delay=0,pitch=1){
   if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;
   let key=type;
-  if(type==='chip') key='chip'+Math.floor(Math.random()*5);
+  // real chips on felt: four set-downs for bets, one heavy throw for big pushes and payouts
+  if(type==='chip'){key='chipd'+Math.floor(Math.random()*4); if(!SND.buf[key]) key='chip'+Math.floor(Math.random()*5)}
+  else if(type==='chips'){key=SND.buf.chipt?'chipt':'chip'+Math.floor(Math.random()*5)}
   else if(type==='card') key='card'+Math.floor(Math.random()*4);
   else if(type==='gun') key='gun'+Math.floor(Math.random()*3);
   const b=SND.buf[key]; if(!b) return;
   const s=c.createBufferSource(); s.buffer=b;
   let rate=pitch;
-  if(type==='chip'||type==='card') rate*=0.95+Math.random()*0.1;
+  if(type==='chip'||type==='card') rate*=0.96+Math.random()*0.08;
   if(type==='tick') rate=0.85+(pitch-1)*0.35;
   s.playbackRate.value=rate;
   const g=c.createGain(); g.gain.value=(SFX_GAIN[type]||.5)*(type==='chip'||type==='card'?0.85+Math.random()*0.3:1);
@@ -3328,7 +3330,7 @@ function doAct(i,type,to){
   const put=applyAction(i,type,to);
   step();
   if(put>0){
-    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx('chip');
+    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip');
     if(p.allIn){const c=centerOfSeat(i); if(c) stampAt(c[0],c[1],'All in','#d8341f',p.isHuman?34:26); sfx('stamp',80); shake(false)}
   }
 }
@@ -3347,7 +3349,7 @@ function handEnd(res){
   render();
   const me=human(), potEl=$('potrow');
   res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(10,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt)));
-  if(res.winners.length) sfx('chip',60);
+  if(res.winners.length) sfx('chips',60);
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
   ev.kos.forEach((i,k)=>{const c=where[i]; if(c) later(()=>{stampAt(c[0],c[1],'Busted','#d8341f',G.players[i].bossDef?42:28); sfx('stamp'); shake(!!G.players[i].bossDef)},500+k*250)});
@@ -3358,7 +3360,7 @@ function handEnd(res){
       sfx('gun'); flash(true); shake(true);
       if(c){stampAt(c[0],c[1],'Shot Dead','#d8341f',34);
         const ghost=document.createElement('div'); ghost.style.cssText=`position:absolute;left:${c[0]}%;top:${c[1]}%;width:2px;height:2px`; $('fx').appendChild(ghost);
-        later(()=>{fly(ghost,bEl,10,700,chipCls(rv.amt)); sfx('chip',150); setTimeout(()=>ghost.remove(),1200)},500)}
+        later(()=>{fly(ghost,bEl,10,700,chipCls(rv.amt)); sfx('chips',150); setTimeout(()=>ghost.remove(),1200)},500)}
       say(ev.bossLine.text);
     },1300);
   } else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);

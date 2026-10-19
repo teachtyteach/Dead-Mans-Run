@@ -1,6 +1,6 @@
 /* ================= audio: recorded-style score, rain, real foley ================= */
 const SND={ctx:null,buf:{},decoding:false,want:false,loops:[],holdMenu:true};
-const SFX_GAIN={toll:1,card:.5,chip:.55,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
+const SFX_GAIN={toll:1,card:.5,chip:.62,chips:.72,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
 // a boss can bring their own song to their table; it replaces the room piano there
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
@@ -67,13 +67,15 @@ function sfx(type,delay=0,pitch=1){
   if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;
   let key=type;
-  if(type==='chip') key='chip'+Math.floor(Math.random()*5);
+  // real chips on felt: four set-downs for bets, one heavy throw for big pushes and payouts
+  if(type==='chip'){key='chipd'+Math.floor(Math.random()*4); if(!SND.buf[key]) key='chip'+Math.floor(Math.random()*5)}
+  else if(type==='chips'){key=SND.buf.chipt?'chipt':'chip'+Math.floor(Math.random()*5)}
   else if(type==='card') key='card'+Math.floor(Math.random()*4);
   else if(type==='gun') key='gun'+Math.floor(Math.random()*3);
   const b=SND.buf[key]; if(!b) return;
   const s=c.createBufferSource(); s.buffer=b;
   let rate=pitch;
-  if(type==='chip'||type==='card') rate*=0.95+Math.random()*0.1;
+  if(type==='chip'||type==='card') rate*=0.96+Math.random()*0.08;
   if(type==='tick') rate=0.85+(pitch-1)*0.35;
   s.playbackRate.value=rate;
   const g=c.createGain(); g.gain.value=(SFX_GAIN[type]||.5)*(type==='chip'||type==='card'?0.85+Math.random()*0.3:1);

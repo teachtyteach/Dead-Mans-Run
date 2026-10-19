@@ -1,5 +1,5 @@
 // Offline support: everything the game needs is cached on first visit, so it runs with no connection afterwards.
-const CACHE='dmr-v33';
+const CACHE='dmr-v34';
 const CORE=[
 "./",
 "index.html",
@@ -33,6 +33,11 @@ const CORE=[
 "audio/v/1751dd3347f62bc4e847.mp3",
 "audio/v/2ecba41a4da2b1413675.mp3",
 "audio/v/3e7908f9aae05dd99e59.mp3",
+"audio/v/34d9f8d5a63d96c29e59.mp3",
+"audio/v/fd94bfb601d17fc2ebfa.mp3",
+"audio/v/9b475cb280df6e884fce.mp3",
+"audio/v/0cfcad71ac27f0287802.mp3",
+"audio/v/72eba37664dd2e9ce989.mp3",
 "audio/v/34310f8947d6116b8841.mp3",
 "audio/v/41af0f2bc944c4d2b2d0.mp3",
 "audio/v/4af8f70dc8c118e3bbe8.mp3",
