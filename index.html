@@ -2550,8 +2550,9 @@ function musicLevel(){
   if(SND.hush){[SND.menu,SND.mus,SND.bossBus,SND.amb].forEach(n=>{if(!n) return; n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(0,c.currentTime+.12)}); return}
   const tg=(n,v)=>{n.cancelScheduledValues(c.currentTime); n.setValueAtTime(n.value,c.currentTime); n.linearRampToValueAtTime(v,c.currentTime+1.5)};
   tg(SND.musF.frequency,menu?9000:(SALOON_MIX[SND.saloon]||3000)); tg(SND.wet.gain,menu?.12:.7); tg(SND.dry.gain,menu?1:.55);
-  const bt=!menu&&BOSS_TRACKS[SND.saloon]&&SND.buf[BOSS_TRACKS[SND.saloon].key]?BOSS_TRACKS[SND.saloon]:null;
-  [[SND.menu,menu?0.5:0],[SND.mus,menu||bt?0:0.16],[SND.bossBus,bt?bt.vol:0],[SND.amb,menu?0:(bt?0.3:0.42)]].forEach(([n,v])=>{n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(v,c.currentTime+1.5)});
+  // music only at the table; the store, trail and events get the saloon's ambience alone
+  const bt=game&&BOSS_TRACKS[SND.saloon]&&SND.buf[BOSS_TRACKS[SND.saloon].key]?BOSS_TRACKS[SND.saloon]:null;
+  [[SND.menu,menu?0.5:0],[SND.mus,!game||bt?0:0.16],[SND.bossBus,bt?bt.vol:0],[SND.amb,menu?0:(bt?0.3:0.42)]].forEach(([n,v])=>{n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(v,c.currentTime+1.5)});
 }
 // the whole world goes quiet: music, ambience and every sound but the bell
 function hush(on){SND.hush=!!on; musicLevel()}
@@ -2603,9 +2604,10 @@ function startMusic(){
     if(!SND.scene||SND.scene==='sTitle'){const m=SND.menu.gain; m.cancelScheduledValues(0); m.value=0.5; m.setValueAtTime(0.5,c.currentTime)}
   }
   if(SND.buf.piano&&!SND.loops.some(l=>l.key==='piano')) loopTrack('piano',MUSIC_PERIOD,SND.mus,0);
-  const bt=BOSS_TRACKS[SND.saloon];
-  SND.loops.filter(l=>/^boss_/.test(l.key)&&(!bt||l.key!==bt.key)).forEach(l=>stopLoop(l,2));
-  if(bt&&SND.buf[bt.key]&&!SND.loops.some(l=>l.key===bt.key)) loopTrack(bt.key,bt.period,SND.bossBus,bt.fade||0);
+  // the boss's song starts from the top when you sit down, and stops when you leave the table
+  const bt=BOSS_TRACKS[SND.saloon], atTable=SND.scene==='sGame';
+  SND.loops.filter(l=>/^boss_/.test(l.key)&&(!atTable||!bt||l.key!==bt.key)).forEach(l=>stopLoop(l,2));
+  if(atTable&&bt&&SND.buf[bt.key]&&!SND.loops.some(l=>l.key===bt.key)) loopTrack(bt.key,bt.period,SND.bossBus,bt.fade||0);
   const g=SND.music.gain; g.cancelScheduledValues(0); g.value=1; g.setValueAtTime(1,c.currentTime);
 }
 function stopMusic(){
@@ -2643,7 +2645,8 @@ const SCREENS=['sTitle','sChapter','sShop','sEvent','sGame','sEnd'];
 function show(id){
   setScene(id);
   if(id!=='sGame') heartbeat(false);
-  SND.scene=id; musicLevel();
+  const was=SND.scene; SND.scene=id; musicLevel();
+  if((id==='sGame')!==(was==='sGame')&&SND.ctx&&SND.want&&meta.music) startMusic();
   document.documentElement.classList.toggle('locked',id!=='sTitle');
   SCREENS.forEach(s=>{const el=$(s), on=s===id;
     if(on&&el.hidden){el.hidden=false; el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter')}

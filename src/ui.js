@@ -8,7 +8,8 @@ const SCREENS=['sTitle','sChapter','sShop','sEvent','sGame','sEnd'];
 function show(id){
   setScene(id);
   if(id!=='sGame') heartbeat(false);
-  SND.scene=id; musicLevel();
+  const was=SND.scene; SND.scene=id; musicLevel();
+  if((id==='sGame')!==(was==='sGame')&&SND.ctx&&SND.want&&meta.music) startMusic();
   document.documentElement.classList.toggle('locked',id!=='sTitle');
   SCREENS.forEach(s=>{const el=$(s), on=s===id;
     if(on&&el.hidden){el.hidden=false; el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter')}
