@@ -628,6 +628,7 @@ function handEnd(res){
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
   if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
+  else if(G.outcome==='lose'&&!TUT){loseRun(); return}
   else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Busted','#d8341f',40); sfx('stamp')},400)}
   else if(meWon){sfx('win',250); if(res.pot>=G.bb*8){flash(); shake(false); burst(seatEl(0,'.plate'),30)}}
   procChain(ev.bonus||[],where[0]||[50,85],1500);
@@ -785,7 +786,22 @@ function tableWon(){
   R.level++;
   openShop('shop',`You busted <b>${bd.name}</b>. Bounty <b>${G.bounty}g</b>${G.koGold?`, knockouts <b>${G.koGold}g</b>`:''}.${extra}${unlockMsg}`);
 }
-function runOver(){TOKEN++; meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); endRun(false)}
+// losing: one bell, the world drains and goes silent, then back to the main menu
+function loseRun(){
+  const sg=$('sGame'); hush(true); heartbeat(false); sfx('toll',60);
+  let v=$('lossVeil'); if(!v){v=document.createElement('div'); v.id='lossVeil'; v.className='lv'; document.body.appendChild(v)}
+  v.innerHTML=`<div class="lv-stamp">Busted</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>`;
+  v.classList.remove('on','black'); v.hidden=false; void v.offsetWidth; v.classList.add('on');
+  sg.classList.add('lost'); R.phase='over'; sset(RUN_KEY,null);
+  let gone=false; const go=()=>{if(gone) return; gone=true; leaveLost()};
+  setTimeout(()=>{v.onclick=go},1800);
+  later(go,5200);
+}
+function leaveLost(){
+  const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
+  if(v&&!v.hidden){v.onclick=null; v.classList.add('black'); setTimeout(fin,950)} else fin();
+}
+function runOver(toMenu){TOKEN++; meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); if(toMenu){hush(false); renderTitle(); return} endRun(false)}
 const NP_ADS=[
   ['Dr. Hatch\'s Tonic','Cures tilt, bad beats &amp; the shakes. Sold at every saloon.','25 cents'],
   ['Wanted: Bicah Mell','For crimes against honest card players.','$5,000 reward'],
@@ -1057,7 +1073,7 @@ function renderControls(){
   if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='done'){
     if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is busted.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
-    if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('raise','Read the Gazette','nextBtn'); $('nextBtn').onclick=runOver; return}
+    if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('dark','Main menu','nextBtn'); $('nextBtn').onclick=leaveLost; return}
     const auto=me.folded&&!me.winner;
     st.innerHTML=me.winner?`<b>You ${me.result.toLowerCase().replace(/^wins\b/,'win').replace(/^splits\b/,'split')}</b>`:(auto?'<span class="dots">Next hand deals in a moment</span>':(me.handName?`You had ${me.handName}`:'Hand over'));
     ac2.innerHTML=one('gold','Deal next hand','nextBtn'); $('nextBtn').onclick=newHand;

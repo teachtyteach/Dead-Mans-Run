@@ -1,6 +1,6 @@
 /* ================= audio: recorded-style score, rain, real foley ================= */
 const SND={ctx:null,buf:{},decoding:false,want:false,loops:[],holdMenu:true};
-const SFX_GAIN={card:.5,chip:.55,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
+const SFX_GAIN={toll:1,card:.5,chip:.55,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
 // a boss can bring their own song to their table; it replaces the room piano there
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
@@ -64,6 +64,7 @@ async function decodeAll(){
 }
 function sfx(type,delay=0,pitch=1){
   if(!meta.sound||!SND.ctx) return;
+  if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;
   let key=type;
   if(type==='chip') key='chip'+Math.floor(Math.random()*5);
@@ -96,11 +97,14 @@ function loopTrack(key,period,bus,fade,startAt){
 function musicLevel(){
   if(!SND.ctx) return; ambEvents(); const c=SND.ctx, game=SND.scene==='sGame';
   const menu=!SND.scene||SND.scene==='sTitle';
+  if(SND.hush){[SND.menu,SND.mus,SND.bossBus,SND.amb].forEach(n=>{if(!n) return; n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(0,c.currentTime+.12)}); return}
   const tg=(n,v)=>{n.cancelScheduledValues(c.currentTime); n.setValueAtTime(n.value,c.currentTime); n.linearRampToValueAtTime(v,c.currentTime+1.5)};
   tg(SND.musF.frequency,menu?9000:(SALOON_MIX[SND.saloon]||3000)); tg(SND.wet.gain,menu?.12:.7); tg(SND.dry.gain,menu?1:.55);
   const bt=!menu&&BOSS_TRACKS[SND.saloon]&&SND.buf[BOSS_TRACKS[SND.saloon].key]?BOSS_TRACKS[SND.saloon]:null;
   [[SND.menu,menu?0.5:0],[SND.mus,menu||bt?0:0.16],[SND.bossBus,bt?bt.vol:0],[SND.amb,menu?0:(bt?0.3:0.42)]].forEach(([n,v])=>{n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(v,c.currentTime+1.5)});
 }
+// the whole world goes quiet: music, ambience and every sound but the bell
+function hush(on){SND.hush=!!on; musicLevel()}
 function ambKey(){return 'amb'+(SND.saloon||5)}
 // one-shot world sounds, scheduled at random per saloon so the loop never feels like a loop
 const AMB_EVENTS={};
@@ -116,7 +120,7 @@ const AMB_EVENTS_OLD={
 };
 function ambEvents(){
   clearTimeout(SND.evT); SND.evT=null; (SND.evTs||[]).forEach(clearTimeout); SND.evTs=[];
-  const menu=!SND.scene||SND.scene==='sTitle'; if(menu||!meta.music||!SND.ctx) return;
+  const menu=!SND.scene||SND.scene==='sTitle'; if(menu||SND.hush||!meta.music||!SND.ctx) return;
   (AMB_EVENTS[SND.saloon]||[]).forEach(([keys,lo,hi,vol])=>{
     const go=()=>{
       const k='ev_'+keys[Math.floor(Math.random()*keys.length)], b=SND.buf[k];

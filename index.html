@@ -1152,6 +1152,24 @@ html.tall .bo-ghost{bottom:11%}
 .poster.stamped .psplat{animation:boSplat .32s cubic-bezier(.2,1.5,.4,1) forwards}
 .poster.stamped .pframe svg{filter:grayscale(.45) sepia(.3) contrast(1.08);transition:filter .6s}
 
+/* ================= busted: the bell tolls, the world drains, silence ================= */
+.lv{position:fixed;inset:0;z-index:140;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;cursor:pointer;-webkit-tap-highlight-color:transparent;isolation:isolate}
+html.tall .lv{bottom:auto;height:var(--appH)}
+.lv[hidden]{display:none}
+.lv::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 50% 46%,rgba(30,10,6,.25),rgba(0,0,0,.88) 75%);
+  -webkit-backdrop-filter:grayscale(1) brightness(.55) contrast(1.1);backdrop-filter:grayscale(1) brightness(.55) contrast(1.1);opacity:0;transition:opacity 2.8s cubic-bezier(.2,.6,.3,1)}
+.lv.on::before{opacity:1}
+.lv::after{content:"";position:absolute;inset:0;z-index:3;background:#000;opacity:0;pointer-events:none;transition:opacity .9s ease}
+.lv.black::after{opacity:1}
+.lv-stamp{font-family:var(--f-poster);font-size:clamp(58px,19vw,150px);line-height:1;color:#c3261a;border:clamp(5px,1.6vw,10px) double #c3261a;border-radius:14px;padding:.06em .32em .14em;
+  rotate:-11deg;scale:3.2;opacity:0;-webkit-mask:var(--wear2) 0 0/260px;mask:var(--wear2) 0 0/260px;filter:drop-shadow(0 0 30px rgba(195,38,26,.35))}
+.lv.on .lv-stamp{animation:lvStamp .3s .06s cubic-bezier(.3,1.6,.5,1) forwards,lvFade 3.4s 1.2s ease forwards}
+@keyframes lvStamp{to{scale:1;opacity:.96}}
+@keyframes lvFade{to{opacity:.55;filter:drop-shadow(0 0 0 transparent)}}
+.lv-sub{font-family:var(--f-label);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:clamp(11px,3vw,14px);color:#d8c8a8;opacity:0;transition:opacity 1.4s 1.1s ease}
+.lv.on .lv-sub{opacity:.75}
+@media (prefers-reduced-motion:reduce){.lv.on .lv-stamp{animation:none;scale:1;opacity:.9}}
+
 </style>
 </head>
 <body>
@@ -1383,7 +1401,7 @@ html.tall .bo-ghost{bottom:11%}
   </div>
 </div>
 
-<script>window.__DMR_SND_KEYS=["amb1", "amb2", "amb3", "amb4", "amb5", "amb6", "amb7", "amb8", "bigwin", "boss", "boss_banker", "boss_bicah", "boss_iron", "boss_ma", "boss_pete", "boss_snake", "boss_under", "boss_vesper", "card0", "card1", "card2", "card3", "chip0", "chip1", "chip2", "chip3", "chip4", "door", "gun0", "gun1", "gun2", "heart", "lose", "menu", "paid", "pen", "piano", "stamp", "tick", "whoosh", "win"];</script>
+<script>window.__DMR_SND_KEYS=["amb1", "amb2", "amb3", "amb4", "amb5", "amb6", "amb7", "amb8", "bigwin", "boss", "boss_banker", "boss_bicah", "boss_iron", "boss_ma", "boss_pete", "boss_snake", "boss_under", "boss_vesper", "card0", "card1", "card2", "card3", "chip0", "chip1", "chip2", "chip3", "chip4", "door", "gun0", "gun1", "gun2", "heart", "lose", "menu", "paid", "pen", "piano", "stamp", "tick", "toll", "whoosh", "win"];</script>
 <script>
 (function(){
 const SUITS=['♠︎','♥︎','♦︎','♣︎'];
@@ -2428,11 +2446,11 @@ function portraitFor(p,frame){
 }
 
 // Licensed recordings are stored encrypted (AES-256-GCM) under hashed names; decrypted in memory only.
-const VAULT={n:{"menu": "b2c485a1f7515257e722", "boss_pete": "be3571a96f8e18b8044b", "boss_ma": "ac1f1ddbdf0149e8d66e", "boss_iron": "11b9187a24ce2143c9d2", "boss_under": "c8bf61ca23cc1ae7ac13", "boss_snake": "a26dc9357e939be2ac4d", "boss_banker": "de770a7fd09676186c37", "boss_vesper": "db2f62e78c08d58235ac", "boss_bicah": "34310f8947d6116b8841", "amb1": "4af8f70dc8c118e3bbe8", "amb2": "5b300d695260f005b043", "amb3": "1751dd3347f62bc4e847", "amb4": "1229c3cfbb22c7f4e4c0", "amb5": "c3f613a225625a513a1f", "amb6": "8e20f5612df92f388407", "amb7": "41af0f2bc944c4d2b2d0", "amb8": "f0d4d1a841aa40f851b9", "gun0": "68dc3ec56e64993c37fb", "gun1": "a057c079bb9134b096d1", "gun2": "2ecba41a4da2b1413675"},a:[21, 25, 137, 183, 47, 175, 117, 248, 218, 161, 26, 70, 180, 250, 124, 179, 206, 243, 80, 162, 210, 147, 126, 88, 147, 74, 9, 237, 187, 10, 232, 229],b:[146, 47, 195, 200, 133, 103, 183, 173, 122, 4, 169, 23, 32, 23, 178, 44, 217, 200, 71, 200, 245, 249, 211, 186, 233, 113, 228, 111, 56, 41, 165, 9]};
+const VAULT={n:{"menu": "b2c485a1f7515257e722", "boss_pete": "be3571a96f8e18b8044b", "boss_ma": "ac1f1ddbdf0149e8d66e", "boss_iron": "11b9187a24ce2143c9d2", "boss_under": "c8bf61ca23cc1ae7ac13", "boss_snake": "a26dc9357e939be2ac4d", "boss_banker": "de770a7fd09676186c37", "boss_vesper": "db2f62e78c08d58235ac", "boss_bicah": "34310f8947d6116b8841", "amb1": "4af8f70dc8c118e3bbe8", "amb2": "5b300d695260f005b043", "amb3": "1751dd3347f62bc4e847", "amb4": "1229c3cfbb22c7f4e4c0", "amb5": "c3f613a225625a513a1f", "amb6": "8e20f5612df92f388407", "amb7": "41af0f2bc944c4d2b2d0", "amb8": "f0d4d1a841aa40f851b9", "gun0": "68dc3ec56e64993c37fb", "gun1": "a057c079bb9134b096d1", "gun2": "2ecba41a4da2b1413675", "toll": "3e7908f9aae05dd99e59"},a:[21, 25, 137, 183, 47, 175, 117, 248, 218, 161, 26, 70, 180, 250, 124, 179, 206, 243, 80, 162, 210, 147, 126, 88, 147, 74, 9, 237, 187, 10, 232, 229],b:[146, 47, 195, 200, 133, 103, 183, 173, 122, 4, 169, 23, 32, 23, 178, 44, 217, 200, 71, 200, 245, 249, 211, 186, 233, 113, 228, 111, 56, 41, 165, 9]};
 
 /* ================= audio: recorded-style score, rain, real foley ================= */
 const SND={ctx:null,buf:{},decoding:false,want:false,loops:[],holdMenu:true};
-const SFX_GAIN={card:.5,chip:.55,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
+const SFX_GAIN={toll:1,card:.5,chip:.55,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
 // a boss can bring their own song to their table; it replaces the room piano there
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
@@ -2496,6 +2514,7 @@ async function decodeAll(){
 }
 function sfx(type,delay=0,pitch=1){
   if(!meta.sound||!SND.ctx) return;
+  if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;
   let key=type;
   if(type==='chip') key='chip'+Math.floor(Math.random()*5);
@@ -2528,11 +2547,14 @@ function loopTrack(key,period,bus,fade,startAt){
 function musicLevel(){
   if(!SND.ctx) return; ambEvents(); const c=SND.ctx, game=SND.scene==='sGame';
   const menu=!SND.scene||SND.scene==='sTitle';
+  if(SND.hush){[SND.menu,SND.mus,SND.bossBus,SND.amb].forEach(n=>{if(!n) return; n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(0,c.currentTime+.12)}); return}
   const tg=(n,v)=>{n.cancelScheduledValues(c.currentTime); n.setValueAtTime(n.value,c.currentTime); n.linearRampToValueAtTime(v,c.currentTime+1.5)};
   tg(SND.musF.frequency,menu?9000:(SALOON_MIX[SND.saloon]||3000)); tg(SND.wet.gain,menu?.12:.7); tg(SND.dry.gain,menu?1:.55);
   const bt=!menu&&BOSS_TRACKS[SND.saloon]&&SND.buf[BOSS_TRACKS[SND.saloon].key]?BOSS_TRACKS[SND.saloon]:null;
   [[SND.menu,menu?0.5:0],[SND.mus,menu||bt?0:0.16],[SND.bossBus,bt?bt.vol:0],[SND.amb,menu?0:(bt?0.3:0.42)]].forEach(([n,v])=>{n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(v,c.currentTime+1.5)});
 }
+// the whole world goes quiet: music, ambience and every sound but the bell
+function hush(on){SND.hush=!!on; musicLevel()}
 function ambKey(){return 'amb'+(SND.saloon||5)}
 // one-shot world sounds, scheduled at random per saloon so the loop never feels like a loop
 const AMB_EVENTS={};
@@ -2548,7 +2570,7 @@ const AMB_EVENTS_OLD={
 };
 function ambEvents(){
   clearTimeout(SND.evT); SND.evT=null; (SND.evTs||[]).forEach(clearTimeout); SND.evTs=[];
-  const menu=!SND.scene||SND.scene==='sTitle'; if(menu||!meta.music||!SND.ctx) return;
+  const menu=!SND.scene||SND.scene==='sTitle'; if(menu||SND.hush||!meta.music||!SND.ctx) return;
   (AMB_EVENTS[SND.saloon]||[]).forEach(([keys,lo,hi,vol])=>{
     const go=()=>{
       const k='ev_'+keys[Math.floor(Math.random()*keys.length)], b=SND.buf[k];
@@ -3241,6 +3263,7 @@ function handEnd(res){
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
   if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
+  else if(G.outcome==='lose'&&!TUT){loseRun(); return}
   else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Busted','#d8341f',40); sfx('stamp')},400)}
   else if(meWon){sfx('win',250); if(res.pot>=G.bb*8){flash(); shake(false); burst(seatEl(0,'.plate'),30)}}
   procChain(ev.bonus||[],where[0]||[50,85],1500);
@@ -3398,7 +3421,22 @@ function tableWon(){
   R.level++;
   openShop('shop',`You busted <b>${bd.name}</b>. Bounty <b>${G.bounty}g</b>${G.koGold?`, knockouts <b>${G.koGold}g</b>`:''}.${extra}${unlockMsg}`);
 }
-function runOver(){TOKEN++; meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); endRun(false)}
+// losing: one bell, the world drains and goes silent, then back to the main menu
+function loseRun(){
+  const sg=$('sGame'); hush(true); heartbeat(false); sfx('toll',60);
+  let v=$('lossVeil'); if(!v){v=document.createElement('div'); v.id='lossVeil'; v.className='lv'; document.body.appendChild(v)}
+  v.innerHTML=`<div class="lv-stamp">Busted</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>`;
+  v.classList.remove('on','black'); v.hidden=false; void v.offsetWidth; v.classList.add('on');
+  sg.classList.add('lost'); R.phase='over'; sset(RUN_KEY,null);
+  let gone=false; const go=()=>{if(gone) return; gone=true; leaveLost()};
+  setTimeout(()=>{v.onclick=go},1800);
+  later(go,5200);
+}
+function leaveLost(){
+  const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
+  if(v&&!v.hidden){v.onclick=null; v.classList.add('black'); setTimeout(fin,950)} else fin();
+}
+function runOver(toMenu){TOKEN++; meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); if(toMenu){hush(false); renderTitle(); return} endRun(false)}
 const NP_ADS=[
   ['Dr. Hatch\'s Tonic','Cures tilt, bad beats &amp; the shakes. Sold at every saloon.','25 cents'],
   ['Wanted: Bicah Mell','For crimes against honest card players.','$5,000 reward'],
@@ -3670,7 +3708,7 @@ function renderControls(){
   if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='done'){
     if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is busted.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
-    if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('raise','Read the Gazette','nextBtn'); $('nextBtn').onclick=runOver; return}
+    if(G.outcome==='lose'){st.innerHTML='<b>You\'re busted.</b> The run ends here.'; ac2.innerHTML=one('dark','Main menu','nextBtn'); $('nextBtn').onclick=leaveLost; return}
     const auto=me.folded&&!me.winner;
     st.innerHTML=me.winner?`<b>You ${me.result.toLowerCase().replace(/^wins\b/,'win').replace(/^splits\b/,'split')}</b>`:(auto?'<span class="dots">Next hand deals in a moment</span>':(me.handName?`You had ${me.handName}`:'Hand over'));
     ac2.innerHTML=one('gold','Deal next hand','nextBtn'); $('nextBtn').onclick=newHand;
