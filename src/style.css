@@ -1242,3 +1242,10 @@ html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavio
 .actrow.rise .btn:nth-child(2){animation-delay:.04s}.actrow.rise .btn:nth-child(3){animation-delay:.08s}
 @keyframes btnRise{from{transform:translateY(10px);opacity:.3}}
 @media (prefers-reduced-motion:reduce){.actrow.rise .btn{animation:none}}
+/* stamps: solid ink on a paper slip so they read over any plate or felt */
+.stampfx{mix-blend-mode:normal!important;-webkit-mask-image:none!important;mask-image:none!important;background:rgba(246,233,204,.96);border:3px double currentColor!important;filter:brightness(.82) saturate(1.3);border-radius:8px;padding:.08em .4em .14em!important;
+  text-shadow:none!important;box-shadow:0 6px 18px rgba(0,0,0,.6);letter-spacing:.03em;opacity:1}
+.lv-stamp{-webkit-mask:none;mask:none;background:rgba(246,233,204,.94);color:#b81f12;border-color:#b81f12;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+.lv.on .lv-stamp{animation:lvStamp .3s .06s cubic-bezier(.3,1.6,.5,1) forwards}
+.lv-sub{opacity:0;color:#f0e4c8;font-size:clamp(13px,3.6vw,16px)}
+.lv.on .lv-sub{opacity:.95}
