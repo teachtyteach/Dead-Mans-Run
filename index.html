@@ -3312,7 +3312,7 @@ function inkSplat(seed,cls='splat'){
   const r=rng(seed+'#ink'); let d='';
   const f=v=>+v.toFixed(1);
   for(let i=0;i<38;i++){
-    const a=r()*Math.PI*2, k=.72+r()*.5, x=100+Math.cos(a)*80*k, y=60+Math.sin(a)*24*k, q=.7+r()*r()*5.2;
+    const a=r()*Math.PI*2, k=.72+r()*.5, x=100+Math.cos(a)*82*k, y=60+Math.sin(a)*(Math.sin(a)<0?9:26)*k, q=.7+r()*r()*5.2;
     d+=`<circle cx="${f(x)}" cy="${f(y)}" r="${f(q)}"/>`;
     if(r()<.4){const l=5+r()*12, cx=x+Math.cos(a)*l*.55, cy=y+Math.sin(a)*l*.55; d+=`<ellipse cx="${f(cx)}" cy="${f(cy)}" rx="${f(l*.5)}" ry="${f(Math.max(.5,q*.4))}" transform="rotate(${Math.round(a*180/Math.PI)} ${f(cx)} ${f(cy)})"/>`}
   }
@@ -3323,7 +3323,7 @@ function bossOut(next){
   let ov=$('bossOut'); if(!ov){ov=document.createElement('div'); ov.id='bossOut'; document.body.appendChild(ov)}
   ov.className='bo side-'+th.side+' bo-'+bd.key;
   ov.style.cssText=`--acc:${th.acc};--deep:${th.deep};--ang:${th.ang}deg`;
-  const hr=rng(bd.key+'#holes'), holes=[[16+hr()*16,9+hr()*7],[70+hr()*16,30+hr()*18],[22+hr()*26,52+hr()*12]];
+  const hr=rng(bd.key+'#holes'), holes=[[12+hr()*12,8+hr()*6],[93+hr()*2.5,30+hr()*22],[5+hr()*2.5,58+hr()*16]];
   const letters=bd.name.split(' ').map((w,wi,arr)=>`<span class="bo-word">${[...w].map((ch,ci)=>`<span class="bo-l" style="--d:${(arr.slice(0,wi).join('').length+ci)*45}ms">${ch}</span>`).join('')}</span>`).join(' ');
   ov.innerHTML=`<div class="bo-rays"></div>
     <div class="bo-ghost">${bd.title.toUpperCase()}</div>
