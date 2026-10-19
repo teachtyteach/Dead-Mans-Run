@@ -1036,7 +1036,7 @@ function render(){
     if(p.bet>0){
       let bx=x+(50-x)*0.5, by=y+(48-y)*0.5;
       if(y<35){bx=x+(x<=50?16:-16); by=y+15}
-      if(p.isHuman){bx=x+20; by=y-15}
+      if(p.isHuman){bx=50; by=y-(narrow?25:24)}
       const landed=BETV[i]!==p.bet; BETV[i]=p.bet;
       html+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
     }

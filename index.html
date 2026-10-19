@@ -1200,6 +1200,14 @@ html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavio
 .tarot.deed .art .glyph{color:#1d2c0e;text-shadow:0 1px 0 rgba(245,252,230,.7),0 0 16px rgba(235,248,210,.9)}
 /* the rider knows what they just did: only results and all-ins get a pill under your plate */
 .seat.human .pill:not(.win):not(.allin){display:none}
+/* card wells pressed into the felt */
+.slot{border:0;background:radial-gradient(ellipse at 50% 40%,rgba(255,240,200,.05),rgba(0,0,0,.2));box-shadow:inset 0 2px 7px rgba(0,0,0,.5),inset 0 0 0 1px rgba(244,203,92,.13),0 1px 0 rgba(255,240,200,.05)}
+/* tricks and one-shot charms: a slim tray of tokens, not a floating button */
+.swaprow{gap:6px;padding:3px 0 1px}
+.swaprow .chipbtn{min-height:34px;padding:4px 12px 4px 5px;font-size:11px;letter-spacing:.1em;display:inline-flex;align-items:center;gap:7px;box-shadow:0 2px 0 rgba(0,0,0,.5),inset 0 1px 0 rgba(255,240,200,.08)}
+.swaprow .chipbtn:not(.trickbtn){padding:4px 12px}
+.swaprow .trickbtn .ti{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:13px;color:#0f2a36;
+  background:radial-gradient(circle at 40% 35%,#e6f5fb,#7fb2c6 70%,#4f7f94);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 1px 2px rgba(0,0,0,.5)}
 
 </style>
 </head>
@@ -3706,7 +3714,7 @@ function render(){
     if(p.bet>0){
       let bx=x+(50-x)*0.5, by=y+(48-y)*0.5;
       if(y<35){bx=x+(x<=50?16:-16); by=y+15}
-      if(p.isHuman){bx=x+20; by=y-15}
+      if(p.isHuman){bx=50; by=y-(narrow?25:24)}
       const landed=BETV[i]!==p.bet; BETV[i]=p.bet;
       html+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
     }
