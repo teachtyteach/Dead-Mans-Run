@@ -2552,10 +2552,12 @@ function musicLevel(){
   tg(SND.musF.frequency,menu?9000:(SALOON_MIX[SND.saloon]||3000)); tg(SND.wet.gain,menu?.12:.7); tg(SND.dry.gain,menu?1:.55);
   // music only at the table; the store, trail and events get the saloon's ambience alone
   const bt=game&&BOSS_TRACKS[SND.saloon]&&SND.buf[BOSS_TRACKS[SND.saloon].key]?BOSS_TRACKS[SND.saloon]:null;
-  [[SND.menu,menu?0.5:0],[SND.mus,!game||bt?0:0.16],[SND.bossBus,bt?bt.vol:0],[SND.amb,menu?0:(bt?0.3:0.42)]].forEach(([n,v])=>{n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(v,c.currentTime+1.5)});
+  [[SND.menu,menu?0.5:0],[SND.mus,!game||bt?0:0.16],[SND.bossBus,bt?bt.vol:0],[SND.amb,menu?0:(bt?0.3:0.42)*(AMB_TRIM[SND.saloon]||1)]].forEach(([n,v])=>{n.gain.cancelScheduledValues(c.currentTime); n.gain.setValueAtTime(n.gain.value,c.currentTime); n.gain.linearRampToValueAtTime(v,c.currentTime+1.5)});
 }
 // the whole world goes quiet: music, ambience and every sound but the bell
 function hush(on){SND.hush=!!on; musicLevel()}
+// per-saloon ambience trim (Ma's room recording runs hot)
+const AMB_TRIM={2:.5};
 function ambKey(){return 'amb'+(SND.saloon||5)}
 // one-shot world sounds, scheduled at random per saloon so the loop never feels like a loop
 const AMB_EVENTS={};
