@@ -1342,3 +1342,13 @@ html.duo-v #sShop .deal-grid .tarot .art{height:clamp(46px,8svh,90px)}
 html.duo-v #sShop #shopActions{margin-top:auto!important;padding-bottom:8px}
 html.duo-v #sEvent .dtop{justify-content:flex-end}
 html.duo-v #sEvent .dbot{justify-content:flex-start;padding-top:18px}
+/* small, tall outer screens: let the table grow taller so seats aren't stacked on each other */
+@media (max-width:400px) and (orientation:portrait){
+  .table.narrow{height:min(100cqh,calc(100cqw * 1.62))}
+  .table.narrow.crowded{--seatw:clamp(64px,20cqw,82px)}
+  .table.narrow.crowded .medal{width:clamp(22px,7cqw,28px)}
+  .table.narrow.crowded .nm,.table.narrow.crowded .chips{font-size:clamp(10.5px,3.3cqw,12.5px)}
+  .table.narrow.crowded .pill{font-size:10.5px;padding:2px 7px}
+  #sGame .console{padding:9px;gap:7px}
+  #sGame .actrow .btn{min-height:48px;font-size:14px}
+}
