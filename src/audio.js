@@ -91,7 +91,11 @@ function sfx(type,delay=0,pitch=1){
   s.playbackRate.value=rate;
   const g=c.createGain(); g.gain.value=(SFX_GAIN[type]||.5)*(type==='chip'||type==='card'?0.85+Math.random()*0.3:1);
   s.connect(g).connect(SND.fx); s.start(c.currentTime+delay/1000);
+  const rec={s,g,at:performance.now()}; (SND.live=SND.live||new Set()).add(rec); s.onended=()=>SND.live.delete(rec);
 }
+// skip a screen, and its sounds go with it: fade out every effect that was set off more than `olderThan` ms ago
+function sfxCut(olderThan=120){if(!SND.ctx||!SND.live) return; const c=SND.ctx, now=performance.now();
+  SND.live.forEach(r=>{if(now-r.at<olderThan) return; try{r.g.gain.cancelScheduledValues(c.currentTime); r.g.gain.setValueAtTime(r.g.gain.value,c.currentTime); r.g.gain.linearRampToValueAtTime(0,c.currentTime+.12); r.s.stop(c.currentTime+.14)}catch(e){} SND.live.delete(r)})}
 function loopTrack(key,period,bus,fade,startAt){
   const c=SND.ctx, b=SND.buf[key]; if(!b) return;
   const sub=c.createGain(); sub.gain.value=1; sub.connect(bus); bus=sub;
@@ -182,7 +186,7 @@ function stopMusic(){
   setTimeout(()=>L.forEach(l=>{clearInterval(l.timer); l.srcs.forEach(s=>{try{s.stop()}catch(e){}})}),900);
 }
 // browsers only allow sound after a tap; any first interaction unlocks it. Files start loading right away.
-['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(SND.dead&&SND.ctx){reviveAudio(); return} const c=ac(); if(c){if(c.state!=='running') c.resume(); if(meta.music) startMusic()}},{passive:true}));
+['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if((SND.dead||SND.kick)&&SND.ctx){SND.kick=false; reviveAudio(); return} const c=ac(); if(c){if(c.state!=='running') c.resume(); if(meta.music) startMusic()}},{passive:true}));
 setTimeout(()=>{try{ac()}catch(e){}},0);
 // iOS can leave Web Audio dead after the phone sleeps or a call interrupts it: a "running" context that makes no sound.
 // So after any real absence we rebuild the audio graph from scratch (decoded sounds are kept) and pick the music back up.
@@ -199,11 +203,12 @@ let AWAY=0;
 function awayBack(){
   if(!SND.ctx) return;
   if(document.hidden){AWAY=Date.now(); try{SND.ctx.suspend()}catch(e){} return}
-  if(SND.dead||(AWAY&&Date.now()-AWAY>1500)) reviveAudio(); else SND.ctx.resume().catch(()=>{});
+  if(SND.dead||(AWAY&&Date.now()-AWAY>1500)){reviveAudio(); SND.kick=true} else SND.ctx.resume().catch(()=>{});
   AWAY=0;
 }
 document.addEventListener('visibilitychange',awayBack);
-addEventListener('pageshow',e=>{if(e.persisted&&SND.ctx) reviveAudio()});
+addEventListener('pageshow',e=>{if(e.persisted&&SND.ctx){reviveAudio(); SND.kick=true}});
+document.addEventListener('resume',()=>{if(SND.ctx){reviveAudio(); SND.kick=true}});
 addEventListener('focus',()=>{if(SND.ctx&&SND.ctx.state!=='running'&&!document.hidden) SND.ctx.resume().catch(()=>{SND.dead=true})});
 
 // the intro starts the menu song itself, from its first beat, and returns the AudioContext time of that beat

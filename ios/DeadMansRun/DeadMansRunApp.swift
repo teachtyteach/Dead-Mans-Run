@@ -14,6 +14,13 @@ struct DeadMansRunApp: App {
         try? AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
         try? AVAudioSession.sharedInstance().setActive(true)
         CloudSaves.shared.start()
+        // coming back from the background (or a call): hand the audio session back to the game
+        for name in [UIApplication.willEnterForegroundNotification, UIApplication.didBecomeActiveNotification, AVAudioSession.interruptionNotification] {
+            NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { _ in
+                try? AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
+                try? AVAudioSession.sharedInstance().setActive(true)
+            }
+        }
     }
     var body: some Scene {
         WindowGroup {

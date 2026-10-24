@@ -7,6 +7,7 @@ function later(fn,ms){const t=TOKEN; const run=()=>{if(t!==TOKEN) return; if(PAU
 function speedMul(){return meta.speed==='fast'?0.45:1}
 const SCREENS=['sTitle','sChapter','sShop','sEvent','sGame','sEnd'];
 function show(id){
+  if(document.documentElement.dataset.screen!==id) sfxCut();
   document.documentElement.dataset.screen=id;
   setScene(id);
   if(id!=='sGame') heartbeat(false);
@@ -330,16 +331,13 @@ function trailMap(level,victory){
 function hingeV(){try{const p=document.createElement('div');p.style.cssText='position:fixed;top:env(viewport-segment-bottom 0 0,-1px);visibility:hidden';document.body.appendChild(p);const b=parseFloat(getComputedStyle(p).top);p.style.top='env(viewport-segment-top 0 1,-1px)';const t=parseFloat(getComputedStyle(p).top);p.remove();return b>0&&t>=b?{w:t-b}:null}catch(e){return null}}
 function hingeW(){const v=hingeV(); if(v&&innerHeight>innerWidth) return v; try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
 function duoAuto(){if(hingeW()) return true;
-  // the inner screen of a foldable is nearly square; a normal iPhone is about twice as tall as it is wide.
-  // Judge by the whole screen, not the window, so it still works half-folded like an L.
+  // The Duo's inner screen gives the game a big, nearly square window (about 950 × 670).
+  // The outer screen and ordinary iPhones are much smaller, and iOS reports the small outer screen in screen.*,
+  // so judge by the window itself: big and squarish means unfolded; anything else gets the phone layout.
   const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
-  const sw=screen.width, sh=screen.height, sr=Math.min(sw,sh)/Math.max(sw,sh), smax=Math.max(sw,sh);
-  const vr=Math.min(innerWidth,innerHeight)/Math.max(innerWidth,innerHeight);
-  // split screen: the game only has part of the display, so the fold isn't inside our window: use the phone layout
-  if(splitView()) return false;
-  return touch&&smax<=1100&&(sr>=.6||vr>=.6)}
-function splitView(){const sw=screen.width, sh=screen.height, L=Math.max(sw,sh), S=Math.min(sw,sh), wl=Math.max(innerWidth,innerHeight), ws=Math.min(innerWidth,innerHeight);
-  return wl<L*.72||ws<S*.62}
+  const wl=Math.max(innerWidth,innerHeight), ws=Math.min(innerWidth,innerHeight);
+  return touch&&wl>=800&&wl<=1150&&ws>=560&&ws/wl>=.6}
+function splitView(){const wl=Math.max(innerWidth,innerHeight), ws=Math.min(innerWidth,innerHeight); return matchMedia('(pointer:coarse)').matches&&wl>=560&&(wl<800||ws<560)&&ws>=360&&ws/wl>=.5&&wl<=1150&&false}
 function duoOn(){const m=meta.duo||'auto'; return (m==='on'&&!splitView())||(m==='auto'&&duoAuto())}
 function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; const land=innerWidth>innerHeight;
   // Duo postures: landscape (flat or folded like an L) puts the crease across the middle, so the game splits there —
@@ -372,7 +370,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 65 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 66 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -468,7 +466,7 @@ function playStory(then){
   const art=a=>a==='bosses'?`<div class="st-row">${BOSSES.slice(0,7).map(b=>`<span class="medal">${bossPortrait(b)}</span>`).join('')}</div>`
     :a==='bicah'?`<span class="medal st-big">${bossPortrait(BOSSES[7])}</span>`:a==='rider'?`<span class="medal st-big">${portrait('You the rider',HUMAN_LOOK)}</span>`
     :a==='town'?`<div class="st-town">${TOWNS.map((n,k)=>`<i style="--k:${k}">${n}</i>`).join('')}</div>`:`<div class="st-logo">Dead Man's Run</div>`;
-  const end=()=>{if(gone) return; gone=true; clearTimeout(t); meta.seenStory=true; saveMeta(); v.classList.add('out'); setTimeout(()=>{v.hidden=true; v.classList.remove('out')},700); then&&then()};
+  const end=()=>{if(gone) return; gone=true; clearTimeout(t); sfxCut(0); meta.seenStory=true; saveMeta(); v.classList.add('out'); setTimeout(()=>{v.hidden=true; v.classList.remove('out')},700); then&&then()};
   const next=()=>{clearTimeout(t); i++; if(i>=STORY.length){end(); return} const sc=STORY[i];
     v.innerHTML=`<div class="st-grain"></div><div class="st-card" style="animation-delay:.05s"><div class="st-frame">${art(sc.art)}${sc.k?`<div class="st-k">${sc.k}</div>`:''}<p class="st-t">${sc.t}</p></div></div>
       <button class="st-skip">Skip</button><div class="st-dots">${STORY.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
@@ -1009,7 +1007,7 @@ function bossOut(next){
   later(()=>{const el=$('boTag'); if(!el) return; let i=0; const t=th.epi; const step=()=>{if(!el.isConnected) return; el.textContent=t.slice(0,++i); if(i%2===0) sfx('tick',0,1.6); if(i<t.length) setTimeout(step,28)}; step()},1150);
   later(()=>{sfx('stamp'); shake(false); ov.classList.add('stamped')},1900);
   later(()=>sfx('bigwin'),2150);
-  let done=false; const close=()=>{if(done) return; done=true; ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped','shot'); sg.classList.remove('frozen')},420); next()};
+  let done=false; const close=()=>{if(done) return; done=true; TOKEN++; sfxCut(0); ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped','shot'); sg.classList.remove('frozen')},420); next()};
   setTimeout(()=>{ov.onclick=close},1200);
 }
 function showPaid(){
@@ -1070,6 +1068,7 @@ function loseRun(){
   later(go,nn?7200:5200);
 }
 function leaveLost(){
+  sfxCut(0);
   const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
   if(v&&!v.hidden){v.onclick=null; v.classList.add('black'); setTimeout(fin,950)} else fin();
 }
@@ -1183,7 +1182,7 @@ function nemAmbush(n,then){
     <div class="nem-facts"><span>Kills<b>${n.kills}×</b></span><span>Last seen<b>${n.last}</b></span><span>Bounty<b>${25*n.rank}g</b></span></div>
     <p class="nem-note">${n.rank>=4?'Plays like a veteran. Never tilts. Deep pockets.':n.rank>=3?'Sharp now. Never tilts.':n.rank>=2?'Tougher than last time. Never tilts.':'Take ' + (n.fem?'her':'him') + ' out yourself to collect.'}</p>
     <button class="btn raise big" id="nemGo">Settle it</button></div>`;
-  v.hidden=false; sfx('boss'); haptic('heavy'); setTimeout(()=>sfx('stamp'),500);
+  v.hidden=false; sfx('boss'); haptic('heavy'); sfx('stamp',500);
   $('nemGo').onclick=()=>{ac(); v.hidden=true; sfx('card'); then&&then()};
 }
 function nemPanel(){
@@ -1340,7 +1339,7 @@ function render(){
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman;
-    const tier=tilted?'On tilt':p.steel?'Sharpened':p.spooked?'Rattled':p.drawn?'Out-drawn':p.calm?'Easy':p.sticky?'Dug in':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
+    const tier=tilted?'Rattled':p.steel?'Sharpened':p.spooked?'Shaken':p.drawn?'Out-drawn':p.calm?'Easy':p.sticky?'Dug in':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
     const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
           <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}${p.nem&&!tilted?' nemtag':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
@@ -1419,7 +1418,7 @@ function speak(kind,line,ti){
   if(kind==='draw'){later(()=>standoff(ti),900); return}
   later(()=>{if(!talkOpen()&&kind!=='bluff'&&G.players[ti].folded) return;
     const r=resolveTalk(kind,ti), c=centerOfSeat(ti);
-    if(r.all){G.players.forEach((q,i)=>{if(!q.isHuman&&q.inHand&&!q.folded){const cc=centerOfSeat(i); if(cc&&(q.spooked||q.sticky)) stampAt(cc[0],cc[1]-8,q.spooked?'Rattled':'Dug in',q.spooked?'#f4cb5c':'#d8341f',18)}})}
+    if(r.all){G.players.forEach((q,i)=>{if(!q.isHuman&&q.inHand&&!q.folded){const cc=centerOfSeat(i); if(cc&&(q.spooked||q.sticky)) stampAt(cc[0],cc[1]-8,q.spooked?'Shaken':'Dug in',q.spooked?'#f4cb5c':'#d8341f',18)}})}
     else if(c) stampAt(c[0],c[1]-8,r.tag,r.ok?'#f4cb5c':'#d8341f',r.tag.length>9?18:22);
     seatSay(ti,r.reply); sfx(r.ok?'stamp':'boss'); haptic(r.ok?'success':'warning'); render()},1100);
 }

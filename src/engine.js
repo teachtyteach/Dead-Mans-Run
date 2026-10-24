@@ -386,7 +386,7 @@ function finishHand(res){
   G.players.forEach(p=>{
     if(p.isHuman||p.bossDef||p.out) return;
     if(p.tilt>0) p.tilt--;
-    if(p.inHand&&!p.winner&&!(p.nem&&p.nemRank>=2)&&p.total>=Math.max(G.bb*4,p.startChips*0.35)){p.tilt=3; log(`${p.name} is on tilt.`)}
+    if(p.inHand&&!p.winner&&!(p.nem&&p.nemRank>=2)&&p.total>=Math.max(G.bb*4,p.startChips*0.35)){p.tilt=3; log(`${p.name} is rattled.`)}
   });
   if(bp&&!bp.out&&bp.inHand&&!ev.bossLine){
     if(bp.winner&&res.pot>=G.bb*4&&Math.random()<0.6) ev.bossLine={i:G.players.indexOf(bp),text:pickLine(bp.bossDef.lines.win)};
@@ -422,7 +422,7 @@ function finishHand(res){
 
 /* ================= table talk: say something, and sometimes it costs you ================= */
 const TALK={
-  needle:{name:'Needle',hint:'May put them on tilt. May wake them up.',base:.52,lines:["That all you got?","My grandma bets bigger than that.","You play cards like you ride. Badly.","Sweatin' already?","I've seen scarecrows with more nerve."]},
+  needle:{name:'Needle',hint:'May rattle them. May wake them up.',base:.52,lines:["That all you got?","My grandma bets bigger than that.","You play cards like you ride. Badly.","Sweatin' already?","I've seen scarecrows with more nerve."]},
   bluff:{name:'Bluff talk',hint:'May scare them off your bets. May dig them in.',base:.5,lines:["I'd fold if I were you.","Go on. Call. I dare you.","This one's already mine.","You don't want to see what I'm holding.","Smart money's on the door."]},
   friendly:{name:'Tip your hat',hint:'May cool them down. Little risk, little reward.',base:.78,lines:["Good hand, partner.","Easy now. Just a friendly game.","Tip of the hat to you.","Drinks are on me after this one."]},
   dig:{name:'Personal',hint:'Cuts deep. Tilts the boss for hands, or makes them hunt you.',base:.48,lines:[]},
@@ -439,14 +439,14 @@ function talkOdds(kind,p){let o=TALK[kind].base+(lvl('tongue')>=2?.25:has('tongu
 function resolveTalk(kind,i){
   const p=G.players[i], ok=Math.random()<talkOdds(kind,p), pick=a=>a[Math.floor(Math.random()*a.length)];
   G.talks++; if(kind==='draw') G.drawUsed=true;
-  if(kind==='needle'){ if(ok){p.tilt=Math.max(p.tilt,3); log(`${p.name} takes the bait. On tilt.`); return {ok,tag:'On tilt',reply:pick(TALK_BACK.tilt)}}
+  if(kind==='needle'){ if(ok){p.tilt=Math.max(p.tilt,3); log(`${p.name} takes the bait. Rattled.`); return {ok,tag:'Rattled',reply:pick(TALK_BACK.tilt)}}
     p.steel=true; p.tilt=0; log(`${p.name} shrugs it off and sharpens up.`); return {ok,tag:'Sharpened',reply:pick(TALK_BACK.fire)}}
   if(kind==='bluff'){ const tgts=G.players.filter(q=>!q.isHuman&&q.inHand&&!q.folded); let n=0;
     tgts.forEach(q=>{if(Math.random()<talkOdds('bluff',q)){q.spooked=true; n++} else if(Math.random()<.45) q.sticky=true});
-    log(n?`Your talk rattles ${n} at the table.`:'Nobody buys it.'); return {ok:n>0,tag:n?'Rattled':'Dug in',reply:n?pick(TALK_BACK.spook):pick(TALK_BACK.fire),all:true}}
+    log(n?`Your talk rattles ${n} at the table.`:'Nobody buys it.'); return {ok:n>0,tag:n?'Shaken':'Dug in',reply:n?pick(TALK_BACK.spook):pick(TALK_BACK.fire),all:true}}
   if(kind==='friendly'){ if(ok){p.calm=true; p.tilt=0; log(`${p.name} eases off.`); return {ok,tag:'Easy',reply:pick(TALK_BACK.calm)}}
     return {ok,tag:'Unmoved',reply:'Save it.'}}
-  if(kind==='dig'){ if(ok){p.tilt=Math.max(p.tilt,5); log(`${p.name} is rattled for good.`); return {ok,tag:'On tilt',reply:pick(TALK_BACK.dig)}}
+  if(kind==='dig'){ if(ok){p.tilt=Math.max(p.tilt,5); log(`${p.name} is rattled for hands.`); return {ok,tag:'Rattled',reply:pick(TALK_BACK.dig)}}
     p.steel=true; p.sticky=false; log(`${p.name} is coming for you now.`); return {ok,tag:'Hunting you',reply:(p.bossDef&&p.bossDef.lines.raise?pick(p.bossDef.lines.raise):pick(TALK_BACK.fire))}}
   return {ok:false};
 }
