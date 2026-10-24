@@ -1190,8 +1190,8 @@ html.tall .lv{bottom:auto;height:var(--appH)}
 .table.crowded:not(.narrow){--seatw:clamp(92px,15cqw,150px)}
 /* store: centred when it fits, scrolls from the top when the screen is too short (never overlaps) */
 html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain}
-#sShop>:first-child{margin-top:auto}
-#sShop>:last-child{margin-bottom:auto}
+#sShop>.dtop>:first-child{margin-top:auto}
+#sShop>.dbot>:last-child{margin-bottom:auto}
 #sShop .deal-grid{flex:none}
 /* tricks and deeds get their own art so their icons read: tricks in gunmetal blue, deeds in ledger green */
 .tarot.trick .art{background:radial-gradient(circle at 50% 56%,rgba(225,242,248,.92) 0 15%,rgba(170,215,232,.35) 30%,transparent 58%),repeating-conic-gradient(from 0deg at 50% 56%,#9cc6d6 0 5deg,#4f7f94 5deg 10deg);box-shadow:inset 0 0 0 2px #cfeaf3,inset 0 0 0 4px rgba(10,30,40,.5),inset 0 0 30px rgba(10,30,45,.55)}
@@ -1298,6 +1298,73 @@ html.duo-v #sGame .hud{align-self:start}
 html.duo-v #sGame .console{align-self:end;width:min(100%,560px);justify-self:center}
 html.duo-v #sGame .actrow .btn{font-size:15px;min-height:56px}
 
+/* ===================== DUO EDITION (held upright, fold across the middle) =====================
+   Top screen: the table and the other players. Bottom screen: you — your hand, your bet, your controls —
+   like a handheld. --hinge is the gap kept clear around the fold. */
+html.duo-v{--half:calc((100% - var(--hinge,28px)) / 2)}
+html.duo-v .duohand{display:flex}
+.duohand{display:none}
+/* the game: two screens */
+html.duo-v #sGame{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);row-gap:var(--hinge,28px);column-gap:0}
+html.duo-v #sGame .table-wrap{grid-column:1;grid-row:1;min-height:0}
+html.duo-v #sGame .hud{grid-column:1;grid-row:2;align-self:start;z-index:2}
+html.duo-v #sGame .console{grid-column:1;grid-row:2;align-self:stretch;justify-self:center;width:min(100%,600px);margin-top:58px;
+  display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:10px 12px 12px;min-height:0;overflow:hidden}
+html.duo-v #sGame .bossbar{display:none!important}
+html.duo-v #sGame .ribbon{position:absolute;left:4px;right:4px;top:52px;height:20px}
+html.duo-v #sGame .ribbon .rib-q{display:flex}
+html.duo-v .table{width:min(100cqw,calc(100cqh * 1.62))!important;aspect-ratio:16/10!important;height:auto!important}
+/* your hand on the bottom screen: big cards, your plate, your bet */
+.duohand{position:relative;flex:1 1 auto;min-height:0;align-items:center;justify-content:center;gap:14px}
+html.duo-v .duohand .seat.duo-me{position:relative;left:auto;top:auto;transform:none;width:auto;flex-direction:column;gap:8px;--cw:clamp(52px,13vw,76px)}
+html.duo-v .duohand .seat.duo-me .cards{display:flex;justify-content:center}
+html.duo-v .duohand .seat.duo-me .plate{margin:0}
+html.duo-v .duohand .seat.duo-me .medal{width:40px}
+html.duo-v .duohand .seat.duo-me .nm,html.duo-v .duohand .seat.duo-me .chips{font-size:15px}
+html.duo-v .duohand .seat.duo-me .handname{font-size:13px}
+html.duo-v .duohand .bet.duo-bet{position:relative;left:auto;top:auto;transform:none;align-self:center;font-size:14px;padding:6px 10px 6px 6px;border-radius:999px;background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(244,203,92,.25)}
+html.duo-v #sGame .console .coach{padding:6px 10px;font-size:13.5px;margin:0}
+html.duo-v #sGame .status{font-size:15px}
+html.duo-v #sGame .actrow .btn{min-height:56px;font-size:15.5px;min-width:0;padding:8px 4px}
+html.duo-v #sGame .console .raisesheet{left:0;right:0;bottom:0;max-width:none;border-radius:16px}
+/* the boss's line sits right under the HUD on the bottom screen, the table stays clean */
+/* modals and sheets open on the bottom screen, like a touch screen */
+html.duo-v .modal{place-items:end center;padding-top:calc(50% + var(--hinge,28px) / 2)}
+html.duo-v .modal .sheet{max-height:calc(50svh - var(--hinge,28px) / 2 - 20px);overflow:auto}
+html.duo-v #poster{place-items:start center;padding-top:12px}
+html.duo-v #poster .poster{max-height:calc(50svh - var(--hinge,28px) / 2 - 16px);overflow:hidden;gap:2px;padding:12px 18px}
+html.duo-v #poster .pframe{width:clamp(70px,13svh,150px)}
+html.duo-v #poster .w1{font-size:clamp(28px,5svh,48px)}
+html.duo-v #poster .ptwist,html.duo-v #poster .pline,html.duo-v #poster .ptitle{display:none}
+/* boss send-off: poster on the top screen, the name band on the bottom */
+html.duo-v .bo-portrait{width:min(56vw,30svh);top:4%}
+html.duo-v .bo-stripe{top:calc(50% + var(--hinge,28px) / 2 + 4px)}
+html.duo-v .bo-band{top:calc(50% + var(--hinge,28px) / 2 + 18px);height:22%}
+html.duo-v .bo-text{top:calc(50% + var(--hinge,28px) / 2 + 28px)}
+html.duo-v .bo-ghost{bottom:6%;font-size:clamp(40px,12vw,110px)}
+/* loss: the stamp lands on the top screen, the line underneath on the bottom */
+html.duo-v .lv{justify-content:flex-start;padding-top:calc(25% - 60px)}
+html.duo-v .lv-sub{position:absolute;top:calc(50% + var(--hinge,28px) / 2 + 40px);left:0;right:0;text-align:center}
+/* chapter card on the top screen */
+html.duo-v #sChapter{justify-content:flex-start;padding-top:4%}
+
+/* two-screen wrappers: invisible normally, exact halves on the Duo */
+.dtop,.dbot{display:contents}
+html.duo-v #sTitle,html.duo-v #sShop,html.duo-v #sEvent{display:flex;flex-direction:column;justify-content:flex-start;gap:var(--hinge,28px);height:calc(100svh - 20px);min-height:0;overflow:hidden}
+html.duo-v .dtop,html.duo-v .dbot{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;flex:0 0 calc((100% - var(--hinge,28px)) / 2);min-height:0;overflow:hidden}
+html.duo-v .dtop{justify-content:center}
+html.duo-v .dbot{justify-content:flex-start;padding-top:6px}
+html.duo-v #sTitle .hero{padding-top:0}
+html.duo-v #sTitle .dbot{justify-content:center;gap:14px}
+html.duo-v #sTitle .heat{display:none}
+html.duo-v #sShop .dtop{justify-content:flex-end;padding-bottom:4px}
+html.duo-v #sShop .dbot>*{margin:0!important}
+html.duo-v #sShop .deal-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none;min-height:0!important;flex:0 1 auto;overflow:visible}
+html.duo-v #sShop .deal-grid .tarot .art{height:clamp(46px,8svh,90px)}
+html.duo-v #sShop #shopActions{margin-top:auto!important;padding-bottom:8px}
+html.duo-v #sEvent .dtop{justify-content:flex-end}
+html.duo-v #sEvent .dbot{justify-content:flex-start;padding-top:18px}
+
 </style>
 </head>
 <body>
@@ -1319,18 +1386,18 @@ html.duo-v #sGame .actrow .btn{font-size:15px;min-height:56px}
 
 <!-- ============ TITLE ============ -->
 <section class="screen center" id="sTitle">
-  <div class="hero">
+  <div class="dtop"><div class="hero">
     <div class="fan" id="fan"></div>
     <div class="est">A Hold'em Roguelite</div>
     <h1 class="brass">Dead Man's Run</h1>
     <p class="sub">Eight saloons. Eight bosses. Take them all down.</p>
-  </div>
-  <div class="row" id="titleActions"></div>
+  </div></div>
+  <div class="dbot"><div class="row" id="titleActions"></div>
   <div class="heat" id="heatPick"></div>
   <div class="statline" id="statLine"></div>
   <div class="title-links">
     <button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
-  </div>
+  </div></div>
 </section>
 
 <!-- ============ TUTORIAL OVERLAY ============ -->
@@ -1382,26 +1449,26 @@ html.duo-v #sGame .actrow .btn{font-size:15px;min-height:56px}
 
 <!-- ============ GENERAL STORE ============ -->
 <section class="screen center" id="sShop" hidden>
-  <div class="sign"><div class="est" id="shopEst">General Store</div><h2 class="brass" id="shopTitle">General Store</h2></div>
+  <div class="dtop"><div class="sign"><div class="est" id="shopEst">General Store</div><h2 class="brass" id="shopTitle">General Store</h2></div>
   <div class="mapwrap" id="shopMap"></div>
-  <div class="banner" id="shopBanner"></div>
-  <div class="section-label" id="offerLabel">Charms for sale</div>
+  <div class="banner" id="shopBanner"></div></div>
+  <div class="dbot"><div class="section-label" id="offerLabel">Charms for sale</div>
   <div class="tabs shoptabs" id="shopTabs" role="tablist" hidden></div>
   <div class="deal-grid"><div class="dc" id="offers"></div><div class="dc" id="curseOffer"></div></div>
-  <div class="row" id="shopActions"></div>
+  <div class="row" id="shopActions"></div></div>
 </section>
 
 <!-- ============ TELEGRAM ============ -->
 <section class="screen center" id="sEvent" hidden>
-  <div class="telegram">
+  <div class="dtop"><div class="telegram">
     <div class="tg-head"><b>Territorial Telegraph Co.</b><span id="tgStamp">RECD 4:12 PM</span></div>
     <div class="tg-title" id="evTitle">Telegram</div>
     <div class="tg-body" id="evText"></div>
     <div class="tg-choices" id="evChoices"></div>
     <div class="tg-result" id="evResult" hidden></div>
-  </div>
-  <div class="goldline">Gold <b id="evGold">0</b></div>
-  <div class="row"><button class="btn gold big" id="evRide" hidden>Ride on</button></div>
+  </div></div>
+  <div class="dbot"><div class="goldline">Gold <b id="evGold">0</b></div>
+  <div class="row"><button class="btn gold big" id="evRide" hidden>Ride on</button></div></div>
 </section>
 
 <!-- ============ TABLE ============ -->
@@ -1447,6 +1514,7 @@ html.duo-v #sGame .actrow .btn{font-size:15px;min-height:56px}
   </div>
 
   <div class="console">
+    <div class="duohand" id="duoHand"></div>
     <div class="status" id="status">Shuffling up…</div>
     <div class="odds" id="odds" hidden></div>
     <div id="actions"></div>
@@ -2926,12 +2994,14 @@ function trailMap(level,victory){
 /* ================= toggles, tips ================= */
 /* iPhone Duo: when the phone is open, the table sits on the left page and your controls on the right,
    so nothing important lands on the fold. Auto uses the fold the browser reports, or a near-square touch screen. */
-function hingeW(){try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
+function hingeV(){try{const p=document.createElement('div');p.style.cssText='position:fixed;top:env(viewport-segment-bottom 0 0,-1px);visibility:hidden';document.body.appendChild(p);const b=parseFloat(getComputedStyle(p).top);p.style.top='env(viewport-segment-top 0 1,-1px)';const t=parseFloat(getComputedStyle(p).top);p.remove();return b>0&&t>=b?{w:t-b}:null}catch(e){return null}}
+function hingeW(){const v=hingeV(); if(v&&innerHeight>innerWidth) return v; try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
 function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return true;
   const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
-  return touch&&r>=.68&&r<=1.47&&m>=540&&m<900}
+  return touch&&r>=.68&&r<=1.47&&m>=540&&m<780}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
+  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 addEventListener('resize',()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles()},150)});
 setTimeout(applyDuo,0);
 function renderToggles(){
@@ -3379,7 +3449,7 @@ function doAct(i,type,to){
   }
 }
 function collectThen(fn){
-  const bets=[...document.querySelectorAll('#seats .bet')];
+  const bets=[...document.querySelectorAll('#seats .bet,#duoHand .bet')];
   if(!bets.length||REDUCED){fn(); return}
   const pot=$('potrow');
   bets.forEach(b=>{fly(b,pot,2,340,'g'); b.style.visibility='hidden'});
@@ -3647,7 +3717,7 @@ function procChain(list,at,start){
 
 function seatEl(i,sel){return document.querySelector(`.seat[data-i="${i}"] ${sel||''}`)}
 function relCenter(el){const t=$('table').getBoundingClientRect(), r=el.getBoundingClientRect(); return [r.left+r.width/2-t.left, r.top+r.height/2-t.top]}
-function centerOfSeat(i){const el=seatEl(i,'.plate'); if(!el) return null; const t=$('table').getBoundingClientRect(); const [x,y]=relCenter(el); return [x/t.width*100,y/t.height*100]}
+function centerOfSeat(i){if(i===0&&isDuoV()) return [50,90]; const el=seatEl(i,'.plate'); if(!el) return null; const t=$('table').getBoundingClientRect(); const [x,y]=relCenter(el); return [x/t.width*100,y/t.height*100]}
 function fly(fromEl,toEl,count,dur,cls){
   if(REDUCED||!fromEl||!toEl) return;
   const [x1,y1]=relCenter(fromEl), [x2,y2]=relCenter(toEl);
@@ -3744,7 +3814,11 @@ const NARROW_SEATS={
   2:[[50,8]],3:[[16,64],[84,64]],4:[[14,66],[50,7],[86,66]],5:[[14,66],[26,8],[74,8],[86,66]],
   6:[[14,66],[17,8],[50,6],[83,8],[86,66]],7:[[14,88],[14,66],[24,8],[76,8],[86,66],[86,88]],8:[[14,88],[14,66],[17,8],[50,6],[83,8],[86,66],[86,88]]
 };
+// Duo upright: the top screen is the table without you; opponents ride the far arc of the oval
+const isDuoV=()=>document.documentElement.classList.contains('duo-v');
+function positionsDuo(N){const out=[[50,112]], k=N-1; for(let j=0;j<k;j++){const a=(k===1?270:150+240*j/(k-1))*Math.PI/180; out.push([50+43*Math.cos(a),50+40*Math.sin(a)])} return out}
 function positions(N,narrow){
+  if(isDuoV()) return positionsDuo(N);
   if(narrow&&NARROW_SEATS[N]) return [[50,88]].concat(NARROW_SEATS[N]);
   const out=[]; for(let i=0;i<N;i++){const a=Math.PI/2+2*Math.PI*i/N; out.push([50+42*Math.cos(a),48+38*Math.sin(a)])} return out;
 }
@@ -3778,7 +3852,7 @@ function render(){
   const ch=$('challenge');
   ch.className='challenge'+(G.challengeDone?' done':''); ch.hidden=true; ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
 
-  const narrow=(innerWidth<640&&innerHeight>innerWidth)||document.documentElement.classList.contains('duo'), N=nP();
+  const duoV=isDuoV(), narrow=!duoV&&((innerWidth<640&&innerHeight>innerWidth)||document.documentElement.classList.contains('duo')), N=nP();
   const tb=$('table'); tb.classList.toggle('narrow',narrow); tb.classList.toggle('crowded',N>=6);
   tb.classList.toggle('showdown',G.street==='done'&&G.winCards.size>0);
   const sg=$('sGame'), live2=G.street!=='done'&&G.street!=='idle';
@@ -3794,11 +3868,11 @@ function render(){
   // seats are kept between renders and only the parts that changed are rebuilt, so portraits, glows,
   // deals and number rolls never restart mid-animation
   const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
-  let bets='';
+  let bets='', duoBet='';
   G.players.forEach((p,i)=>{
     if(p.out) return;
     live.add(i);
-    const [x,y]=pos[i], fx=(50-x)/100*W, fy=(48-y)/100*H;
+    const me0=duoV&&i===0, [x,y]=pos[i], fx=me0?0:(50-x)/100*W, fy=me0?-H*.75:(48-y)/100*H;
     const cards=(p.hand||[]).map((c,k)=>{
       const anim={fx,fy,delay:(c.order||0)*70};
       if(p.isHuman) return cardHTML(c,!blindfold,(snakeOn&&k===0&&!blindfold)?'watched':'','h'+i,anim);
@@ -3817,12 +3891,12 @@ function render(){
         ${G.dealer===i&&G.street!=='idle'?'<div class="dealer" title="Dealer">D</div>':''}
         ${p.bossDef?`<div class="bossmeter"><i style="width:${Math.max(0,Math.min(100,p.chips/G.bossStart*100))}%"></i></div>`:''}
         ${pill?`<div class="pill ${pcls}"${pillLife(i,pill,!!p.result||pcls==='allin')}>${pill}</div>`:''}`;
-    let m=SM.get(i);
-    if(m&&!m.el.isConnected){SM.delete(i); m=null}
-    if(!m){const el=document.createElement('div'); el.dataset.i=i; el.innerHTML='<div class="cards"></div><div class="plate"><span class="medal"></span><span class="pr"></span></div>'; seatsEl.appendChild(el);
+    let m=SM.get(i); const home=me0?$('duoHand'):seatsEl;
+    if(m&&(!m.el.isConnected||m.el.parentElement!==home)){m.el.remove(); SM.delete(i); m=null}
+    if(!m){const el=document.createElement('div'); el.dataset.i=i; el.innerHTML='<div class="cards"></div><div class="plate"><span class="medal"></span><span class="pr"></span></div>'; home.appendChild(el);
       m={el,cardsEl:el.firstElementChild,medalEl:el.querySelector('.medal'),restEl:el.querySelector('.pr'),cards:null,medal:null,rest:null}; SM.set(i,m)}
-    if(m.el.className!==cls) m.el.className=cls;
-    m.el.style.left=x+'%'; m.el.style.top=y+'%';
+    const cls2=me0?cls+' duo-me':cls; if(m.el.className!==cls2) m.el.className=cls2;
+    if(me0){m.el.style.left=''; m.el.style.top=''} else {m.el.style.left=x+'%'; m.el.style.top=y+'%'}
     const cq=quiet(cards); if(m.cards!==cq){m.cards=cq; m.cardsEl.innerHTML=cards}
     const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier; if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
     const rq=rest.replace(/ style="animation-delay:[^"]*"/g,''); if(m.rest!==rq){m.rest=rq; m.restEl.innerHTML=rest}
@@ -3831,12 +3905,13 @@ function render(){
       if(y<35){bx=x+(x<=50?16:-16); by=y+15}
       if(p.isHuman){bx=50; by=y-(narrow?25:24)}
       const landed=BETV[i]!==p.bet; BETV[i]=p.bet;
-      bets+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
+      if(me0){duoBet=`<div class="bet duo-bet${landed&&!REDUCED?' land':''}" data-i="0">${chipStack(p.bet)}${money(p.bet)}</div>`} else bets+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
     }
   });
   SM.forEach((m,i)=>{if(!live.has(i)){m.el.remove(); SM.delete(i)}});
-  seatsEl.querySelectorAll('.bet').forEach(b=>b.remove());
-  if(bets) seatsEl.insertAdjacentHTML('beforeend',bets);  seatsEl.querySelectorAll('.seat').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
+  document.querySelectorAll('#seats .bet,#duoHand .bet').forEach(b=>b.remove());
+  if(bets) seatsEl.insertAdjacentHTML('beforeend',bets);
+  if(duoBet) $('duoHand').insertAdjacentHTML('beforeend',duoBet);  seatsEl.querySelectorAll('.seat:not(.duo-me)').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
   const tellerOn=has('teller')&&['preflop','flop','turn'].includes(G.street)&&G.deck.length;
   const bparts=[];
   for(let k=0;k<5;k++){

@@ -16,18 +16,18 @@
 
 <!-- ============ TITLE ============ -->
 <section class="screen center" id="sTitle">
-  <div class="hero">
+  <div class="dtop"><div class="hero">
     <div class="fan" id="fan"></div>
     <div class="est">A Hold'em Roguelite</div>
     <h1 class="brass">Dead Man's Run</h1>
     <p class="sub">Eight saloons. Eight bosses. Take them all down.</p>
-  </div>
-  <div class="row" id="titleActions"></div>
+  </div></div>
+  <div class="dbot"><div class="row" id="titleActions"></div>
   <div class="heat" id="heatPick"></div>
   <div class="statline" id="statLine"></div>
   <div class="title-links">
     <button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
-  </div>
+  </div></div>
 </section>
 
 <!-- ============ TUTORIAL OVERLAY ============ -->
@@ -79,26 +79,26 @@
 
 <!-- ============ GENERAL STORE ============ -->
 <section class="screen center" id="sShop" hidden>
-  <div class="sign"><div class="est" id="shopEst">General Store</div><h2 class="brass" id="shopTitle">General Store</h2></div>
+  <div class="dtop"><div class="sign"><div class="est" id="shopEst">General Store</div><h2 class="brass" id="shopTitle">General Store</h2></div>
   <div class="mapwrap" id="shopMap"></div>
-  <div class="banner" id="shopBanner"></div>
-  <div class="section-label" id="offerLabel">Charms for sale</div>
+  <div class="banner" id="shopBanner"></div></div>
+  <div class="dbot"><div class="section-label" id="offerLabel">Charms for sale</div>
   <div class="tabs shoptabs" id="shopTabs" role="tablist" hidden></div>
   <div class="deal-grid"><div class="dc" id="offers"></div><div class="dc" id="curseOffer"></div></div>
-  <div class="row" id="shopActions"></div>
+  <div class="row" id="shopActions"></div></div>
 </section>
 
 <!-- ============ TELEGRAM ============ -->
 <section class="screen center" id="sEvent" hidden>
-  <div class="telegram">
+  <div class="dtop"><div class="telegram">
     <div class="tg-head"><b>Territorial Telegraph Co.</b><span id="tgStamp">RECD 4:12 PM</span></div>
     <div class="tg-title" id="evTitle">Telegram</div>
     <div class="tg-body" id="evText"></div>
     <div class="tg-choices" id="evChoices"></div>
     <div class="tg-result" id="evResult" hidden></div>
-  </div>
-  <div class="goldline">Gold <b id="evGold">0</b></div>
-  <div class="row"><button class="btn gold big" id="evRide" hidden>Ride on</button></div>
+  </div></div>
+  <div class="dbot"><div class="goldline">Gold <b id="evGold">0</b></div>
+  <div class="row"><button class="btn gold big" id="evRide" hidden>Ride on</button></div></div>
 </section>
 
 <!-- ============ TABLE ============ -->
@@ -144,6 +144,7 @@
   </div>
 
   <div class="console">
+    <div class="duohand" id="duoHand"></div>
     <div class="status" id="status">Shuffling up…</div>
     <div class="odds" id="odds" hidden></div>
     <div id="actions"></div>

@@ -1168,8 +1168,8 @@ html.tall .lv{bottom:auto;height:var(--appH)}
 .table.crowded:not(.narrow){--seatw:clamp(92px,15cqw,150px)}
 /* store: centred when it fits, scrolls from the top when the screen is too short (never overlaps) */
 html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavior:contain}
-#sShop>:first-child{margin-top:auto}
-#sShop>:last-child{margin-bottom:auto}
+#sShop>.dtop>:first-child{margin-top:auto}
+#sShop>.dbot>:last-child{margin-bottom:auto}
 #sShop .deal-grid{flex:none}
 /* tricks and deeds get their own art so their icons read: tricks in gunmetal blue, deeds in ledger green */
 .tarot.trick .art{background:radial-gradient(circle at 50% 56%,rgba(225,242,248,.92) 0 15%,rgba(170,215,232,.35) 30%,transparent 58%),repeating-conic-gradient(from 0deg at 50% 56%,#9cc6d6 0 5deg,#4f7f94 5deg 10deg);box-shadow:inset 0 0 0 2px #cfeaf3,inset 0 0 0 4px rgba(10,30,40,.5),inset 0 0 30px rgba(10,30,45,.55)}
@@ -1275,3 +1275,70 @@ html.duo-v #sGame .hud,html.duo-v #sGame .console{grid-column:1;grid-row:2}
 html.duo-v #sGame .hud{align-self:start}
 html.duo-v #sGame .console{align-self:end;width:min(100%,560px);justify-self:center}
 html.duo-v #sGame .actrow .btn{font-size:15px;min-height:56px}
+
+/* ===================== DUO EDITION (held upright, fold across the middle) =====================
+   Top screen: the table and the other players. Bottom screen: you — your hand, your bet, your controls —
+   like a handheld. --hinge is the gap kept clear around the fold. */
+html.duo-v{--half:calc((100% - var(--hinge,28px)) / 2)}
+html.duo-v .duohand{display:flex}
+.duohand{display:none}
+/* the game: two screens */
+html.duo-v #sGame{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);row-gap:var(--hinge,28px);column-gap:0}
+html.duo-v #sGame .table-wrap{grid-column:1;grid-row:1;min-height:0}
+html.duo-v #sGame .hud{grid-column:1;grid-row:2;align-self:start;z-index:2}
+html.duo-v #sGame .console{grid-column:1;grid-row:2;align-self:stretch;justify-self:center;width:min(100%,600px);margin-top:58px;
+  display:flex;flex-direction:column;justify-content:flex-end;gap:8px;padding:10px 12px 12px;min-height:0;overflow:hidden}
+html.duo-v #sGame .bossbar{display:none!important}
+html.duo-v #sGame .ribbon{position:absolute;left:4px;right:4px;top:52px;height:20px}
+html.duo-v #sGame .ribbon .rib-q{display:flex}
+html.duo-v .table{width:min(100cqw,calc(100cqh * 1.62))!important;aspect-ratio:16/10!important;height:auto!important}
+/* your hand on the bottom screen: big cards, your plate, your bet */
+.duohand{position:relative;flex:1 1 auto;min-height:0;align-items:center;justify-content:center;gap:14px}
+html.duo-v .duohand .seat.duo-me{position:relative;left:auto;top:auto;transform:none;width:auto;flex-direction:column;gap:8px;--cw:clamp(52px,13vw,76px)}
+html.duo-v .duohand .seat.duo-me .cards{display:flex;justify-content:center}
+html.duo-v .duohand .seat.duo-me .plate{margin:0}
+html.duo-v .duohand .seat.duo-me .medal{width:40px}
+html.duo-v .duohand .seat.duo-me .nm,html.duo-v .duohand .seat.duo-me .chips{font-size:15px}
+html.duo-v .duohand .seat.duo-me .handname{font-size:13px}
+html.duo-v .duohand .bet.duo-bet{position:relative;left:auto;top:auto;transform:none;align-self:center;font-size:14px;padding:6px 10px 6px 6px;border-radius:999px;background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(244,203,92,.25)}
+html.duo-v #sGame .console .coach{padding:6px 10px;font-size:13.5px;margin:0}
+html.duo-v #sGame .status{font-size:15px}
+html.duo-v #sGame .actrow .btn{min-height:56px;font-size:15.5px;min-width:0;padding:8px 4px}
+html.duo-v #sGame .console .raisesheet{left:0;right:0;bottom:0;max-width:none;border-radius:16px}
+/* the boss's line sits right under the HUD on the bottom screen, the table stays clean */
+/* modals and sheets open on the bottom screen, like a touch screen */
+html.duo-v .modal{place-items:end center;padding-top:calc(50% + var(--hinge,28px) / 2)}
+html.duo-v .modal .sheet{max-height:calc(50svh - var(--hinge,28px) / 2 - 20px);overflow:auto}
+html.duo-v #poster{place-items:start center;padding-top:12px}
+html.duo-v #poster .poster{max-height:calc(50svh - var(--hinge,28px) / 2 - 16px);overflow:hidden;gap:2px;padding:12px 18px}
+html.duo-v #poster .pframe{width:clamp(70px,13svh,150px)}
+html.duo-v #poster .w1{font-size:clamp(28px,5svh,48px)}
+html.duo-v #poster .ptwist,html.duo-v #poster .pline,html.duo-v #poster .ptitle{display:none}
+/* boss send-off: poster on the top screen, the name band on the bottom */
+html.duo-v .bo-portrait{width:min(56vw,30svh);top:4%}
+html.duo-v .bo-stripe{top:calc(50% + var(--hinge,28px) / 2 + 4px)}
+html.duo-v .bo-band{top:calc(50% + var(--hinge,28px) / 2 + 18px);height:22%}
+html.duo-v .bo-text{top:calc(50% + var(--hinge,28px) / 2 + 28px)}
+html.duo-v .bo-ghost{bottom:6%;font-size:clamp(40px,12vw,110px)}
+/* loss: the stamp lands on the top screen, the line underneath on the bottom */
+html.duo-v .lv{justify-content:flex-start;padding-top:calc(25% - 60px)}
+html.duo-v .lv-sub{position:absolute;top:calc(50% + var(--hinge,28px) / 2 + 40px);left:0;right:0;text-align:center}
+/* chapter card on the top screen */
+html.duo-v #sChapter{justify-content:flex-start;padding-top:4%}
+
+/* two-screen wrappers: invisible normally, exact halves on the Duo */
+.dtop,.dbot{display:contents}
+html.duo-v #sTitle,html.duo-v #sShop,html.duo-v #sEvent{display:flex;flex-direction:column;justify-content:flex-start;gap:var(--hinge,28px);height:calc(100svh - 20px);min-height:0;overflow:hidden}
+html.duo-v .dtop,html.duo-v .dbot{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;flex:0 0 calc((100% - var(--hinge,28px)) / 2);min-height:0;overflow:hidden}
+html.duo-v .dtop{justify-content:center}
+html.duo-v .dbot{justify-content:flex-start;padding-top:6px}
+html.duo-v #sTitle .hero{padding-top:0}
+html.duo-v #sTitle .dbot{justify-content:center;gap:14px}
+html.duo-v #sTitle .heat{display:none}
+html.duo-v #sShop .dtop{justify-content:flex-end;padding-bottom:4px}
+html.duo-v #sShop .dbot>*{margin:0!important}
+html.duo-v #sShop .deal-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-width:none;min-height:0!important;flex:0 1 auto;overflow:visible}
+html.duo-v #sShop .deal-grid .tarot .art{height:clamp(46px,8svh,90px)}
+html.duo-v #sShop #shopActions{margin-top:auto!important;padding-bottom:8px}
+html.duo-v #sEvent .dtop{justify-content:flex-end}
+html.duo-v #sEvent .dbot{justify-content:flex-start;padding-top:18px}

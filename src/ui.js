@@ -157,12 +157,14 @@ function trailMap(level,victory){
 /* ================= toggles, tips ================= */
 /* iPhone Duo: when the phone is open, the table sits on the left page and your controls on the right,
    so nothing important lands on the fold. Auto uses the fold the browser reports, or a near-square touch screen. */
-function hingeW(){try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
+function hingeV(){try{const p=document.createElement('div');p.style.cssText='position:fixed;top:env(viewport-segment-bottom 0 0,-1px);visibility:hidden';document.body.appendChild(p);const b=parseFloat(getComputedStyle(p).top);p.style.top='env(viewport-segment-top 0 1,-1px)';const t=parseFloat(getComputedStyle(p).top);p.remove();return b>0&&t>=b?{w:t-b}:null}catch(e){return null}}
+function hingeW(){const v=hingeV(); if(v&&innerHeight>innerWidth) return v; try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
 function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return true;
   const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
-  return touch&&r>=.68&&r<=1.47&&m>=540&&m<900}
+  return touch&&r>=.68&&r<=1.47&&m>=540&&m<780}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
+  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 addEventListener('resize',()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles()},150)});
 setTimeout(applyDuo,0);
 function renderToggles(){
@@ -610,7 +612,7 @@ function doAct(i,type,to){
   }
 }
 function collectThen(fn){
-  const bets=[...document.querySelectorAll('#seats .bet')];
+  const bets=[...document.querySelectorAll('#seats .bet,#duoHand .bet')];
   if(!bets.length||REDUCED){fn(); return}
   const pot=$('potrow');
   bets.forEach(b=>{fly(b,pot,2,340,'g'); b.style.visibility='hidden'});
@@ -878,7 +880,7 @@ function procChain(list,at,start){
 
 function seatEl(i,sel){return document.querySelector(`.seat[data-i="${i}"] ${sel||''}`)}
 function relCenter(el){const t=$('table').getBoundingClientRect(), r=el.getBoundingClientRect(); return [r.left+r.width/2-t.left, r.top+r.height/2-t.top]}
-function centerOfSeat(i){const el=seatEl(i,'.plate'); if(!el) return null; const t=$('table').getBoundingClientRect(); const [x,y]=relCenter(el); return [x/t.width*100,y/t.height*100]}
+function centerOfSeat(i){if(i===0&&isDuoV()) return [50,90]; const el=seatEl(i,'.plate'); if(!el) return null; const t=$('table').getBoundingClientRect(); const [x,y]=relCenter(el); return [x/t.width*100,y/t.height*100]}
 function fly(fromEl,toEl,count,dur,cls){
   if(REDUCED||!fromEl||!toEl) return;
   const [x1,y1]=relCenter(fromEl), [x2,y2]=relCenter(toEl);
@@ -975,7 +977,11 @@ const NARROW_SEATS={
   2:[[50,8]],3:[[16,64],[84,64]],4:[[14,66],[50,7],[86,66]],5:[[14,66],[26,8],[74,8],[86,66]],
   6:[[14,66],[17,8],[50,6],[83,8],[86,66]],7:[[14,88],[14,66],[24,8],[76,8],[86,66],[86,88]],8:[[14,88],[14,66],[17,8],[50,6],[83,8],[86,66],[86,88]]
 };
+// Duo upright: the top screen is the table without you; opponents ride the far arc of the oval
+const isDuoV=()=>document.documentElement.classList.contains('duo-v');
+function positionsDuo(N){const out=[[50,112]], k=N-1; for(let j=0;j<k;j++){const a=(k===1?270:150+240*j/(k-1))*Math.PI/180; out.push([50+43*Math.cos(a),50+40*Math.sin(a)])} return out}
 function positions(N,narrow){
+  if(isDuoV()) return positionsDuo(N);
   if(narrow&&NARROW_SEATS[N]) return [[50,88]].concat(NARROW_SEATS[N]);
   const out=[]; for(let i=0;i<N;i++){const a=Math.PI/2+2*Math.PI*i/N; out.push([50+42*Math.cos(a),48+38*Math.sin(a)])} return out;
 }
@@ -1009,7 +1015,7 @@ function render(){
   const ch=$('challenge');
   ch.className='challenge'+(G.challengeDone?' done':''); ch.hidden=true; ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
 
-  const narrow=(innerWidth<640&&innerHeight>innerWidth)||document.documentElement.classList.contains('duo'), N=nP();
+  const duoV=isDuoV(), narrow=!duoV&&((innerWidth<640&&innerHeight>innerWidth)||document.documentElement.classList.contains('duo')), N=nP();
   const tb=$('table'); tb.classList.toggle('narrow',narrow); tb.classList.toggle('crowded',N>=6);
   tb.classList.toggle('showdown',G.street==='done'&&G.winCards.size>0);
   const sg=$('sGame'), live2=G.street!=='done'&&G.street!=='idle';
@@ -1025,11 +1031,11 @@ function render(){
   // seats are kept between renders and only the parts that changed are rebuilt, so portraits, glows,
   // deals and number rolls never restart mid-animation
   const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
-  let bets='';
+  let bets='', duoBet='';
   G.players.forEach((p,i)=>{
     if(p.out) return;
     live.add(i);
-    const [x,y]=pos[i], fx=(50-x)/100*W, fy=(48-y)/100*H;
+    const me0=duoV&&i===0, [x,y]=pos[i], fx=me0?0:(50-x)/100*W, fy=me0?-H*.75:(48-y)/100*H;
     const cards=(p.hand||[]).map((c,k)=>{
       const anim={fx,fy,delay:(c.order||0)*70};
       if(p.isHuman) return cardHTML(c,!blindfold,(snakeOn&&k===0&&!blindfold)?'watched':'','h'+i,anim);
@@ -1048,12 +1054,12 @@ function render(){
         ${G.dealer===i&&G.street!=='idle'?'<div class="dealer" title="Dealer">D</div>':''}
         ${p.bossDef?`<div class="bossmeter"><i style="width:${Math.max(0,Math.min(100,p.chips/G.bossStart*100))}%"></i></div>`:''}
         ${pill?`<div class="pill ${pcls}"${pillLife(i,pill,!!p.result||pcls==='allin')}>${pill}</div>`:''}`;
-    let m=SM.get(i);
-    if(m&&!m.el.isConnected){SM.delete(i); m=null}
-    if(!m){const el=document.createElement('div'); el.dataset.i=i; el.innerHTML='<div class="cards"></div><div class="plate"><span class="medal"></span><span class="pr"></span></div>'; seatsEl.appendChild(el);
+    let m=SM.get(i); const home=me0?$('duoHand'):seatsEl;
+    if(m&&(!m.el.isConnected||m.el.parentElement!==home)){m.el.remove(); SM.delete(i); m=null}
+    if(!m){const el=document.createElement('div'); el.dataset.i=i; el.innerHTML='<div class="cards"></div><div class="plate"><span class="medal"></span><span class="pr"></span></div>'; home.appendChild(el);
       m={el,cardsEl:el.firstElementChild,medalEl:el.querySelector('.medal'),restEl:el.querySelector('.pr'),cards:null,medal:null,rest:null}; SM.set(i,m)}
-    if(m.el.className!==cls) m.el.className=cls;
-    m.el.style.left=x+'%'; m.el.style.top=y+'%';
+    const cls2=me0?cls+' duo-me':cls; if(m.el.className!==cls2) m.el.className=cls2;
+    if(me0){m.el.style.left=''; m.el.style.top=''} else {m.el.style.left=x+'%'; m.el.style.top=y+'%'}
     const cq=quiet(cards); if(m.cards!==cq){m.cards=cq; m.cardsEl.innerHTML=cards}
     const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier; if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
     const rq=rest.replace(/ style="animation-delay:[^"]*"/g,''); if(m.rest!==rq){m.rest=rq; m.restEl.innerHTML=rest}
@@ -1062,12 +1068,13 @@ function render(){
       if(y<35){bx=x+(x<=50?16:-16); by=y+15}
       if(p.isHuman){bx=50; by=y-(narrow?25:24)}
       const landed=BETV[i]!==p.bet; BETV[i]=p.bet;
-      bets+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
+      if(me0){duoBet=`<div class="bet duo-bet${landed&&!REDUCED?' land':''}" data-i="0">${chipStack(p.bet)}${money(p.bet)}</div>`} else bets+=`<div class="bet${landed&&!REDUCED?' land':''}" data-i="${i}" style="left:${bx}%;top:${by}%">${chipStack(p.bet)}${money(p.bet)}</div>`;
     }
   });
   SM.forEach((m,i)=>{if(!live.has(i)){m.el.remove(); SM.delete(i)}});
-  seatsEl.querySelectorAll('.bet').forEach(b=>b.remove());
-  if(bets) seatsEl.insertAdjacentHTML('beforeend',bets);  seatsEl.querySelectorAll('.seat').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
+  document.querySelectorAll('#seats .bet,#duoHand .bet').forEach(b=>b.remove());
+  if(bets) seatsEl.insertAdjacentHTML('beforeend',bets);
+  if(duoBet) $('duoHand').insertAdjacentHTML('beforeend',duoBet);  seatsEl.querySelectorAll('.seat:not(.duo-me)').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
   const tellerOn=has('teller')&&['preflop','flop','turn'].includes(G.street)&&G.deck.length;
   const bparts=[];
   for(let k=0;k<5;k++){
