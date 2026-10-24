@@ -1249,3 +1249,10 @@ html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavio
 .lv.on .lv-stamp{animation:lvStamp .3s .06s cubic-bezier(.3,1.6,.5,1) forwards}
 .lv-sub{opacity:0;color:#f0e4c8;font-size:clamp(13px,3.6vw,16px)}
 .lv.on .lv-sub{opacity:.95}
+/* iPhone Duo open: table on the left page, controls on the right, the fold runs between them */
+html.duo #sGame{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:var(--hinge,28px);row-gap:8px}
+html.duo #sGame .hud{grid-column:1;grid-row:1}
+html.duo #sGame .table-wrap{grid-column:1;grid-row:2}
+html.duo #sGame .console{grid-column:2;grid-row:1/3;align-self:center;width:100%}
+html.duo #sGame .trail,html.duo #sGame .charm-icons,html.duo #sGame .bossbar{display:none!important}
+html.duo #sGame .ribbon .rib-q{display:flex}

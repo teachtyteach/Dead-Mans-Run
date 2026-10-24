@@ -1271,6 +1271,13 @@ html.locked #sShop{justify-content:flex-start;overflow-y:auto;overscroll-behavio
 .lv.on .lv-stamp{animation:lvStamp .3s .06s cubic-bezier(.3,1.6,.5,1) forwards}
 .lv-sub{opacity:0;color:#f0e4c8;font-size:clamp(13px,3.6vw,16px)}
 .lv.on .lv-sub{opacity:.95}
+/* iPhone Duo open: table on the left page, controls on the right, the fold runs between them */
+html.duo #sGame{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:var(--hinge,28px);row-gap:8px}
+html.duo #sGame .hud{grid-column:1;grid-row:1}
+html.duo #sGame .table-wrap{grid-column:1;grid-row:2}
+html.duo #sGame .console{grid-column:2;grid-row:1/3;align-self:center;width:100%}
+html.duo #sGame .trail,html.duo #sGame .charm-icons,html.duo #sGame .bossbar{display:none!important}
+html.duo #sGame .ribbon .rib-q{display:flex}
 
 </style>
 </head>
@@ -2898,15 +2905,26 @@ function trailMap(level,victory){
 }
 
 /* ================= toggles, tips ================= */
+/* iPhone Duo: when the phone is open, the table sits on the left page and your controls on the right,
+   so nothing important lands on the fold. Auto uses the fold the browser reports, or a near-square touch screen. */
+function hingeW(){try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
+function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return true;
+  const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
+  return touch&&r>=.72&&r<=1.38&&m>=540&&m<900}
+function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+addEventListener('resize',()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles()},150)});
+setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button>`;
   });
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
   const k=b.dataset.audio;
   if(k==='speed') meta.speed=meta.speed==='fast'?'normal':'fast';
+  else if(k==='duo'){meta.duo={auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
   saveMeta(); renderToggles();
 });
@@ -3741,7 +3759,7 @@ function render(){
   const ch=$('challenge');
   ch.className='challenge'+(G.challengeDone?' done':''); ch.hidden=true; ch.innerHTML=G.challenge?`<b>Challenge</b><span>${G.challenge.text} · +${G.challenge.gold}g</span>`:'';
 
-  const narrow=innerWidth<640&&innerHeight>innerWidth, N=nP();
+  const narrow=(innerWidth<640&&innerHeight>innerWidth)||document.documentElement.classList.contains('duo'), N=nP();
   const tb=$('table'); tb.classList.toggle('narrow',narrow); tb.classList.toggle('crowded',N>=6);
   tb.classList.toggle('showdown',G.street==='done'&&G.winCards.size>0);
   const sg=$('sGame'), live2=G.street!=='done'&&G.street!=='idle';
