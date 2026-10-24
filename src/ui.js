@@ -80,6 +80,7 @@ function lightning(on){
 function setScene(id){
   const sl=(R&&id!=='sTitle')?R.level:0;
   document.documentElement.dataset.saloon=sl||'';
+  document.documentElement.dataset.back=(meta.back&&meta.back!=='auto')?meta.back:(sl||1);
   AIR.mode=SALOON_AIR[sl]||'dust';
   if(typeof setSaloon==='function') setSaloon(sl||5);
   lightning(sl===8);
@@ -87,6 +88,18 @@ function setScene(id){
 
 /* ================= rendering helpers ================= */
 let SOUNDQ=[];
+// court cards are Western portraits: the Jack a young gun, the Queen a saloon lady, the King an old cattle baron
+const COURT={};
+function courtArt(r,s){
+  const k=r+'-'+s; if(COURT[k]) return COURT[k].replace(/§§/g,'c'+(++PID));
+  const red=s===1||s===2, ink=red?'#8e2418':'#22201e', paper=['#f6ead0','#d9c49a'];
+  const base={bg:paper,rim:red?'#c0503f':'#6a6a6a',skin:['#e8c4a2','#a8805e'],scar:false,smoke:false,patch:false,mask:false,bandolier:false,badge:false,stubble:false,freckles:false};
+  const looks={11:{hat:'cowboy',hatc:red?'#7a2418':'#2a2622',hatTilt:-6,fh:'stache',hair:'#5a3a22',age:0,neck:'scarf',scarf:ink,coat:red?'#6a1e16':'#2a2826',mouth:'smirk',brows:'cocked'},
+    12:{fem:true,hat:'none',hairdo:'updo',hair:red?'#7a2a12':'#1a120c',dress:red?'#9a1e22':'#2a2630',choker:true,earring:'drop',lips:'#a01828',eyes:{lashes:true,liner:true,iris:'#3a5a4a'},brows:'arched',rose:false},
+    13:{hat:'cattleman',hatc:red?'#5a1e16':'#1e1c1a',fh:'beard',hair:'#d6d0c4',age:2,hw:9.8,jaw:1.4,neck:'bolo',vest:red?'#6a1e16':'#2a2826',coat:'#1e1a18',mouth:'grim',brows:'flat'}};
+  const svg=portrait('court'+k,Object.assign({},base,looks[r]),'square').replace(/pt\d+/g,'§§');
+  COURT[k]=svg; return svg.replace(/§§/g,'c'+(++PID));
+}
 function cardHTML(c,up,extra='',loc=null,anim=null){
   let cls='', style='';
   if(loc){
@@ -99,8 +112,9 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
   if(!up) return `<div class="card back${cls} ${extra}"${style}>${/marked/.test(extra)?`<span class="mk${c.s===1||c.s===2?' red':''}">${SUITS[c.s]}</span>`:''}</div>`;
   const red=c.s===1||c.s===2, rk=RN[c.r]||String(c.r), su=SUITS[c.s], face=c.r>=11&&c.r<=13;
   const ix=`<b${rk.length>1?' class="ten"':''}>${rk}</b><i>${su}</i>`, hot=G.winCards.has(c.id)?' hot':'';
-  return `<div class="card${red?' red':''}${hot}${cls} ${extra}"${style} role="img" aria-label="${SG[c.r]} of ${SUITN[c.s]}">`+
-    `<div class="ix">${ix}</div>`+(face?`<div class="face"><i>${su}</i><span>${rk}</span></div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
+  const gold=c.r>=11?' gold':'';
+  return `<div class="card${red?' red':''}${hot}${gold}${cls} ${extra}"${style} role="img" aria-label="${SG[c.r]} of ${SUITN[c.s]}">`+
+    `<div class="ix">${ix}</div>`+(face?`<div class="face court">${courtArt(c.r,c.s)}<i>${su}</i></div>`:c.r===14?`<div class="pip ace">${su}</div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
 }
 function chipCls(a){return a>=500?'k':a>=150?'g':a>=50?'b':'r'}
 function chipStack(a){const k=Math.max(1,Math.min(6,Math.ceil(Math.log10(a+1)*1.5))); let h=`<span class="stack" style="--n:${k-1}">`; for(let j=0;j<k;j++) h+=`<span class="chip ${chipCls(a)}" style="--i:${j}"></span>`; return h+'</span>'}
@@ -137,9 +151,80 @@ function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-famil
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
-let LASTTAP=0; document.addEventListener('touchend',e=>{const n=Date.now(); if(n-LASTTAP<320&&!(e.target.closest&&e.target.closest('input,textarea'))) e.preventDefault(); LASTTAP=n},{passive:false});
+// instant response: buttons press the moment a finger lands, with a tick of haptic feedback
+document.addEventListener('touchstart',()=>{},{passive:true});
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button,.btn,.chipbtn,[data-buy],[data-stab]'); if(!b||b.disabled) return;
+  b.classList.add('pressing'); haptic(b.classList.contains('raise')||b.classList.contains('call')||b.classList.contains('gold')?'medium':'light');
+  const up=()=>{b.classList.remove('pressing'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+
+/* haptics: real taps on the native app, a buzz where the browser allows it */
+let HAPT=0;
+function haptic(k){const n=performance.now(); if(n-HAPT<35) return; HAPT=n;
+  try{if(window.webkit&&webkit.messageHandlers&&webkit.messageHandlers.haptic){webkit.messageHandlers.haptic.postMessage(k); return}}catch(e){}
+  if(navigator.vibrate){const ms={select:6,light:8,medium:14,heavy:24,success:[12,40,18],error:[30,50,30]}[k]||8; try{navigator.vibrate(ms)}catch(e){}}}
+/* buttons answer the instant a finger lands, not when it lifts */
+const PRESSABLE='.btn,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest(PRESSABLE); if(!b||b.disabled) return; b.classList.add('press'); haptic('select');
+  const up=()=>{b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
+
+/* ================= daily table: one boss, one deck order, the same for everyone today ================= */
+let DAILY=null;
+function dayKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function seeded(str){let h=2166136261; for(const ch of str){h^=ch.charCodeAt(0); h=Math.imul(h,16777619)} return ()=>{h+=0x6D2B79F5; let t=h; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return((t^t>>>14)>>>0)/4294967296}}
+function startDaily(){
+  const dk=dayKey(), pick=seeded('boss'+dk), lvl=2+Math.floor(pick()*6);
+  DAILY={key:dk,rng:seeded('deck'+dk)};
+  const pool=Object.keys(CHARMS).filter(k=>CHARMS[k].tier===0), r2=seeded('charm'+dk);
+  const charms=[]; while(charms.length<2&&pool.length) charms.push(pool.splice(Math.floor(r2()*pool.length),1)[0]);
+  R={level:lvl,gold:0,charms,lv:{},deeds:[],tricks:[],curse:null,phase:'table',heat:0,temp:null,daily:dk};
+  startTable();
+}
+function dailyDone(won){
+  const dk=R.daily, hands=(G&&G.tableHands)||0; meta.daily=meta.daily||{}; const prev=meta.daily[dk];
+  if(won&&(!prev||!prev.won||hands<prev.hands)) meta.daily[dk]={won:true,hands}; else if(!prev) meta.daily[dk]={won:false,hands};
+  meta.dailyDone=(meta.dailyDone||0)+1; saveMeta();
+  const bd=BOSSES[R.level-1], best=meta.daily[dk];
+  $('poster').hidden=true;
+  let v=$('dailyCard'); if(!v){v=document.createElement('div'); v.id='dailyCard'; v.className='modal'; document.body.appendChild(v)}
+  v.innerHTML=`<div class="sheet daily-sheet"><div class="est">Daily table · ${dk}</div><h3 class="sheet-title">${won?'Taken down':'Dead man'}</h3>
+    <p class="daily-line">${won?`You took down ${bossName(bd)} in <b>${hands}</b> hand${hands===1?'':'s'}.`:`${bossName(bd)} won today's table.`}</p>
+    <p class="daily-line">${best.won?`Your best today: <b>${best.hands}</b> hands.`:'Come back and try again. Same deal, all day.'}</p>
+    <div class="row"><button class="btn gold" id="dailyOk" style="flex:1">Back to the menu</button></div></div>`;
+  v.hidden=false; sfx(won?'paid':'stamp');
+  $('dailyOk').onclick=()=>{v.hidden=true; DAILY=null; R=null; hush(false); $('sGame').classList.remove('lost'); const lv=$('lossVeil'); if(lv){lv.hidden=true; lv.classList.remove('on','black')} renderTitle()};
+}
+
+/* ================= trophy room: wanted posters, card backs, achievements ================= */
+const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded'];
+function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
+const ACH=[
+  ['First blood','Take down your first boss',()=>meta.stats.bosses>=1],
+  ['Halfway there','Reach the fifth saloon',()=>meta.best>=5],
+  ['Territory clean','Win a whole run',()=>meta.wins>=1],
+  ['Wanted everywhere','Take down all eight bosses at least once',()=>BOSSES.every(b=>(meta.beaten||{})[b.key])],
+  ['Regular','Ride ten runs',()=>meta.runs>=10],
+  ['Hundred hands','Play 100 hands',()=>meta.stats.hands>=100],
+  ['High roller','Win a pot of 5,000 or more',()=>meta.stats.bigPot>=5000],
+  ['Full house','Make a full house or better',()=>meta.stats.bestHand&&handCat(meta.stats.bestHand)>=6],
+  ['Straight flush','Make a straight flush',()=>meta.stats.bestHand&&handCat(meta.stats.bestHand)>=8],
+  ['Hired gun','Finish ten challenges',()=>meta.stats.challenges>=10],
+  ['Daily rider','Play a daily table',()=>(meta.dailyDone||0)>=1],
+  ['Collector','Unlock five card backs',()=>[1,2,3,4,5,6,7,8,9].filter(backUnlocked).length>=5]];
+function renderTrophies(){
+  const beaten=meta.beaten||{}, cur=meta.back||'auto';
+  const posters=BOSSES.map(b=>beaten[b.key]?`<div class="tp-poster got"><span class="medal">${bossPortrait(b)}</span><b>${b.name}</b><em>Taken down ×${beaten[b.key]}</em></div>`
+    :`<div class="tp-poster"><span class="medal locked">?</span><b>Wanted</b><em>${TOWNS[BOSSES.indexOf(b)]}</em></div>`).join('');
+  const backs=[`<button class="tp-back${cur==='auto'?' on':''}" data-back="auto"><span class="bk-auto">Each saloon</span><em>Auto</em></button>`]
+    .concat(BACK_NAMES.map((nm,i)=>{const n=i+1, ok=backUnlocked(n); return `<button class="tp-back${String(cur)===String(n)?' on':''}" data-back="${n}" ${ok?'':'disabled'}><span class="bk-swatch" data-bk="${n}"></span><em>${ok?nm:'Locked'}</em></button>`})).join('');
+  const done=ACH.filter(a=>a[2]()).length;
+  const ach=ACH.map(([t,d,f])=>{const ok=f(); return `<div class="tp-ach${ok?' got':''}"><i>${ok?'★':'☆'}</i><div><b>${t}</b><span>${d}</span></div></div>`}).join('');
+  $('trophies').innerHTML=`<div class="tp-h">Wanted posters <small>${Object.keys(beaten).length}/8</small></div><div class="tp-posters">${posters}</div>
+    <div class="tp-h">Card backs <small>beat a saloon's boss to win its deck</small></div><div class="tp-backs">${backs}</div>
+    <div class="tp-h">Achievements <small>${done}/${ACH.length}</small></div><div class="tp-achs">${ach}</div>`;
+  $('trophies').querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(b.disabled) return; meta.back=b.dataset.back; saveMeta(); setScene(SND.scene||'sTitle'); sfx('card'); renderTrophies()});
+}
 
 /* ================= trail map ================= */
 const MAPPTS=[[70,205],[170,125],[275,190],[375,100],[478,172],[572,88],[668,160],[742,78]];
@@ -184,13 +269,14 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
   const k=b.dataset.audio;
   if(k==='speed') meta.speed=meta.speed==='fast'?'normal':'fast';
+  else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
   else if(k==='duo'){meta.duo={auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
   saveMeta(); renderToggles();
@@ -212,7 +298,7 @@ function renderCoach(){
 
 /* ================= title ================= */
 function renderTitle(){
-  TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
+  DAILY=null; TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
   drawFan($('fan')); renderToggles();
   const unlockedCount=Object.values(CHARMS).filter(c=>c.tier<=meta.unlock).length;
   $('metaPlaques').innerHTML=`
@@ -221,10 +307,12 @@ function renderTitle(){
     <div class="plaque"><span>Wins</span><b>${meta.wins}</b></div>
     <div class="plaque"><span>Charms</span><b>${unlockedCount} / ${Object.keys(CHARMS).length}</b></div>`;
   const saved=sget(RUN_KEY);
+  const dk=dayKey(), dd=(meta.daily||{})[dk];
   $('titleActions').innerHTML=(saved?`<button class="btn gold big" id="contBtn">Continue · Saloon ${saved.level}</button>`:'')+
-    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`;
+    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`+`<button class="btn dark daily-btn" id="dailyBtn">Daily table${dd&&dd.won?` · ${dd.hands} hands`:''}</button>`;
   if(saved) $('contBtn').onclick=()=>{ac(); continueRun(saved)};
   $('newBtn').onclick=()=>{ac(); startRun()};
+  $('dailyBtn').onclick=()=>{ac(); startDaily()};
   const mh=maxHeat();
   $('heatPick').hidden=mh<1;
   $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
@@ -245,7 +333,8 @@ function renderTitle(){
   show('sTitle');
 }
 function openMore(tab){
-  const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
+  const names={howto:'How to play',trophies:'Trophies',records:'Records',charms:'Charms',settings:'Settings'};
+  if(tab==='trophies') renderTrophies();
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
   $('moreTitle').textContent=names[tab]; renderToggles(); $('more').hidden=false;
@@ -253,7 +342,7 @@ function openMore(tab){
 }
 
 /* ================= run flow ================= */
-function saveRun(phase){if(!R||R.tutorial) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
+function saveRun(phase){if(!R||R.tutorial||R.daily) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
 function startRun(){
   if(!meta.tutDone){startTutorial(true); return}
   R={level:1,gold:0,charms:[],lv:{},deeds:[],tricks:[],curse:null,phase:'pick',heat:Math.min(meta.heatPick||0,maxHeat()),temp:null};
@@ -567,7 +656,7 @@ function startTable(){
   posterFor(bd,'intro');
   $('poster').hidden=false;
   later(()=>sfx('boss'),150); later(()=>sfx('door'),700);
-  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R); say(bd.lines.intro); later(newHand,350)};
+  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} say(bd.lines.intro); later(newHand,350)};
 }
 function resumeTable(){
   TOKEN++;
@@ -591,8 +680,13 @@ function step(){
   render();
   if(live().length===1){later(()=>collectThen(()=>handEnd(resolveUncontested())),450); return}
   if(G.turn===-1){
+    // everyone's in and the cards just run out: slow it right down
+    const lv=live(), me=human(), runout=lv.length>=2&&lv.filter(q=>!q.allIn).length<=1&&me.inHand&&!me.folded&&G.board.length<5&&!REDUCED;
+    if(runout&&!G.slowmo){G.slowmo=true; lv.forEach(q=>q.show=true); $('sGame').classList.add('slowmo'); heartbeat(true); haptic('heavy'); render()}
     later(()=>collectThen(()=>{
       const st=advanceStreet();
+      if(G.slowmo){sfx('whoosh'); haptic('medium'); const bd=$('board'); bd.classList.remove('slam'); void bd.offsetWidth; bd.classList.add('slam')}
+      if(st==='showdown'&&G.slowmo){G.slowmo=false; later(()=>{$('sGame').classList.remove('slowmo'); heartbeat(false)},900)}
       if(st==='showdown'){
         const ev=revealShowdown();
         render(); sfx('whoosh');
@@ -602,7 +696,7 @@ function step(){
         G.dealUntil=performance.now()+(G.board.length===3?270:0)+450;
         step();
       }
-    }),650);
+    }),G.slowmo?1700:650);
     return;
   }
   const p=G.players[G.turn];
@@ -667,7 +761,7 @@ function handEnd(res){
   if(ev.challenge){later(()=>{stampAt(50,30,'Challenge!','#f4cb5c',28); sfx('win'); bumpGold()},ev.kos.length?2000:900)}
   if(ev.wind) later(()=>{stampAt(50,60,'Second Wind','#7fcf8f',30); sfx('bigwin')},700);
   if(TUT){later(tutFinale,2600); return}
-  if(!G.outcome){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
+  if(!G.outcome&&!R.daily){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
   renderCoach();
 }
 
@@ -806,6 +900,8 @@ function coinRain(){
 function tableWon(){
   TOKEN++;
   const L=R.level, bd=BOSSES[L-1], me=human();
+  meta.beaten=meta.beaten||{}; meta.beaten[bd.key]=(meta.beaten[bd.key]||0)+1;
+  if(R.daily){dailyDone(true); return}
   R.gold+=G.bounty; meta.stats.bosses++;
   let extra='';
   if(has('cashout')){const g=Math.floor(me.chips/100); R.gold+=g; extra+=` Cashout +${g}.`}
@@ -836,7 +932,7 @@ function leaveLost(){
   const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
   if(v&&!v.hidden){v.onclick=null; v.classList.add('black'); setTimeout(fin,950)} else fin();
 }
-function runOver(toMenu){TOKEN++; meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); if(toMenu){hush(false); renderTitle(); return} endRun(false)}
+function runOver(toMenu){TOKEN++; if(R&&R.daily){dailyDone(false); return} meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); if(toMenu){hush(false); renderTitle(); return} endRun(false)}
 const NP_ADS=[
   ['Dr. Hatch\'s Tonic','Cures tilt, bad beats &amp; the shakes. Sold at every saloon.','25 cents'],
   ['Wanted: Bicah Mell','For crimes against honest card players.','$5,000 reward'],

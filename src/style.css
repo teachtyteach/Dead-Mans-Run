@@ -1380,3 +1380,109 @@ input,textarea{-webkit-user-select:text;user-select:text}
 /* the title always fits the screen now that nothing scrolls */
 #sTitle{min-height:0!important;height:100%;justify-content:center;overflow:hidden}
 @media (max-height:700px){#sTitle .fan{--cw:clamp(44px,8vh,70px)} #sTitle h1.brass{font-size:clamp(34px,7vh,60px)} #sTitle{gap:10px}}
+
+/* ================= the deck: aged paper, an engraved frame, gold-edged honours ================= */
+.card:not(.back){background:radial-gradient(ellipse at 30% 18%,#fffcf3,#f7eedb 55%,#eadcbc);
+  box-shadow:0 1px 0 rgba(0,0,0,.28),0 6px 14px rgba(0,0,0,.5),inset 0 0 0 1px rgba(70,45,20,.35),inset 0 0 0 calc(var(--cw)*.045) #fbf3e2,inset 0 0 0 calc(var(--cw)*.055) rgba(70,45,20,.22)}
+.card.gold:not(.back){box-shadow:0 0 0 1px #b8913a,0 1px 0 rgba(0,0,0,.3),0 6px 16px rgba(0,0,0,.5),inset 0 0 0 1px #f4dc94,inset 0 0 0 calc(var(--cw)*.045) #fbf3e2,inset 0 0 0 calc(var(--cw)*.06) #c9a24e}
+.card.gold:not(.back)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,246,210,.6) 50%,transparent 60%) 0 0/300% 100% no-repeat;animation:goldSheen 6s ease-in-out infinite}
+@keyframes goldSheen{0%,70%{background-position:110% 0}100%{background-position:-10% 0}}
+/* court cards: a portrait in a gilt frame, the suit set into the corner */
+.card .face.court{inset:auto calc(var(--cw)*.07) calc(var(--cw)*.07) auto;width:calc(var(--cw)*.62);height:calc(var(--cw)*.8);padding:0;overflow:hidden;border:0;border-radius:calc(var(--cw)*.05);
+  box-shadow:0 0 0 calc(var(--cw)*.022) #c9a24e,0 0 0 calc(var(--cw)*.034) rgba(70,45,20,.5);background:#e9dcbc;display:block}
+.card .face.court svg{display:block;width:100%;height:100%;object-fit:cover;filter:sepia(.25) contrast(1.05) saturate(.9)}
+.card .face.court i{position:absolute;right:calc(var(--cw)*.03);bottom:calc(var(--cw)*.02);font-size:calc(var(--cw)*.2);line-height:1;font-style:normal;text-shadow:0 0 3px #fbf3e2,0 0 2px #fbf3e2}
+/* the ace: one big engraved suit with a sunburst */
+.card .pip.ace{inset:calc(var(--cw)*.36) 0 auto 0;text-align:center;font-size:calc(var(--cw)*.74);
+  background:radial-gradient(circle,rgba(201,162,78,.28) 0 30%,transparent 62%);text-shadow:0 1px 0 rgba(255,255,255,.6)}
+
+/* ================= card backs, one per saloon ================= */
+.card.back{--b1:#8f2b20;--b2:#561510;--bl:rgba(242,216,143,.22);--bm:var(--brass);--bg:"✦";
+  background:radial-gradient(circle at 50% 50%,var(--bm) 0 9%,transparent 10%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(242,216,143,.55) 16% 17%,transparent 18%),
+    repeating-linear-gradient(45deg,var(--bl) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1),var(--b2));
+  box-shadow:0 1px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.5),inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2),inset 0 0 0 4px rgba(242,216,143,.6)}
+html[data-back="2"] .card.back{--b1:#b0592a;--b2:#5a2410;--bl:rgba(120,210,200,.22);--bm:#5fb3a8}
+html[data-back="3"] .card.back{--b1:#3d5168;--b2:#1a2532;--bl:rgba(200,215,235,.2);--bm:#b8c6d6}
+html[data-back="4"] .card.back{--b1:#c0582a;--b2:#5e1a0c;--bl:rgba(255,200,120,.24);--bm:#f2b45a}
+html[data-back="5"] .card.back{--b1:#2c5a3a;--b2:#0f2a18;--bl:rgba(210,230,170,.2);--bm:#c9a24e}
+html[data-back="6"] .card.back{--b1:#26386a;--b2:#0e1630;--bl:rgba(220,225,240,.24);--bm:#e2e6ee}
+html[data-back="7"] .card.back{--b1:#5a2a5e;--b2:#24102a;--bl:rgba(230,170,220,.2);--bm:#e0a0d8}
+html[data-back="8"] .card.back{--b1:#2a2422;--b2:#0a0808;--bl:rgba(230,220,200,.16);--bm:#e8dcc4}
+html[data-back="9"] .card.back{--b1:#d8b45c;--b2:#7a5a1e;--bl:rgba(255,250,220,.35);--bm:#fff4c8}
+
+/* ================= materials: woven felt, padded leather rail, wood, tooled leather panels ================= */
+:root{
+  --fibre:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --grain:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .05 0 0 0 0 .02 0 0 0 .55 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --hide:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='turbulence' baseFrequency='.55' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.9 .62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+}
+/* felt: woven fibres, a lighter worn patch where the cards land, darker toward the rail */
+.felt{background:var(--fibre),radial-gradient(ellipse 46% 34% at 50% 50%,rgba(255,255,230,.07),transparent 70%),var(--noise),
+  radial-gradient(ellipse at center,var(--felt-hi) 0%,var(--felt) 48%,var(--felt-lo) 100%)}
+/* the rail: padded leather with a hide texture, a highlight along the top and a wood trim where it meets the felt */
+.rail{background:var(--hide),radial-gradient(ellipse 100% 60% at 50% 0%,rgba(255,190,150,.28),transparent 60%),linear-gradient(180deg,var(--leather-hi),var(--leather) 45%,#200a08);
+  box-shadow:0 26px 50px rgba(0,0,0,.75),0 0 0 3px #140a05,0 0 0 6px #6a4424,0 0 0 7px #140a05,inset 0 3px 3px rgba(255,200,170,.28),inset 0 -8px 14px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,220,180,.06)}
+.felt{box-shadow:0 0 0 2px #1a0d07,0 0 0 5px #7a5230,0 0 0 6px #c9a24e,0 0 0 7px #1a0d07,inset 0 12px 34px rgba(0,0,0,.6),inset 0 -6px 22px rgba(0,0,0,.45)}
+/* panels: tooled leather over walnut */
+.topbar,.console,.banner,.sheet{background:var(--hide),var(--grain),var(--panel)!important;background-blend-mode:soft-light,multiply,normal}
+.btn.dark,.btn.fold,.handsbtn,.iconbtn{background-image:var(--grain),linear-gradient(#4a3222,#2a1b11)}
+html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226,160,70,.2),transparent 70%),var(--noise),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.45) 0 2px,transparent 2px 140px),repeating-linear-gradient(90deg,#1c110a 0 70px,#160d07 70px 140px)}
+
+/* ================= feel: weighty cards, instant presses, the slow-motion all-in ================= */
+.card.deal{animation:deal .58s cubic-bezier(.2,.75,.25,1) both}
+@keyframes deal{0%{translate:var(--fx,0) var(--fy,-40px);rotate:-160deg;scale:.55;opacity:0}12%{opacity:1}68%{translate:0 0;rotate:5deg;scale:1.07}84%{rotate:-1.5deg;scale:.985}100%{translate:0 0;rotate:0deg;scale:1;opacity:1}}
+.card.flip{animation:flip3 .5s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes flip3{0%{rotate:y 90deg;scale:1.1}55%{rotate:y -14deg;scale:1.06}100%{rotate:y 0deg;scale:1}}
+.press{transform:translateY(3px) scale(.965)!important;filter:brightness(1.12);transition:none!important}
+/* slow-motion runout: the room darkens, the board grows, every card lands like a gunshot */
+#sGame::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity .6s;
+  background:radial-gradient(ellipse 60% 45% at 50% 42%,transparent 40%,rgba(0,0,0,.72) 100%)}
+#sGame.slowmo::after{opacity:1}
+#sGame.slowmo .board{scale:1.14;transition:scale .6s var(--ease-out)}
+.board{transition:scale .5s var(--ease-out)}
+.board.slam .card.deal{animation:slamIn .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes slamIn{0%{scale:1.6;opacity:0;rotate:y 90deg}60%{scale:.95;opacity:1}100%{scale:1;rotate:y 0deg}}
+#sGame.slowmo .seat:not(.folded) .cards .card{box-shadow:0 0 0 1px rgba(244,203,92,.5),0 0 16px rgba(244,203,92,.35),0 6px 14px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion:reduce){.card.deal,.card.flip{animation-duration:.01s}}
+
+/* ================= trophy room ================= */
+.trophies{display:flex;flex-direction:column;gap:10px;max-height:min(62vh,560px);overflow:auto;padding-right:2px}
+.tp-h{font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;color:var(--brass-hi);display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:4px}
+.tp-h small{font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:none;font-weight:400}
+.tp-posters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tp-poster{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px rgba(201,162,78,.16);text-align:center}
+.tp-poster .medal{width:44px;height:44px}
+.tp-poster .medal.locked{display:grid;place-items:center;font-family:var(--f-poster);color:var(--muted);background:#120a06;font-size:18px}
+.tp-poster b{font-family:var(--f-label);font-size:11.5px;line-height:1.1;color:var(--ivory)}
+.tp-poster em{font-size:10.5px;color:var(--muted)}
+.tp-poster.got{box-shadow:inset 0 0 0 1px rgba(244,203,92,.45)}
+.tp-poster.got em{color:var(--gold)}
+.tp-backs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.tp-back{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:4px;border-radius:10px;cursor:pointer;color:var(--ivory-lo)}
+.tp-back em{font-size:10.5px;font-style:normal;font-family:var(--f-label);letter-spacing:.04em;text-align:center;line-height:1.1}
+.tp-back.on{box-shadow:inset 0 0 0 1.5px var(--brass-hi)}
+.tp-back:disabled{opacity:.35;cursor:default}
+.bk-swatch,.bk-auto{width:38px;height:54px;border-radius:5px;display:grid;place-items:center}
+.bk-auto{background:conic-gradient(#8f2b20,#b0592a,#3d5168,#c0582a,#2c5a3a,#26386a,#5a2a5e,#2a2422,#8f2b20);font-size:0}
+.bk-swatch{box-shadow:inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px rgba(0,0,0,.4);background:repeating-linear-gradient(45deg,rgba(255,240,200,.2) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,rgba(255,240,200,.2) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--s1),var(--s2))}
+.bk-swatch[data-bk="1"]{--s1:#8f2b20;--s2:#561510}.bk-swatch[data-bk="2"]{--s1:#b0592a;--s2:#5a2410}.bk-swatch[data-bk="3"]{--s1:#3d5168;--s2:#1a2532}
+.bk-swatch[data-bk="4"]{--s1:#c0582a;--s2:#5e1a0c}.bk-swatch[data-bk="5"]{--s1:#2c5a3a;--s2:#0f2a18}.bk-swatch[data-bk="6"]{--s1:#26386a;--s2:#0e1630}
+.bk-swatch[data-bk="7"]{--s1:#5a2a5e;--s2:#24102a}.bk-swatch[data-bk="8"]{--s1:#2a2422;--s2:#0a0808}.bk-swatch[data-bk="9"]{--s1:#d8b45c;--s2:#7a5a1e}
+.tp-achs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tp-ach{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:10px;background:rgba(0,0,0,.25);opacity:.6}
+.tp-ach.got{opacity:1;box-shadow:inset 0 0 0 1px rgba(244,203,92,.35)}
+.tp-ach i{font-style:normal;color:var(--gold);font-size:15px;line-height:1.2}
+.tp-ach b{display:block;font-family:var(--f-label);font-size:13px;color:var(--ivory)}
+.tp-ach span{font-size:12px;color:var(--muted);line-height:1.25}
+.title-links{grid-template-columns:repeat(3,minmax(0,1fr));width:min(380px,100%)}
+@media (min-width:700px){.title-links{grid-template-columns:repeat(5,minmax(0,auto))}}
+#titleActions{flex-wrap:wrap;justify-content:center;gap:10px}
+.daily-btn{min-width:0}
+.daily-sheet{text-align:center;align-items:center}
+.daily-line{margin:0;font-size:16px;color:var(--ivory-lo)}
+.daily-line b{color:var(--gold)}
+/* instant press: the button sinks the moment your finger lands */
+.btn.pressing:not(:disabled),.chipbtn.pressing,.handsbtn.pressing,.iconbtn.pressing{transform:translateY(3px) scale(.97);filter:brightness(1.08);transition-duration:.05s}
+.tabs button.pressing,.title-links button.pressing{transform:scale(.96)}

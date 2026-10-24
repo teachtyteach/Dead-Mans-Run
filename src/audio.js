@@ -62,7 +62,15 @@ async function decodeAll(){
   await decodeOne('piano'); if(SND.want) startMusic();
   for(const t of Object.values(BOSS_TRACKS)){await decodeOne(t.key); if(SND.want) startMusic()}
 }
+// haptics: the native app feels every chip, stamp and shot; the web falls back to vibrate where it exists
+const HAPTIC_FOR={chip:'light',chips:'medium',card:'soft',stamp:'heavy',gun:'heavy',boss:'rigid',bigwin:'success',win:'light',paid:'success',lose:'error',toll:'error',heart:'soft',whoosh:'soft'};
+let HAPT_T=0;
+function haptic(kind){if(meta.haptics===false) return; const n=performance.now(); if(n-HAPT_T<35&&kind!=='heavy'&&kind!=='success'&&kind!=='error') return; HAPT_T=n;
+  try{const h=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.haptic; if(h){h.postMessage(kind); return}
+    if(navigator.vibrate) navigator.vibrate({light:8,soft:6,medium:14,rigid:18,heavy:26,success:[14,40,22],error:[30,50,30]}[kind]||10)}catch(e){}}
 function sfx(type,delay=0,pitch=1){
+  if(HAPTIC_FOR[type]){if(delay>0) setTimeout(()=>haptic(HAPTIC_FOR[type]),delay); else haptic(HAPTIC_FOR[type])}
+  if(typeof haptic==='function'&&!(SND.hush&&type!=='toll')){const hk={chip:'light',chips:'medium',card:'light',stamp:'heavy',gun:'heavy',boss:'heavy',bigwin:'success',paid:'success',win:'success',toll:'error',lose:'error'}[type]; if(hk) setTimeout(()=>haptic(hk),delay||0)}
   if(!meta.sound||!SND.ctx) return;
   if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;

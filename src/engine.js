@@ -16,6 +16,7 @@ function emit(t,...a){if(EMIT[t]) return EMIT[t](...a)}
 function log(t){G.log.unshift(t); if(G.log.length>40) G.log.pop(); G.handLog.push(t)}
 
 /* ================= helpers ================= */
+function shuffleWith(a,rnd){for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function money(n){return '$'+Math.round(n).toLocaleString('en-US')}
 function num(n){return Math.round(n).toLocaleString('en-US')}
@@ -174,7 +175,7 @@ function startHand(){
   G.handLog=[];
   G.winCards=new Set(); G.outcome=null; G.seen=new Map(); G.lastWinners=[];
   G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0}));
-  G.board=[]; G.deck=shuffle(FULL.map(c=>Object.assign({},c)));
+  G.board=[]; G.deck=(typeof DAILY!=='undefined'&&DAILY&&DAILY.rng)?shuffleWith(FULL.map(c=>Object.assign({},c)),DAILY.rng):shuffle(FULL.map(c=>Object.assign({},c)));
   // a scripted deal (tutorial): rigDeck lists [rank,suit] in the order cards come off the deck
   if(G.rigDeck){const pick=G.rigDeck.map(([r,s])=>G.deck.find(c=>c.r===r&&c.s===s)); G.deck=G.deck.filter(c=>!pick.includes(c)).concat(pick.reverse()); G.rigDeck=null}
   G.dealer=nextIn(G.dealer);

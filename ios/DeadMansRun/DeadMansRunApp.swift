@@ -31,6 +31,8 @@ struct GameView: UIViewRepresentable {
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
         config.websiteDataStore = .default()
+        config.userContentController.add(context.coordinator, name: "haptic")
+        config.userContentController.add(context.coordinator, name: "haptic")
         let web = WKWebView(frame: .zero, configuration: config)
         web.isOpaque = false
         web.backgroundColor = UIColor(red: 0.086, green: 0.051, blue: 0.027, alpha: 1)
@@ -49,6 +51,27 @@ struct GameView: UIViewRepresentable {
         return web
     }
     func updateUIView(_ uiView: WKWebView, context: Context) {}
+    func makeCoordinator() -> Haptics { Haptics() }
+}
+
+/// The game calls window.webkit.messageHandlers.haptic.postMessage("light"|"medium"|"heavy"|"select"|"success"|"error").
+final class Haptics: NSObject, WKScriptMessageHandler {
+    private let light = UIImpactFeedbackGenerator(style: .light)
+    private let medium = UIImpactFeedbackGenerator(style: .medium)
+    private let heavy = UIImpactFeedbackGenerator(style: .heavy)
+    private let select = UISelectionFeedbackGenerator()
+    private let note = UINotificationFeedbackGenerator()
+    func userContentController(_ c: WKUserContentController, didReceive m: WKScriptMessage) {
+        switch m.body as? String ?? "" {
+        case "light": light.impactOccurred()
+        case "medium": medium.impactOccurred()
+        case "heavy": heavy.impactOccurred(intensity: 1)
+        case "select": select.selectionChanged()
+        case "success": note.notificationOccurred(.success)
+        case "error": note.notificationOccurred(.error)
+        default: break
+        }
+    }
 }
 
 /// Serves files from the bundled "www" folder for app://game/... requests.

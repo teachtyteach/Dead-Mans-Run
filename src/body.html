@@ -26,7 +26,7 @@
   <div class="heat" id="heatPick"></div>
   <div class="statline" id="statLine"></div>
   <div class="title-links">
-    <button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
+    <button data-more="trophies">Trophies</button><span>·</span><button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
   </div></div>
 </section>
 
@@ -46,6 +46,7 @@
     <h3 id="moreTitle" class="sheet-title">How to play</h3>
     <div class="tabs" role="tablist">
       <button role="tab" data-mtab="howto" aria-selected="true">How to play</button>
+      <button role="tab" data-mtab="trophies" aria-selected="false">Trophies</button>
       <button role="tab" data-mtab="records" aria-selected="false">Records</button>
       <button role="tab" data-mtab="charms" aria-selected="false">Charms</button>
       <button role="tab" data-mtab="settings" aria-selected="false">Settings</button>
@@ -57,6 +58,7 @@
         <div><b>3 · It gets harder</b><span>More outlaws join each table, and they get tougher. Eight saloons to the end.</span></div>
       </div>
     </div>
+    <div class="pane" data-mpane="trophies" hidden><div class="trophies" id="trophies" data-scroll></div></div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
     <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>

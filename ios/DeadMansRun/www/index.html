@@ -1403,6 +1403,112 @@ input,textarea{-webkit-user-select:text;user-select:text}
 #sTitle{min-height:0!important;height:100%;justify-content:center;overflow:hidden}
 @media (max-height:700px){#sTitle .fan{--cw:clamp(44px,8vh,70px)} #sTitle h1.brass{font-size:clamp(34px,7vh,60px)} #sTitle{gap:10px}}
 
+/* ================= the deck: aged paper, an engraved frame, gold-edged honours ================= */
+.card:not(.back){background:radial-gradient(ellipse at 30% 18%,#fffcf3,#f7eedb 55%,#eadcbc);
+  box-shadow:0 1px 0 rgba(0,0,0,.28),0 6px 14px rgba(0,0,0,.5),inset 0 0 0 1px rgba(70,45,20,.35),inset 0 0 0 calc(var(--cw)*.045) #fbf3e2,inset 0 0 0 calc(var(--cw)*.055) rgba(70,45,20,.22)}
+.card.gold:not(.back){box-shadow:0 0 0 1px #b8913a,0 1px 0 rgba(0,0,0,.3),0 6px 16px rgba(0,0,0,.5),inset 0 0 0 1px #f4dc94,inset 0 0 0 calc(var(--cw)*.045) #fbf3e2,inset 0 0 0 calc(var(--cw)*.06) #c9a24e}
+.card.gold:not(.back)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 40%,rgba(255,246,210,.6) 50%,transparent 60%) 0 0/300% 100% no-repeat;animation:goldSheen 6s ease-in-out infinite}
+@keyframes goldSheen{0%,70%{background-position:110% 0}100%{background-position:-10% 0}}
+/* court cards: a portrait in a gilt frame, the suit set into the corner */
+.card .face.court{inset:auto calc(var(--cw)*.07) calc(var(--cw)*.07) auto;width:calc(var(--cw)*.62);height:calc(var(--cw)*.8);padding:0;overflow:hidden;border:0;border-radius:calc(var(--cw)*.05);
+  box-shadow:0 0 0 calc(var(--cw)*.022) #c9a24e,0 0 0 calc(var(--cw)*.034) rgba(70,45,20,.5);background:#e9dcbc;display:block}
+.card .face.court svg{display:block;width:100%;height:100%;object-fit:cover;filter:sepia(.25) contrast(1.05) saturate(.9)}
+.card .face.court i{position:absolute;right:calc(var(--cw)*.03);bottom:calc(var(--cw)*.02);font-size:calc(var(--cw)*.2);line-height:1;font-style:normal;text-shadow:0 0 3px #fbf3e2,0 0 2px #fbf3e2}
+/* the ace: one big engraved suit with a sunburst */
+.card .pip.ace{inset:calc(var(--cw)*.36) 0 auto 0;text-align:center;font-size:calc(var(--cw)*.74);
+  background:radial-gradient(circle,rgba(201,162,78,.28) 0 30%,transparent 62%);text-shadow:0 1px 0 rgba(255,255,255,.6)}
+
+/* ================= card backs, one per saloon ================= */
+.card.back{--b1:#8f2b20;--b2:#561510;--bl:rgba(242,216,143,.22);--bm:var(--brass);--bg:"✦";
+  background:radial-gradient(circle at 50% 50%,var(--bm) 0 9%,transparent 10%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(242,216,143,.55) 16% 17%,transparent 18%),
+    repeating-linear-gradient(45deg,var(--bl) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1),var(--b2));
+  box-shadow:0 1px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.5),inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2),inset 0 0 0 4px rgba(242,216,143,.6)}
+html[data-back="2"] .card.back{--b1:#b0592a;--b2:#5a2410;--bl:rgba(120,210,200,.22);--bm:#5fb3a8}
+html[data-back="3"] .card.back{--b1:#3d5168;--b2:#1a2532;--bl:rgba(200,215,235,.2);--bm:#b8c6d6}
+html[data-back="4"] .card.back{--b1:#c0582a;--b2:#5e1a0c;--bl:rgba(255,200,120,.24);--bm:#f2b45a}
+html[data-back="5"] .card.back{--b1:#2c5a3a;--b2:#0f2a18;--bl:rgba(210,230,170,.2);--bm:#c9a24e}
+html[data-back="6"] .card.back{--b1:#26386a;--b2:#0e1630;--bl:rgba(220,225,240,.24);--bm:#e2e6ee}
+html[data-back="7"] .card.back{--b1:#5a2a5e;--b2:#24102a;--bl:rgba(230,170,220,.2);--bm:#e0a0d8}
+html[data-back="8"] .card.back{--b1:#2a2422;--b2:#0a0808;--bl:rgba(230,220,200,.16);--bm:#e8dcc4}
+html[data-back="9"] .card.back{--b1:#d8b45c;--b2:#7a5a1e;--bl:rgba(255,250,220,.35);--bm:#fff4c8}
+
+/* ================= materials: woven felt, padded leather rail, wood, tooled leather panels ================= */
+:root{
+  --fibre:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+  --grain:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='120'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .32' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .1 0 0 0 0 .05 0 0 0 0 .02 0 0 0 .55 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --hide:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='h'%3E%3CfeTurbulence type='turbulence' baseFrequency='.55' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.9 .62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23h)'/%3E%3C/svg%3E");
+}
+/* felt: woven fibres, a lighter worn patch where the cards land, darker toward the rail */
+.felt{background:var(--fibre),radial-gradient(ellipse 46% 34% at 50% 50%,rgba(255,255,230,.07),transparent 70%),var(--noise),
+  radial-gradient(ellipse at center,var(--felt-hi) 0%,var(--felt) 48%,var(--felt-lo) 100%)}
+/* the rail: padded leather with a hide texture, a highlight along the top and a wood trim where it meets the felt */
+.rail{background:var(--hide),radial-gradient(ellipse 100% 60% at 50% 0%,rgba(255,190,150,.28),transparent 60%),linear-gradient(180deg,var(--leather-hi),var(--leather) 45%,#200a08);
+  box-shadow:0 26px 50px rgba(0,0,0,.75),0 0 0 3px #140a05,0 0 0 6px #6a4424,0 0 0 7px #140a05,inset 0 3px 3px rgba(255,200,170,.28),inset 0 -8px 14px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,220,180,.06)}
+.felt{box-shadow:0 0 0 2px #1a0d07,0 0 0 5px #7a5230,0 0 0 6px #c9a24e,0 0 0 7px #1a0d07,inset 0 12px 34px rgba(0,0,0,.6),inset 0 -6px 22px rgba(0,0,0,.45)}
+/* panels: tooled leather over walnut */
+.topbar,.console,.banner,.sheet{background:var(--hide),var(--grain),var(--panel)!important;background-blend-mode:soft-light,multiply,normal}
+.btn.dark,.btn.fold,.handsbtn,.iconbtn{background-image:var(--grain),linear-gradient(#4a3222,#2a1b11)}
+html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226,160,70,.2),transparent 70%),var(--noise),
+  repeating-linear-gradient(90deg,rgba(0,0,0,.45) 0 2px,transparent 2px 140px),repeating-linear-gradient(90deg,#1c110a 0 70px,#160d07 70px 140px)}
+
+/* ================= feel: weighty cards, instant presses, the slow-motion all-in ================= */
+.card.deal{animation:deal .58s cubic-bezier(.2,.75,.25,1) both}
+@keyframes deal{0%{translate:var(--fx,0) var(--fy,-40px);rotate:-160deg;scale:.55;opacity:0}12%{opacity:1}68%{translate:0 0;rotate:5deg;scale:1.07}84%{rotate:-1.5deg;scale:.985}100%{translate:0 0;rotate:0deg;scale:1;opacity:1}}
+.card.flip{animation:flip3 .5s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes flip3{0%{rotate:y 90deg;scale:1.1}55%{rotate:y -14deg;scale:1.06}100%{rotate:y 0deg;scale:1}}
+.press{transform:translateY(3px) scale(.965)!important;filter:brightness(1.12);transition:none!important}
+/* slow-motion runout: the room darkens, the board grows, every card lands like a gunshot */
+#sGame::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity .6s;
+  background:radial-gradient(ellipse 60% 45% at 50% 42%,transparent 40%,rgba(0,0,0,.72) 100%)}
+#sGame.slowmo::after{opacity:1}
+#sGame.slowmo .board{scale:1.14;transition:scale .6s var(--ease-out)}
+.board{transition:scale .5s var(--ease-out)}
+.board.slam .card.deal{animation:slamIn .5s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes slamIn{0%{scale:1.6;opacity:0;rotate:y 90deg}60%{scale:.95;opacity:1}100%{scale:1;rotate:y 0deg}}
+#sGame.slowmo .seat:not(.folded) .cards .card{box-shadow:0 0 0 1px rgba(244,203,92,.5),0 0 16px rgba(244,203,92,.35),0 6px 14px rgba(0,0,0,.5)}
+@media (prefers-reduced-motion:reduce){.card.deal,.card.flip{animation-duration:.01s}}
+
+/* ================= trophy room ================= */
+.trophies{display:flex;flex-direction:column;gap:10px;max-height:min(62vh,560px);overflow:auto;padding-right:2px}
+.tp-h{font-family:var(--f-label);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:12.5px;color:var(--brass-hi);display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:4px}
+.tp-h small{font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:none;font-weight:400}
+.tp-posters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tp-poster{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.28);box-shadow:inset 0 0 0 1px rgba(201,162,78,.16);text-align:center}
+.tp-poster .medal{width:44px;height:44px}
+.tp-poster .medal.locked{display:grid;place-items:center;font-family:var(--f-poster);color:var(--muted);background:#120a06;font-size:18px}
+.tp-poster b{font-family:var(--f-label);font-size:11.5px;line-height:1.1;color:var(--ivory)}
+.tp-poster em{font-size:10.5px;color:var(--muted)}
+.tp-poster.got{box-shadow:inset 0 0 0 1px rgba(244,203,92,.45)}
+.tp-poster.got em{color:var(--gold)}
+.tp-backs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.tp-back{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:4px;border-radius:10px;cursor:pointer;color:var(--ivory-lo)}
+.tp-back em{font-size:10.5px;font-style:normal;font-family:var(--f-label);letter-spacing:.04em;text-align:center;line-height:1.1}
+.tp-back.on{box-shadow:inset 0 0 0 1.5px var(--brass-hi)}
+.tp-back:disabled{opacity:.35;cursor:default}
+.bk-swatch,.bk-auto{width:38px;height:54px;border-radius:5px;display:grid;place-items:center}
+.bk-auto{background:conic-gradient(#8f2b20,#b0592a,#3d5168,#c0582a,#2c5a3a,#26386a,#5a2a5e,#2a2422,#8f2b20);font-size:0}
+.bk-swatch{box-shadow:inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px rgba(0,0,0,.4);background:repeating-linear-gradient(45deg,rgba(255,240,200,.2) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,rgba(255,240,200,.2) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--s1),var(--s2))}
+.bk-swatch[data-bk="1"]{--s1:#8f2b20;--s2:#561510}.bk-swatch[data-bk="2"]{--s1:#b0592a;--s2:#5a2410}.bk-swatch[data-bk="3"]{--s1:#3d5168;--s2:#1a2532}
+.bk-swatch[data-bk="4"]{--s1:#c0582a;--s2:#5e1a0c}.bk-swatch[data-bk="5"]{--s1:#2c5a3a;--s2:#0f2a18}.bk-swatch[data-bk="6"]{--s1:#26386a;--s2:#0e1630}
+.bk-swatch[data-bk="7"]{--s1:#5a2a5e;--s2:#24102a}.bk-swatch[data-bk="8"]{--s1:#2a2422;--s2:#0a0808}.bk-swatch[data-bk="9"]{--s1:#d8b45c;--s2:#7a5a1e}
+.tp-achs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tp-ach{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:10px;background:rgba(0,0,0,.25);opacity:.6}
+.tp-ach.got{opacity:1;box-shadow:inset 0 0 0 1px rgba(244,203,92,.35)}
+.tp-ach i{font-style:normal;color:var(--gold);font-size:15px;line-height:1.2}
+.tp-ach b{display:block;font-family:var(--f-label);font-size:13px;color:var(--ivory)}
+.tp-ach span{font-size:12px;color:var(--muted);line-height:1.25}
+.title-links{grid-template-columns:repeat(3,minmax(0,1fr));width:min(380px,100%)}
+@media (min-width:700px){.title-links{grid-template-columns:repeat(5,minmax(0,auto))}}
+#titleActions{flex-wrap:wrap;justify-content:center;gap:10px}
+.daily-btn{min-width:0}
+.daily-sheet{text-align:center;align-items:center}
+.daily-line{margin:0;font-size:16px;color:var(--ivory-lo)}
+.daily-line b{color:var(--gold)}
+/* instant press: the button sinks the moment your finger lands */
+.btn.pressing:not(:disabled),.chipbtn.pressing,.handsbtn.pressing,.iconbtn.pressing{transform:translateY(3px) scale(.97);filter:brightness(1.08);transition-duration:.05s}
+.tabs button.pressing,.title-links button.pressing{transform:scale(.96)}
+
 </style>
 </head>
 <body>
@@ -1434,7 +1540,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="heat" id="heatPick"></div>
   <div class="statline" id="statLine"></div>
   <div class="title-links">
-    <button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
+    <button data-more="trophies">Trophies</button><span>·</span><button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
   </div></div>
 </section>
 
@@ -1454,6 +1560,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
     <h3 id="moreTitle" class="sheet-title">How to play</h3>
     <div class="tabs" role="tablist">
       <button role="tab" data-mtab="howto" aria-selected="true">How to play</button>
+      <button role="tab" data-mtab="trophies" aria-selected="false">Trophies</button>
       <button role="tab" data-mtab="records" aria-selected="false">Records</button>
       <button role="tab" data-mtab="charms" aria-selected="false">Charms</button>
       <button role="tab" data-mtab="settings" aria-selected="false">Settings</button>
@@ -1465,6 +1572,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
         <div><b>3 · It gets harder</b><span>More outlaws join each table, and they get tougher. Eight saloons to the end.</span></div>
       </div>
     </div>
+    <div class="pane" data-mpane="trophies" hidden><div class="trophies" id="trophies" data-scroll></div></div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
     <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>
@@ -1797,6 +1905,7 @@ function emit(t,...a){if(EMIT[t]) return EMIT[t](...a)}
 function log(t){G.log.unshift(t); if(G.log.length>40) G.log.pop(); G.handLog.push(t)}
 
 /* ================= helpers ================= */
+function shuffleWith(a,rnd){for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function money(n){return '$'+Math.round(n).toLocaleString('en-US')}
 function num(n){return Math.round(n).toLocaleString('en-US')}
@@ -1955,7 +2064,7 @@ function startHand(){
   G.handLog=[];
   G.winCards=new Set(); G.outcome=null; G.seen=new Map(); G.lastWinners=[];
   G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0}));
-  G.board=[]; G.deck=shuffle(FULL.map(c=>Object.assign({},c)));
+  G.board=[]; G.deck=(typeof DAILY!=='undefined'&&DAILY&&DAILY.rng)?shuffleWith(FULL.map(c=>Object.assign({},c)),DAILY.rng):shuffle(FULL.map(c=>Object.assign({},c)));
   // a scripted deal (tutorial): rigDeck lists [rank,suit] in the order cards come off the deck
   if(G.rigDeck){const pick=G.rigDeck.map(([r,s])=>G.deck.find(c=>c.r===r&&c.s===s)); G.deck=G.deck.filter(c=>!pick.includes(c)).concat(pick.reverse()); G.rigDeck=null}
   G.dealer=nextIn(G.dealer);
@@ -2746,7 +2855,15 @@ async function decodeAll(){
   await decodeOne('piano'); if(SND.want) startMusic();
   for(const t of Object.values(BOSS_TRACKS)){await decodeOne(t.key); if(SND.want) startMusic()}
 }
+// haptics: the native app feels every chip, stamp and shot; the web falls back to vibrate where it exists
+const HAPTIC_FOR={chip:'light',chips:'medium',card:'soft',stamp:'heavy',gun:'heavy',boss:'rigid',bigwin:'success',win:'light',paid:'success',lose:'error',toll:'error',heart:'soft',whoosh:'soft'};
+let HAPT_T=0;
+function haptic(kind){if(meta.haptics===false) return; const n=performance.now(); if(n-HAPT_T<35&&kind!=='heavy'&&kind!=='success'&&kind!=='error') return; HAPT_T=n;
+  try{const h=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.haptic; if(h){h.postMessage(kind); return}
+    if(navigator.vibrate) navigator.vibrate({light:8,soft:6,medium:14,rigid:18,heavy:26,success:[14,40,22],error:[30,50,30]}[kind]||10)}catch(e){}}
 function sfx(type,delay=0,pitch=1){
+  if(HAPTIC_FOR[type]){if(delay>0) setTimeout(()=>haptic(HAPTIC_FOR[type]),delay); else haptic(HAPTIC_FOR[type])}
+  if(typeof haptic==='function'&&!(SND.hush&&type!=='toll')){const hk={chip:'light',chips:'medium',card:'light',stamp:'heavy',gun:'heavy',boss:'heavy',bigwin:'success',paid:'success',win:'success',toll:'error',lose:'error'}[type]; if(hk) setTimeout(()=>haptic(hk),delay||0)}
   if(!meta.sound||!SND.ctx) return;
   if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;
@@ -2955,6 +3072,7 @@ function lightning(on){
 function setScene(id){
   const sl=(R&&id!=='sTitle')?R.level:0;
   document.documentElement.dataset.saloon=sl||'';
+  document.documentElement.dataset.back=(meta.back&&meta.back!=='auto')?meta.back:(sl||1);
   AIR.mode=SALOON_AIR[sl]||'dust';
   if(typeof setSaloon==='function') setSaloon(sl||5);
   lightning(sl===8);
@@ -2962,6 +3080,18 @@ function setScene(id){
 
 /* ================= rendering helpers ================= */
 let SOUNDQ=[];
+// court cards are Western portraits: the Jack a young gun, the Queen a saloon lady, the King an old cattle baron
+const COURT={};
+function courtArt(r,s){
+  const k=r+'-'+s; if(COURT[k]) return COURT[k].replace(/§§/g,'c'+(++PID));
+  const red=s===1||s===2, ink=red?'#8e2418':'#22201e', paper=['#f6ead0','#d9c49a'];
+  const base={bg:paper,rim:red?'#c0503f':'#6a6a6a',skin:['#e8c4a2','#a8805e'],scar:false,smoke:false,patch:false,mask:false,bandolier:false,badge:false,stubble:false,freckles:false};
+  const looks={11:{hat:'cowboy',hatc:red?'#7a2418':'#2a2622',hatTilt:-6,fh:'stache',hair:'#5a3a22',age:0,neck:'scarf',scarf:ink,coat:red?'#6a1e16':'#2a2826',mouth:'smirk',brows:'cocked'},
+    12:{fem:true,hat:'none',hairdo:'updo',hair:red?'#7a2a12':'#1a120c',dress:red?'#9a1e22':'#2a2630',choker:true,earring:'drop',lips:'#a01828',eyes:{lashes:true,liner:true,iris:'#3a5a4a'},brows:'arched',rose:false},
+    13:{hat:'cattleman',hatc:red?'#5a1e16':'#1e1c1a',fh:'beard',hair:'#d6d0c4',age:2,hw:9.8,jaw:1.4,neck:'bolo',vest:red?'#6a1e16':'#2a2826',coat:'#1e1a18',mouth:'grim',brows:'flat'}};
+  const svg=portrait('court'+k,Object.assign({},base,looks[r]),'square').replace(/pt\d+/g,'§§');
+  COURT[k]=svg; return svg.replace(/§§/g,'c'+(++PID));
+}
 function cardHTML(c,up,extra='',loc=null,anim=null){
   let cls='', style='';
   if(loc){
@@ -2974,8 +3104,9 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
   if(!up) return `<div class="card back${cls} ${extra}"${style}>${/marked/.test(extra)?`<span class="mk${c.s===1||c.s===2?' red':''}">${SUITS[c.s]}</span>`:''}</div>`;
   const red=c.s===1||c.s===2, rk=RN[c.r]||String(c.r), su=SUITS[c.s], face=c.r>=11&&c.r<=13;
   const ix=`<b${rk.length>1?' class="ten"':''}>${rk}</b><i>${su}</i>`, hot=G.winCards.has(c.id)?' hot':'';
-  return `<div class="card${red?' red':''}${hot}${cls} ${extra}"${style} role="img" aria-label="${SG[c.r]} of ${SUITN[c.s]}">`+
-    `<div class="ix">${ix}</div>`+(face?`<div class="face"><i>${su}</i><span>${rk}</span></div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
+  const gold=c.r>=11?' gold':'';
+  return `<div class="card${red?' red':''}${hot}${gold}${cls} ${extra}"${style} role="img" aria-label="${SG[c.r]} of ${SUITN[c.s]}">`+
+    `<div class="ix">${ix}</div>`+(face?`<div class="face court">${courtArt(c.r,c.s)}<i>${su}</i></div>`:c.r===14?`<div class="pip ace">${su}</div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
 }
 function chipCls(a){return a>=500?'k':a>=150?'g':a>=50?'b':'r'}
 function chipStack(a){const k=Math.max(1,Math.min(6,Math.ceil(Math.log10(a+1)*1.5))); let h=`<span class="stack" style="--n:${k-1}">`; for(let j=0;j<k;j++) h+=`<span class="chip ${chipCls(a)}" style="--i:${j}"></span>`; return h+'</span>'}
@@ -3012,9 +3143,80 @@ function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-famil
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
-let LASTTAP=0; document.addEventListener('touchend',e=>{const n=Date.now(); if(n-LASTTAP<320&&!(e.target.closest&&e.target.closest('input,textarea'))) e.preventDefault(); LASTTAP=n},{passive:false});
+// instant response: buttons press the moment a finger lands, with a tick of haptic feedback
+document.addEventListener('touchstart',()=>{},{passive:true});
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button,.btn,.chipbtn,[data-buy],[data-stab]'); if(!b||b.disabled) return;
+  b.classList.add('pressing'); haptic(b.classList.contains('raise')||b.classList.contains('call')||b.classList.contains('gold')?'medium':'light');
+  const up=()=>{b.classList.remove('pressing'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+
+/* haptics: real taps on the native app, a buzz where the browser allows it */
+let HAPT=0;
+function haptic(k){const n=performance.now(); if(n-HAPT<35) return; HAPT=n;
+  try{if(window.webkit&&webkit.messageHandlers&&webkit.messageHandlers.haptic){webkit.messageHandlers.haptic.postMessage(k); return}}catch(e){}
+  if(navigator.vibrate){const ms={select:6,light:8,medium:14,heavy:24,success:[12,40,18],error:[30,50,30]}[k]||8; try{navigator.vibrate(ms)}catch(e){}}}
+/* buttons answer the instant a finger lands, not when it lifts */
+const PRESSABLE='.btn,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest(PRESSABLE); if(!b||b.disabled) return; b.classList.add('press'); haptic('select');
+  const up=()=>{b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
+
+/* ================= daily table: one boss, one deck order, the same for everyone today ================= */
+let DAILY=null;
+function dayKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function seeded(str){let h=2166136261; for(const ch of str){h^=ch.charCodeAt(0); h=Math.imul(h,16777619)} return ()=>{h+=0x6D2B79F5; let t=h; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return((t^t>>>14)>>>0)/4294967296}}
+function startDaily(){
+  const dk=dayKey(), pick=seeded('boss'+dk), lvl=2+Math.floor(pick()*6);
+  DAILY={key:dk,rng:seeded('deck'+dk)};
+  const pool=Object.keys(CHARMS).filter(k=>CHARMS[k].tier===0), r2=seeded('charm'+dk);
+  const charms=[]; while(charms.length<2&&pool.length) charms.push(pool.splice(Math.floor(r2()*pool.length),1)[0]);
+  R={level:lvl,gold:0,charms,lv:{},deeds:[],tricks:[],curse:null,phase:'table',heat:0,temp:null,daily:dk};
+  startTable();
+}
+function dailyDone(won){
+  const dk=R.daily, hands=(G&&G.tableHands)||0; meta.daily=meta.daily||{}; const prev=meta.daily[dk];
+  if(won&&(!prev||!prev.won||hands<prev.hands)) meta.daily[dk]={won:true,hands}; else if(!prev) meta.daily[dk]={won:false,hands};
+  meta.dailyDone=(meta.dailyDone||0)+1; saveMeta();
+  const bd=BOSSES[R.level-1], best=meta.daily[dk];
+  $('poster').hidden=true;
+  let v=$('dailyCard'); if(!v){v=document.createElement('div'); v.id='dailyCard'; v.className='modal'; document.body.appendChild(v)}
+  v.innerHTML=`<div class="sheet daily-sheet"><div class="est">Daily table · ${dk}</div><h3 class="sheet-title">${won?'Taken down':'Dead man'}</h3>
+    <p class="daily-line">${won?`You took down ${bossName(bd)} in <b>${hands}</b> hand${hands===1?'':'s'}.`:`${bossName(bd)} won today's table.`}</p>
+    <p class="daily-line">${best.won?`Your best today: <b>${best.hands}</b> hands.`:'Come back and try again. Same deal, all day.'}</p>
+    <div class="row"><button class="btn gold" id="dailyOk" style="flex:1">Back to the menu</button></div></div>`;
+  v.hidden=false; sfx(won?'paid':'stamp');
+  $('dailyOk').onclick=()=>{v.hidden=true; DAILY=null; R=null; hush(false); $('sGame').classList.remove('lost'); const lv=$('lossVeil'); if(lv){lv.hidden=true; lv.classList.remove('on','black')} renderTitle()};
+}
+
+/* ================= trophy room: wanted posters, card backs, achievements ================= */
+const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded'];
+function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
+const ACH=[
+  ['First blood','Take down your first boss',()=>meta.stats.bosses>=1],
+  ['Halfway there','Reach the fifth saloon',()=>meta.best>=5],
+  ['Territory clean','Win a whole run',()=>meta.wins>=1],
+  ['Wanted everywhere','Take down all eight bosses at least once',()=>BOSSES.every(b=>(meta.beaten||{})[b.key])],
+  ['Regular','Ride ten runs',()=>meta.runs>=10],
+  ['Hundred hands','Play 100 hands',()=>meta.stats.hands>=100],
+  ['High roller','Win a pot of 5,000 or more',()=>meta.stats.bigPot>=5000],
+  ['Full house','Make a full house or better',()=>meta.stats.bestHand&&handCat(meta.stats.bestHand)>=6],
+  ['Straight flush','Make a straight flush',()=>meta.stats.bestHand&&handCat(meta.stats.bestHand)>=8],
+  ['Hired gun','Finish ten challenges',()=>meta.stats.challenges>=10],
+  ['Daily rider','Play a daily table',()=>(meta.dailyDone||0)>=1],
+  ['Collector','Unlock five card backs',()=>[1,2,3,4,5,6,7,8,9].filter(backUnlocked).length>=5]];
+function renderTrophies(){
+  const beaten=meta.beaten||{}, cur=meta.back||'auto';
+  const posters=BOSSES.map(b=>beaten[b.key]?`<div class="tp-poster got"><span class="medal">${bossPortrait(b)}</span><b>${b.name}</b><em>Taken down ×${beaten[b.key]}</em></div>`
+    :`<div class="tp-poster"><span class="medal locked">?</span><b>Wanted</b><em>${TOWNS[BOSSES.indexOf(b)]}</em></div>`).join('');
+  const backs=[`<button class="tp-back${cur==='auto'?' on':''}" data-back="auto"><span class="bk-auto">Each saloon</span><em>Auto</em></button>`]
+    .concat(BACK_NAMES.map((nm,i)=>{const n=i+1, ok=backUnlocked(n); return `<button class="tp-back${String(cur)===String(n)?' on':''}" data-back="${n}" ${ok?'':'disabled'}><span class="bk-swatch" data-bk="${n}"></span><em>${ok?nm:'Locked'}</em></button>`})).join('');
+  const done=ACH.filter(a=>a[2]()).length;
+  const ach=ACH.map(([t,d,f])=>{const ok=f(); return `<div class="tp-ach${ok?' got':''}"><i>${ok?'★':'☆'}</i><div><b>${t}</b><span>${d}</span></div></div>`}).join('');
+  $('trophies').innerHTML=`<div class="tp-h">Wanted posters <small>${Object.keys(beaten).length}/8</small></div><div class="tp-posters">${posters}</div>
+    <div class="tp-h">Card backs <small>beat a saloon's boss to win its deck</small></div><div class="tp-backs">${backs}</div>
+    <div class="tp-h">Achievements <small>${done}/${ACH.length}</small></div><div class="tp-achs">${ach}</div>`;
+  $('trophies').querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(b.disabled) return; meta.back=b.dataset.back; saveMeta(); setScene(SND.scene||'sTitle'); sfx('card'); renderTrophies()});
+}
 
 /* ================= trail map ================= */
 const MAPPTS=[[70,205],[170,125],[275,190],[375,100],[478,172],[572,88],[668,160],[742,78]];
@@ -3059,13 +3261,14 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
   const k=b.dataset.audio;
   if(k==='speed') meta.speed=meta.speed==='fast'?'normal':'fast';
+  else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
   else if(k==='duo'){meta.duo={auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
   saveMeta(); renderToggles();
@@ -3087,7 +3290,7 @@ function renderCoach(){
 
 /* ================= title ================= */
 function renderTitle(){
-  TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
+  DAILY=null; TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
   drawFan($('fan')); renderToggles();
   const unlockedCount=Object.values(CHARMS).filter(c=>c.tier<=meta.unlock).length;
   $('metaPlaques').innerHTML=`
@@ -3096,10 +3299,12 @@ function renderTitle(){
     <div class="plaque"><span>Wins</span><b>${meta.wins}</b></div>
     <div class="plaque"><span>Charms</span><b>${unlockedCount} / ${Object.keys(CHARMS).length}</b></div>`;
   const saved=sget(RUN_KEY);
+  const dk=dayKey(), dd=(meta.daily||{})[dk];
   $('titleActions').innerHTML=(saved?`<button class="btn gold big" id="contBtn">Continue · Saloon ${saved.level}</button>`:'')+
-    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`;
+    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`+`<button class="btn dark daily-btn" id="dailyBtn">Daily table${dd&&dd.won?` · ${dd.hands} hands`:''}</button>`;
   if(saved) $('contBtn').onclick=()=>{ac(); continueRun(saved)};
   $('newBtn').onclick=()=>{ac(); startRun()};
+  $('dailyBtn').onclick=()=>{ac(); startDaily()};
   const mh=maxHeat();
   $('heatPick').hidden=mh<1;
   $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
@@ -3120,7 +3325,8 @@ function renderTitle(){
   show('sTitle');
 }
 function openMore(tab){
-  const names={howto:'How to play',records:'Records',charms:'Charms',settings:'Settings'};
+  const names={howto:'How to play',trophies:'Trophies',records:'Records',charms:'Charms',settings:'Settings'};
+  if(tab==='trophies') renderTrophies();
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
   $('moreTitle').textContent=names[tab]; renderToggles(); $('more').hidden=false;
@@ -3128,7 +3334,7 @@ function openMore(tab){
 }
 
 /* ================= run flow ================= */
-function saveRun(phase){if(!R||R.tutorial) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
+function saveRun(phase){if(!R||R.tutorial||R.daily) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
 function startRun(){
   if(!meta.tutDone){startTutorial(true); return}
   R={level:1,gold:0,charms:[],lv:{},deeds:[],tricks:[],curse:null,phase:'pick',heat:Math.min(meta.heatPick||0,maxHeat()),temp:null};
@@ -3442,7 +3648,7 @@ function startTable(){
   posterFor(bd,'intro');
   $('poster').hidden=false;
   later(()=>sfx('boss'),150); later(()=>sfx('door'),700);
-  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R); say(bd.lines.intro); later(newHand,350)};
+  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} say(bd.lines.intro); later(newHand,350)};
 }
 function resumeTable(){
   TOKEN++;
@@ -3466,8 +3672,13 @@ function step(){
   render();
   if(live().length===1){later(()=>collectThen(()=>handEnd(resolveUncontested())),450); return}
   if(G.turn===-1){
+    // everyone's in and the cards just run out: slow it right down
+    const lv=live(), me=human(), runout=lv.length>=2&&lv.filter(q=>!q.allIn).length<=1&&me.inHand&&!me.folded&&G.board.length<5&&!REDUCED;
+    if(runout&&!G.slowmo){G.slowmo=true; lv.forEach(q=>q.show=true); $('sGame').classList.add('slowmo'); heartbeat(true); haptic('heavy'); render()}
     later(()=>collectThen(()=>{
       const st=advanceStreet();
+      if(G.slowmo){sfx('whoosh'); haptic('medium'); const bd=$('board'); bd.classList.remove('slam'); void bd.offsetWidth; bd.classList.add('slam')}
+      if(st==='showdown'&&G.slowmo){G.slowmo=false; later(()=>{$('sGame').classList.remove('slowmo'); heartbeat(false)},900)}
       if(st==='showdown'){
         const ev=revealShowdown();
         render(); sfx('whoosh');
@@ -3477,7 +3688,7 @@ function step(){
         G.dealUntil=performance.now()+(G.board.length===3?270:0)+450;
         step();
       }
-    }),650);
+    }),G.slowmo?1700:650);
     return;
   }
   const p=G.players[G.turn];
@@ -3542,7 +3753,7 @@ function handEnd(res){
   if(ev.challenge){later(()=>{stampAt(50,30,'Challenge!','#f4cb5c',28); sfx('win'); bumpGold()},ev.kos.length?2000:900)}
   if(ev.wind) later(()=>{stampAt(50,60,'Second Wind','#7fcf8f',30); sfx('bigwin')},700);
   if(TUT){later(tutFinale,2600); return}
-  if(!G.outcome){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
+  if(!G.outcome&&!R.daily){R.table=serializeTable(); R.phase='table'; sset(RUN_KEY,R)}
   renderCoach();
 }
 
@@ -3681,6 +3892,8 @@ function coinRain(){
 function tableWon(){
   TOKEN++;
   const L=R.level, bd=BOSSES[L-1], me=human();
+  meta.beaten=meta.beaten||{}; meta.beaten[bd.key]=(meta.beaten[bd.key]||0)+1;
+  if(R.daily){dailyDone(true); return}
   R.gold+=G.bounty; meta.stats.bosses++;
   let extra='';
   if(has('cashout')){const g=Math.floor(me.chips/100); R.gold+=g; extra+=` Cashout +${g}.`}
@@ -3711,7 +3924,7 @@ function leaveLost(){
   const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
   if(v&&!v.hidden){v.onclick=null; v.classList.add('black'); setTimeout(fin,950)} else fin();
 }
-function runOver(toMenu){TOKEN++; meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); if(toMenu){hush(false); renderTitle(); return} endRun(false)}
+function runOver(toMenu){TOKEN++; if(R&&R.daily){dailyDone(false); return} meta.best=Math.max(meta.best,R.level); saveMeta(); sset(RUN_KEY,null); if(toMenu){hush(false); renderTitle(); return} endRun(false)}
 const NP_ADS=[
   ['Dr. Hatch\'s Tonic','Cures tilt, bad beats &amp; the shakes. Sold at every saloon.','25 cents'],
   ['Wanted: Bicah Mell','For crimes against honest card players.','$5,000 reward'],
