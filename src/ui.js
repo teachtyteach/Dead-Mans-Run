@@ -1,11 +1,13 @@
 /* ================= basics ================= */
 const $=id=>document.getElementById(id);
+document.documentElement.dataset.screen='sTitle';
 const REDUCED=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 let TOKEN=0, PAUSED=false;
 function later(fn,ms){const t=TOKEN; const run=()=>{if(t!==TOKEN) return; if(PAUSED){setTimeout(run,250); return} fn()}; setTimeout(run,ms)}
 function speedMul(){return meta.speed==='fast'?0.45:1}
 const SCREENS=['sTitle','sChapter','sShop','sEvent','sGame','sEnd'];
 function show(id){
+  document.documentElement.dataset.screen=id;
   setScene(id);
   if(id!=='sGame') heartbeat(false);
   const was=SND.scene; SND.scene=id; musicLevel();
@@ -25,8 +27,8 @@ const AIR={mode:'dust'};
 const SALOON_AIR=['dust','dust','embers','drips','sand','rain','sparkle','fireflies','ash'];
 (function air(){
   const cv=$('dust'); if(!cv||REDUCED) return; const ctx=cv.getContext('2d');
-  let W=0,H=0,DPR=Math.min(2,window.devicePixelRatio||1), motes=[], mode='';
-  function size(){W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
+  let W=0,H=0,DPR=1, motes=[], mode='', lastCol='';  // soft motes don't need retina pixels: 1x keeps the GPU cool
+  function size(){lastCol='';W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0)}
   size(); addEventListener('resize',size);
   const R0=Math.random;
   const spawn={
@@ -46,7 +48,7 @@ const SALOON_AIR=['dust','dust','embers','drips','sand','rain','sparkle','firefl
     const dt=Math.min(50,now-last); last=now;
     if(mode!==AIR.mode) reseed();
     if(!document.hidden){
-      ctx.clearRect(0,0,W,H);
+      ctx.globalAlpha=1; ctx.clearRect(0,0,W,H);
       for(const m of motes){
         let col='255,226,170', a=m.a;
         if(mode==='dust'){m.y-=m.s*dt; m.p+=dt*.0006; m.x+=Math.sin(m.p)*.00006*dt; if(m.y<-.02){m.y=1.02;m.x=R0()}
@@ -56,14 +58,14 @@ const SALOON_AIR=['dust','dust','embers','drips','sand','rain','sparkle','firefl
         else if(mode==='drips'){if(m.wait>0){m.wait-=dt; continue} m.y+=m.s*dt; m.s+=.0000006*dt; col='200,225,255'; if(m.y>1.02) Object.assign(m,spawn.drips(),{y:-.02})}
         else if(mode==='sand'){m.x+=m.s*dt*(1.2+Math.sin(now*.0004)); m.p+=dt*.002; m.y+=Math.sin(m.p)*.00004*dt; col='230,170,110'; if(m.x>1.05){m.x=-.05; m.y=R0()}}
         else if(mode==='rain'){m.y+=m.s*dt; m.x-=m.s*dt*.18; if(m.y>1.05){m.y=-.05-R0()*.2; m.x=R0()*1.2}
-          ctx.strokeStyle=`rgba(190,210,235,${m.a})`; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(m.x*W,m.y*H); ctx.lineTo(m.x*W+m.r*.18,m.y*H-m.r); ctx.stroke(); continue}
+          ctx.globalAlpha=m.a; if(lastCol!=='r'){ctx.strokeStyle='rgb(190,210,235)'; ctx.lineWidth=1; lastCol='r'} ctx.beginPath(); ctx.moveTo(m.x*W,m.y*H); ctx.lineTo(m.x*W+m.r*.18,m.y*H-m.r); ctx.stroke(); continue}
         else if(mode==='sparkle'){m.p+=m.sp*dt; a*=Math.max(0,Math.sin(m.p))**6; col='255,250,230'; if(m.p>6.28*3){Object.assign(m,spawn.sparkle())}
-          if(a>.02){ctx.fillStyle=`rgba(${col},${a.toFixed(3)})`; const s=m.r*2.4; ctx.fillRect(m.x*W-s,m.y*H-.5,s*2,1); ctx.fillRect(m.x*W-.5,m.y*H-s,1,s*2)}}
+          if(a>.02){ctx.globalAlpha=a; if(lastCol!==col){ctx.fillStyle=`rgb(${col})`; lastCol=col} const s=m.r*2.4; ctx.fillRect(m.x*W-s,m.y*H-.5,s*2,1); ctx.fillRect(m.x*W-.5,m.y*H-s,1,s*2)}}
         else if(mode==='fireflies'){m.p+=dt*.0012; m.x+=m.vx*dt+Math.sin(m.p*.7)*.00003*dt; m.y+=m.vy*dt+Math.cos(m.p*.5)*.00003*dt; if(m.x<0||m.x>1) m.vx*=-1; if(m.y<.2||m.y>1) m.vy*=-1;
-          a*=Math.max(0,Math.sin(m.p))**3; col='210,255,120'; if(a>.02){const g=ctx.createRadialGradient(m.x*W,m.y*H,0,m.x*W,m.y*H,m.r*6); g.addColorStop(0,`rgba(${col},${(a*.5).toFixed(3)})`); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.fillRect(m.x*W-m.r*6,m.y*H-m.r*6,m.r*12,m.r*12)}}
+          a*=Math.max(0,Math.sin(m.p))**3; col='210,255,120'; if(a>.02){const g=ctx.createRadialGradient(m.x*W,m.y*H,0,m.x*W,m.y*H,m.r*6); g.addColorStop(0,`rgba(${col},${(a*.5).toFixed(3)})`); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.globalAlpha=1; ctx.fillStyle=g; lastCol=''; ctx.fillRect(m.x*W-m.r*6,m.y*H-m.r*6,m.r*12,m.r*12)}}
         else if(mode==='ash'){m.y+=m.s*dt; m.p+=dt*.001; m.x+=Math.sin(m.p)*.00008*dt; col='180,175,170'; if(m.y>1.02){m.y=-.02; m.x=R0()}}
         if(a<=.005) continue;
-        ctx.beginPath(); ctx.arc(m.x*W,m.y*H,m.r,0,6.283); ctx.fillStyle=`rgba(${col},${Math.min(1,a).toFixed(3)})`; ctx.fill();
+        ctx.globalAlpha=Math.min(1,a); if(lastCol!==col){ctx.fillStyle=`rgb(${col})`; lastCol=col} ctx.beginPath(); ctx.arc(m.x*W,m.y*H,m.r,0,6.283); ctx.fill();
       }
     }
     requestAnimationFrame(frame);
@@ -97,45 +99,60 @@ function buildVista(){
         d+=` L${(x+s1*.4).toFixed(0)} ${(base-h*.35).toFixed(0)} L${(x+s1).toFixed(0)} ${(base-h).toFixed(0)} L${(x+s1+w).toFixed(0)} ${(base-h+rr(-4,4)).toFixed(0)} L${(x+s1+w+s2*.6).toFixed(0)} ${(base-h*.4).toFixed(0)} L${(x+s1+w+s2).toFixed(0)} ${base}`; x+=s1+w+s2}
       else{const w=rr(60,160); d+=` Q${(x+w/2).toFixed(0)} ${(base-rr(4,amp*.25)).toFixed(0)} ${(x+w).toFixed(0)} ${base}`; x+=w}}
     return d+` L${W+40} ${H} Z`};
-  const stars=Array.from({length:150},()=>{const x=rr(0,W),y=rr(0,H*.62)**1.08,r=rnd()<.08?rr(1.4,2.1):rr(.5,1.2);return `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(2)}" class="${rnd()<.3?'tw':''}" style="--d:${rr(2,6).toFixed(1)}s;--o:${rr(.35,1).toFixed(2)}"/>`}).join('');
+  const st=['','',''];
+  for(let i=0;i<150;i++){const x=rr(0,W),y=rr(0,H*.62)**1.08,r=rnd()<.08?rr(1.4,2.1):rr(.5,1.2),k=rnd()<.3?1+Math.floor(rnd()*2):0; st[k]+=`<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(2)}" opacity="${rr(.35,1).toFixed(2)}"/>`}
   // the town: false-front saloons, a church, a water tower, a windmill, lamplit windows
-  let town='', win='', bx=470; const ground=792;
+  let town='', win='', flick='', bx=470; const ground=792;
   const B=[[64,92,'step'],[48,70,'flat'],[96,128,'peak'],[58,84,'step'],[30,0,'gap'],[44,150,'church'],[30,0,'gap'],[110,118,'saloon'],[54,76,'flat'],[72,104,'step'],[40,62,'flat'],[88,96,'peak']];
   B.forEach(([w,h,k])=>{ if(k==='gap'){bx+=w; return}
     const y=ground-h;
     if(k==='church'){town+=`<path d="M${bx} ${ground} V${y+40} L${bx+w/2} ${y+12} L${bx+w} ${y+40} V${ground}Z M${bx+w/2-7} ${y+14} V${y-26} L${bx+w/2} ${y-40} L${bx+w/2+7} ${y-26} V${y+14}Z M${bx+w/2-1.5} ${y-58} h3 v18 h-3z M${bx+w/2-7} ${y-52} h14 v3 h-14z"/>`;
-      win+=`<path class="lw" style="--d:${rr(3,7).toFixed(1)}s" d="M${bx+w/2-6} ${y+76} v-16 a6 6 0 0 1 12 0 v16z"/>`}
+      win+=`<path d="M${bx+w/2-6} ${y+76} v-16 a6 6 0 0 1 12 0 v16z"/>`}
     else{let top=k==='step'?`V${y+14} H${bx+8} V${y} H${bx+w-8} V${y+14} H${bx+w}`:k==='peak'?`V${y+18} L${bx+w/2} ${y-8} L${bx+w} ${y+18}`:k==='saloon'?`V${y+10} H${bx+14} V${y-10} H${bx+w-14} V${y+10} H${bx+w}`:`V${y} H${bx+w}`;
       town+=`<path d="M${bx-3} ${ground} ${top.replace(/^V/,'V').replace(`V${y}`,`V${y}`)} V${ground}Z"/><rect x="${bx-6}" y="${ground-30}" width="${w+12}" height="4"/>`;
       const rows=h>100?2:1, cols=Math.max(2,Math.round(w/26));
       for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(rnd()<.32) continue;
         const wx=bx+(c+.5)*(w/cols)-5, wy=y+22+r*38; if(wy>ground-40) continue;
-        win+=`<rect class="lw" style="--d:${rr(2.5,8).toFixed(1)}s;--o:${rr(.7,1).toFixed(2)}" x="${wx.toFixed(0)}" y="${wy}" width="10" height="15" rx="1"/>`}
-      if(k==='saloon') win+=`<rect class="lw door" x="${bx+w/2-9}" y="${ground-26}" width="18" height="22"/>`;
+        const wr=`<rect x="${wx.toFixed(0)}" y="${wy}" width="10" height="15" rx="1" opacity="${rr(.7,1).toFixed(2)}"/>`; if(rnd()<.14) flick+=wr; else win+=wr}
+      if(k==='saloon') win+=`<rect class="door" x="${bx+w/2-9}" y="${ground-26}" width="18" height="22"/>`;
     }
     bx+=w+rr(4,12)});
   // water tower and windmill on the edges of town
   const tw=`<g><path d="M392 ${ground} L404 712 M436 ${ground} L424 712 M398 750 L430 750 M402 730 L426 772" stroke-width="3.5" fill="none"/><path d="M394 712 h48 v-46 a24 8 0 0 0 -48 0z"/><path d="M390 668 L418 646 L446 668z"/></g>`;
-  const mill=`<g><path d="M1248 ${ground} L1262 650 L1276 ${ground} M1252 740 h20 M1256 700 h12" stroke-width="3" fill="none"/><path d="M1262 650 l26 6 v4 l-26 -4z"/><g class="blades" style="transform-origin:1262px 650px">${Array.from({length:8},(_,i)=>`<path transform="rotate(${i*45} 1262 650)" d="M1262 650 L1259 606 L1265 606Z"/>`).join('')}<circle cx="1262" cy="650" r="4"/></g></g>`;
+  const mill=`<g><path d="M1248 ${ground} L1262 650 L1276 ${ground} M1252 740 h20 M1256 700 h12" stroke-width="3" fill="none"/><path d="M1262 650 l26 6 v4 l-26 -4z"/></g>`;
+  const blades=`<svg viewBox="-34 -34 68 68"><g transform="scale(.72)">${Array.from({length:8},(_,i)=>`<path transform="rotate(${i*45})" d="M0 0 L-3 -44 L3 -44Z"/>`).join('')}<circle r="4"/></g></svg>`;
   const poles=[120,300,1130,1360,1520].map(x=>`<path d="M${x} ${ground+6} V${ground-74} M${x-14} ${ground-66} h28" stroke-width="3" fill="none"/>`).join('');
   const wire=`<path class="wire" d="M120 ${ground-66} Q210 ${ground-40} 300 ${ground-66} M1130 ${ground-66} Q1245 ${ground-40} 1360 ${ground-66} Q1440 ${ground-44} 1520 ${ground-66}" fill="none" stroke-width="1.2"/>`;
   const cactus=(x,s)=>`<path transform="translate(${x} ${ground+4}) scale(${s})" d="M-5 0 V-62 a5 5 0 0 1 10 0 V0z M-5 -30 h-10 a4 4 0 0 1 -4 -4 v-14 a4 4 0 0 1 8 0 v10 h6z M5 -22 h10 v-18 a4 4 0 0 1 8 0 v20 a6 6 0 0 1 -6 6 h-12z"/>`;
   const svg=(cls,inner,extra='')=>`<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" ${extra}>${inner}</svg>`;
+  const TF='translate(800 792) scale(.72) translate(-800 -792)';
   v.innerHTML=`<div class="vs-sky"></div>`+
-    svg('vs-stars',stars)+
+    svg('vs-stars',st[0])+svg('vs-stars vs-tw1',st[1])+svg('vs-stars vs-tw2',st[2])+
     `<div class="vs-orb"><i></i></div><i class="vs-shoot"></i>`+
     svg('vs-cloud',`<path d="M120 300 q120 -26 260 -6 t260 -2 q-140 14 -280 10 t-240 -2z M900 210 q160 -22 330 -4 t220 2 q-150 14 -320 8 t-230 -6z"/>`)+
     svg('vs-far',`<path d="${ridge(640,190,.55)}"/>`)+
     svg('vs-mid',`<path d="${ridge(720,120,.45)}"/>`)+
     `<div class="vs-haze"></div>`+
-    svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}<g class="town">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
-    `<div class="vs-weed"><svg viewBox="-30 -30 60 60"><g fill="none" stroke-width="2.2">${Array.from({length:11},(_,i)=>`<ellipse rx="${rr(14,26).toFixed(0)}" ry="${rr(8,22).toFixed(0)}" transform="rotate(${i*33})"/>`).join('')}</g></svg></div>`+
-    `<div class="vs-floor"></div>`;
-  // gentle parallax: follow the pointer on desktop, drift on its own on touch
-  let tx=0,ty=0,cx=0,cy=0;
-  addEventListener('pointermove',e=>{if(e.pointerType!=='mouse') return; tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5},{passive:true});
-  if(!REDUCED) (function loop(t){cx+=(tx-cx)*.04; cy+=(ty-cy)*.04; const a=Math.sin(t/9000)*.18, px=cx+a, py=cy+Math.cos(t/11000)*.08;
-    v.style.setProperty('--px',px.toFixed(4)); v.style.setProperty('--py',py.toFixed(4)); requestAnimationFrame(loop)})(0);
+    `<div class="vs-nearw">`+
+      svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}<g transform="${TF}">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
+      svg('vs-lights',`<g transform="${TF}">${flick}</g>`)+
+      `<div class="vs-mill">${blades}</div>`+
+      `<div class="vs-weed"><i><svg viewBox="-30 -30 60 60"><g fill="none" stroke-width="2.4">${Array.from({length:11},(_,i)=>`<ellipse rx="${rr(14,26).toFixed(0)}" ry="${rr(8,22).toFixed(0)}" transform="rotate(${i*33})"/>`).join('')}</g></svg></i></div>`+
+    `</div><div class="vs-dim"></div><div class="vs-floor"></div>`;
+  // place the windmill blades and the tumbleweed on the same ground the town stands on (the art is "slice"-scaled)
+  const nearw=v.querySelector('.vs-nearw'), millEl=v.querySelector('.vs-mill'), weed=v.querySelector('.vs-weed');
+  const place=()=>{const w=nearw.clientWidth||innerWidth+140, h=nearw.clientHeight||innerHeight, s=Math.max(w/W,h/H), ox=(w-W*s)/2, oy=h-H*s;
+    const hx=ox+(800+(1262-800)*.72)*s, hy=oy+(792+(650-792)*.72)*s, ms=68*s;
+    Object.assign(millEl.style,{left:(hx-ms/2)+'px',top:(hy-ms/2)+'px',width:ms+'px',height:ms+'px'});
+    const ws=Math.max(26,46*s); Object.assign(weed.style,{top:(oy+797*s-ws)+'px',width:ws+'px',height:ws+'px'}); weed.style.setProperty('--run',(w+ws*2)+'px')};
+  place(); addEventListener('resize',place); if(window.visualViewport) visualViewport.addEventListener('resize',place);
+  // parallax: the mouse moves the layers on desktop (transforms only, and only while moving); touch screens drift on their own in CSS
+  const layers=[['.vs-stars',6,4],['.vs-far',14,5],['.vs-mid',28,8],['.vs-nearw',48,10]].map(([q,ax,ay])=>[v.querySelectorAll(q),ax,ay]);
+  let tx=0,ty=0,cx=0,cy=0,run=false;
+  const step=()=>{cx+=(tx-cx)*.08; cy+=(ty-cy)*.08; layers.forEach(([els,ax,ay])=>els.forEach(e=>e.style.transform=`translate3d(${(-cx*ax).toFixed(2)}px,${(-cy*ay).toFixed(2)}px,0)`));
+    if(Math.abs(tx-cx)+Math.abs(ty-cy)>.0005) requestAnimationFrame(step); else run=false};
+  if(!REDUCED&&matchMedia('(hover:hover) and (pointer:fine)').matches){v.classList.add('mouse');
+    addEventListener('pointermove',e=>{if(e.pointerType!=='mouse') return; tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; if(!run){run=true; requestAnimationFrame(step)}},{passive:true})}
 }
 buildVista();
 
@@ -317,7 +334,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 56 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 57 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{

@@ -606,8 +606,8 @@ input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:50%;bor
 .ch-sub{color:#e2d2b0;text-shadow:0 0 10px rgba(255,225,170,.3)}
 .ch-rule{color:rgba(240,215,160,.7);filter:drop-shadow(0 0 4px rgba(240,200,110,.4))}
 .ch-tap{color:rgba(240,220,180,.35)}
-html:has(#sChapter:not([hidden])) .film{opacity:.08}
-html:has(#sChapter:not([hidden])) #dust{opacity:.5}
+html[data-screen="sChapter"] .film{opacity:.08}
+html[data-screen="sChapter"] #dust{opacity:.5}
 
 .ch-hand{display:block;width:100%;height:auto;margin:0 auto;overflow:visible;
   filter:drop-shadow(0 0 1.5px rgba(255,240,210,.6)) drop-shadow(0 0 16px rgba(255,220,160,.3))}
@@ -933,8 +933,8 @@ html[data-saloon="3"] .lamp{animation:flicker 9s infinite}
 .rk.mine b{color:var(--gold)}
 @media (max-width:640px){#sGame .charm-icons{display:none}}
 /* crisp HUD: less film grain over the table, brighter labels */
-html:has(#sGame:not([hidden])) .film{opacity:.04}
-html:has(#sGame:not([hidden])) .vignette{opacity:.6}
+html[data-screen="sGame"] .film{opacity:.04}
+html[data-screen="sGame"] .vignette{opacity:.6}
 #sGame .where .lvl{color:var(--brass-hi);opacity:1;font-weight:700}
 #sGame .where b{text-shadow:0 1px 0 rgba(0,0,0,.8)}
 #sGame .topbar{position:relative;z-index:45}
@@ -1546,14 +1546,12 @@ body{padding-left:var(--side);padding-right:var(--side)}
 /* ================= the vista: frontier backdrop, re-lit for every saloon ================= */
 #vista{--sky1:#070b1c;--sky2:#1a1d3c;--sky3:#5b3446;--orb:#f2e8cc;--orb-glow:rgba(242,232,204,.35);--orb-x:73%;--orb-y:22%;--orb-s:clamp(70px,11vmin,130px);
   --stars:1;--cloud:rgba(60,50,80,.35);--far:#231a2e;--mid:#150f1b;--near:#0a0708;--win:#ffc266;--haze:rgba(140,80,90,.22);--dim:1;--px:0;--py:0;
-  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--sky1);filter:brightness(var(--dim));transition:filter 1s ease}
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--sky1);contain:strict}
 html.tall #vista{bottom:auto;height:var(--appH)}
 #vista>*{position:absolute;inset:0 -70px;width:calc(100% + 140px);height:100%}
 #vista svg{display:block}
 .vs-sky{background:linear-gradient(var(--sky1) 0%,var(--sky2) 48%,var(--sky3) 78%,var(--sky3) 100%);transition:background 1.2s}
-.vs-stars{opacity:var(--stars);fill:#fff6e0;translate:calc(var(--px) * -6px) calc(var(--py) * -4px);transition:opacity 1.2s}
-.vs-stars .tw{animation:twk var(--d) ease-in-out infinite alternate}
-.vs-stars circle{opacity:var(--o)}
+.vs-stars{opacity:var(--stars);fill:#fff6e0;transition:opacity 1.2s}
 @keyframes twk{to{opacity:.12}}
 .vs-orb{inset:0!important;width:auto!important}
 .vs-orb i{position:absolute;left:var(--orb-x);top:var(--orb-y);width:var(--orb-s);aspect-ratio:1;translate:-50% -50%;border-radius:50%;
@@ -1563,29 +1561,23 @@ html.tall #vista{bottom:auto;height:var(--appH)}
 @keyframes orbRise{from{translate:-50% -30%;opacity:0}}
 .vs-cloud{fill:var(--cloud);animation:cloudDrift 140s linear infinite alternate}
 @keyframes cloudDrift{to{transform:translateX(120px)}}
-.vs-far{fill:var(--far);translate:calc(var(--px) * -14px) calc(var(--py) * -5px);transition:fill 1.2s}
-.vs-mid{fill:var(--mid);translate:calc(var(--px) * -28px) calc(var(--py) * -8px);transition:fill 1.2s}
+.vs-far{fill:var(--far)}
+.vs-mid{fill:var(--mid)}
 .vs-haze{background:linear-gradient(transparent 55%,var(--haze) 82%,transparent 92%);transition:background 1.2s}
-.vs-near{fill:var(--near);stroke:var(--near);translate:calc(var(--px) * -48px) calc(var(--py) * -10px);transition:fill 1.2s}
+.vs-near{fill:var(--near);stroke:var(--near)}
 .vs-near .wire{stroke:color-mix(in srgb,var(--near) 70%,#555)}
-.vs-near .blades{animation:spin 11s linear infinite}
 @keyframes spin{to{rotate:360deg}}
 .vs-win{fill:var(--win);stroke:none;filter:drop-shadow(0 0 5px var(--win))}
-.vs-win .lw{opacity:var(--o,.9);animation:lw var(--d,4s) ease-in-out infinite alternate}
 @keyframes lw{60%{opacity:var(--o,.9)}100%{opacity:calc(var(--o,.9) * .55)}}
 .vs-floor{background:linear-gradient(transparent 80%,rgba(0,0,0,.55));inset:0!important;width:auto!important}
 .vs-shoot{inset:auto!important;width:140px!important;height:2px!important;left:18%;top:16%;border-radius:2px;background:linear-gradient(90deg,transparent,#fff);rotate:-24deg;opacity:0;animation:shoot 17s 5s linear infinite}
 @keyframes shoot{0%,93%{opacity:0;translate:0 0}94%{opacity:1}100%{opacity:0;translate:360px 160px}}
-.vs-weed{inset:auto!important;left:0;bottom:4.5%;width:clamp(34px,5vmin,54px)!important;height:auto!important;aspect-ratio:1;stroke:color-mix(in srgb,var(--near) 55%,#7a6040);opacity:0;animation:weedGo 26s 3s linear infinite}
-.vs-weed svg{width:100%;height:100%;stroke:inherit;animation:weedRoll 1.4s linear infinite}
-@keyframes weedRoll{to{rotate:360deg}}
-@keyframes weedGo{0%{translate:-80px 0;opacity:1}6%{translate:12vw -18px}10%{translate:22vw 0}15%{translate:32vw -12px}19%{translate:41vw 0}25%{translate:54vw -20px}30%{translate:66vw 0}36%{translate:80vw -10px}42%{translate:96vw 0}46%{translate:110vw -6px;opacity:1}47%,100%{translate:120vw 0;opacity:0}}
-html:not(:has(#sTitle:not([hidden]))) .vs-weed,html:not(:has(#sTitle:not([hidden]))) .vs-shoot{display:none}
+html:not([data-screen="sTitle"]) .vs-weed,html:not([data-screen="sTitle"]) .vs-shoot{display:none}
 
 /* each screen sets how bright the world outside is */
-html:has(#sShop:not([hidden])) #vista,html:has(#sEvent:not([hidden])) #vista{--dim:.72}
-html:has(#sGame:not([hidden])) #vista{--dim:.42}
-html:has(#sEnd:not([hidden])) #vista{--dim:.6}
+html[data-screen="sShop"] .vs-dim,html[data-screen="sEvent"] .vs-dim{opacity:.28}
+html[data-screen="sGame"] .vs-dim{opacity:.58}
+html[data-screen="sEnd"] .vs-dim{opacity:.4}
 
 /* the run's clock: from golden afternoon in Dry Creek to a blood moon over Graves End */
 html[data-saloon="1"] #vista{--sky1:#1c2140;--sky2:#6a3f3a;--sky3:#d98a46;--orb:#ffd98a;--orb-glow:rgba(255,190,90,.45);--orb-y:64%;--orb-x:30%;--orb-s:clamp(90px,15vmin,170px);--craters:0;--stars:0;--cloud:rgba(255,170,110,.25);--far:#6a3426;--mid:#3d1f1a;--near:#140b08;--haze:rgba(255,160,80,.3)}
@@ -1656,3 +1648,55 @@ html.duo-v #sGame .hud{position:relative}
 .tp-grave{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.3);text-align:center;filter:grayscale(.8)}
 .tp-grave .medal{width:40px;height:40px}
 .tp-grave b{font-size:12px;color:#e8d4a2}.tp-grave em{font-style:normal;font-size:11px;color:#a89070}
+
+/* ================= 120fps pass: everything that moves every frame is a transform or opacity on its own layer ================= */
+#vista>*{will-change:auto}
+.vs-dim{inset:0!important;width:auto!important;background:#000;opacity:0;transition:opacity 1s ease;will-change:opacity}
+.vs-tw1,.vs-tw2{will-change:opacity;animation:twLayer 5.5s ease-in-out infinite alternate}
+.vs-tw2{animation-duration:7.3s;animation-delay:-3s}
+@keyframes twLayer{0%{opacity:calc(var(--stars) * .15)}100%{opacity:var(--stars)}}
+.vs-nearw{position:absolute;inset:0 -70px!important;width:auto!important}
+.vs-nearw>svg{position:absolute;inset:0;width:100%;height:100%}
+.vs-lights{fill:var(--win);filter:drop-shadow(0 0 5px var(--win));will-change:opacity;animation:lightsFlick 6.5s steps(1) infinite}
+@keyframes lightsFlick{0%,100%{opacity:1}23%{opacity:.55}24%{opacity:1}61%{opacity:.7}62%{opacity:.25}64%{opacity:1}87%{opacity:.6}88%{opacity:1}}
+.vs-mill{position:absolute;fill:var(--near);will-change:transform;animation:spin 11s linear infinite}
+.vs-mill svg{width:100%;height:100%;display:block}
+.vs-weed{position:absolute;left:0;will-change:transform;opacity:0;animation:weedGo 26s 3s linear infinite}
+.vs-weed i{display:block;width:100%;height:100%;will-change:transform;animation:weedHop 26s 3s linear infinite}
+.vs-weed svg{display:block;width:100%;height:100%;stroke:color-mix(in srgb,var(--near) 50%,#8a6c48);animation:weedRoll 1.3s linear infinite}
+@keyframes weedRoll{to{rotate:360deg}}
+@keyframes weedGo{0%{opacity:1;transform:translate3d(-120%,0,0)}45%{opacity:1;transform:translate3d(var(--run),0,0)}45.1%,100%{opacity:0;transform:translate3d(var(--run),0,0)}}
+@keyframes weedHop{0%,45%,100%{transform:translateY(0)}4%{transform:translateY(-38%)}8%{transform:translateY(0)}13%{transform:translateY(-24%)}17%{transform:translateY(0)}23%{transform:translateY(-44%)}28%{transform:translateY(0)}33%{transform:translateY(-20%)}37%{transform:translateY(0)}41%{transform:translateY(-30%)}}
+.vs-cloud{will-change:transform}
+/* touch screens: the world breathes by itself, on the compositor */
+#vista:not(.mouse) .vs-far{animation:drift 26s ease-in-out infinite alternate;--dx:-5px}
+#vista:not(.mouse) .vs-mid{animation:drift 26s ease-in-out infinite alternate;--dx:-10px}
+#vista:not(.mouse) .vs-nearw{animation:drift 26s ease-in-out infinite alternate;--dx:-18px}
+@keyframes drift{from{transform:translate3d(calc(var(--dx) * -1),0,0)}to{transform:translate3d(var(--dx),0,0)}}
+#vista.mouse .vs-far,#vista.mouse .vs-mid,#vista.mouse .vs-nearw,#vista.mouse .vs-stars{will-change:transform}
+/* only the title gets the shooting star and the tumbleweed; every other screen stops them entirely */
+html:not([data-screen="sTitle"]) .vs-weed,html:not([data-screen="sTitle"]) .vs-shoot{display:none}
+/* at the table the backdrop is mostly hidden: freeze it so the GPU only works on the game */
+html[data-screen="sGame"] #vista *{animation-play-state:paused!important}
+/* film grain: plain overlay instead of a full-screen blend */
+.film{mix-blend-mode:normal!important;opacity:.05!important;will-change:transform}
+/* pulses: fade a pre-drawn glow instead of repainting a box-shadow every frame */
+.medal{overflow:visible!important;position:relative}
+.medal>svg{clip-path:circle(50% at 50% 50%);border-radius:50%}
+.seat.boss .medal,.seat.turn .medal,#sGame.tension .seat.boss .medal{animation:none}
+.seat.boss .medal::before,.seat.turn .medal::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;opacity:0;will-change:opacity;animation:glowFade 2.4s ease-in-out infinite}
+.seat.boss .medal::before{box-shadow:0 0 0 2px var(--ember),0 0 22px rgba(232,101,63,.8)}
+#sGame.tension .seat.boss .medal::before{animation-duration:.88s}
+.seat.turn .medal::before{box-shadow:0 0 0 2px var(--brass-hi),0 0 20px rgba(242,216,143,.95);animation-duration:1.3s}
+@keyframes glowFade{50%{opacity:1}}
+.seat.nem .plate{animation:none!important}
+.hunt-line{animation:none}
+.tut.waiting .tut-ring{animation:none}
+.tut.waiting .tut-ring::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 3px var(--gold),0 0 30px 8px rgba(244,203,92,.6);opacity:0;will-change:opacity;animation:glowFade 1.4s ease-in-out infinite}
+/* tarot foil: shimmer by fading, not by sliding the gradient */
+.tarot.foil::after,.tarot.gold::after{animation:foilFade 4.5s ease-in-out infinite!important;background-position:50% 0!important;will-change:opacity}
+@keyframes foilFade{0%,100%{opacity:.18}50%{opacity:.45}}
+#sTitle .fan{will-change:transform}
+.tarot .art::after{inset:0 auto 0 -160%!important;width:260%!important;background-size:100% 100%!important;background-position:0 0!important;will-change:transform;animation:sheenT 4s ease-in-out infinite!important}
+@keyframes sheenT{0%,15%{transform:translate3d(0,0,0)}85%,100%{transform:translate3d(61.5%,0,0)}}
+.card.gold:not(.back)::after{animation:goldSheen 2.2s ease-in-out .2s 1 both}
