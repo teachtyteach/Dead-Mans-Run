@@ -159,9 +159,13 @@ function trailMap(level,victory){
    so nothing important lands on the fold. Auto uses the fold the browser reports, or a near-square touch screen. */
 function hingeV(){try{const p=document.createElement('div');p.style.cssText='position:fixed;top:env(viewport-segment-bottom 0 0,-1px);visibility:hidden';document.body.appendChild(p);const b=parseFloat(getComputedStyle(p).top);p.style.top='env(viewport-segment-top 0 1,-1px)';const t=parseFloat(getComputedStyle(p).top);p.remove();return b>0&&t>=b?{w:t-b}:null}catch(e){return null}}
 function hingeW(){const v=hingeV(); if(v&&innerHeight>innerWidth) return v; try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
-function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return true;
-  const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
-  return touch&&r>=.68&&r<=1.47&&m>=540&&m<780}
+function duoAuto(){if(hingeW()) return true;
+  // the inner screen of a foldable is nearly square; a normal iPhone is about twice as tall as it is wide.
+  // Judge by the whole screen, not the window, so it still works half-folded like an L.
+  const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
+  const sw=screen.width, sh=screen.height, sr=Math.min(sw,sh)/Math.max(sw,sh), smax=Math.max(sw,sh);
+  const vr=Math.min(innerWidth,innerHeight)/Math.max(innerWidth,innerHeight);
+  return touch&&smax<=1100&&(sr>=.6||vr>=.6)}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
 function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&innerWidth>innerHeight);
   const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
@@ -171,7 +175,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
