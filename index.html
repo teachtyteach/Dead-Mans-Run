@@ -1374,6 +1374,22 @@ html.duo-v #sEvent .dbot{justify-content:flex-start;padding-top:18px}
   #sGame .console{padding:9px;gap:7px}
   #sGame .actrow .btn{min-height:48px;font-size:14px}
 }
+/* Duo held sideways (L / laptop posture): still table on top, you on the bottom.
+   The bottom screen is wide and short, so your hand sits on the left and the buttons on the right. */
+html.duo-wide #sGame .console{width:100%;max-width:none;margin-top:52px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-rows:auto auto auto minmax(0,1fr);column-gap:16px;row-gap:6px;align-content:center}
+html.duo-wide #sGame .console .duohand{grid-column:1;grid-row:1/5;align-self:center;flex-direction:row}
+html.duo-wide #sGame .console .coach{grid-column:2;grid-row:1}
+html.duo-wide #sGame .console .status{grid-column:2;grid-row:2}
+html.duo-wide #sGame .console .odds{grid-column:2;grid-row:3}
+html.duo-wide #sGame .console #actions{grid-column:2;grid-row:4;align-self:end}
+html.duo-wide .duohand .seat.duo-me{--cw:clamp(48px,6.4vw,70px)}
+html.duo-wide .table{width:min(100cqw,calc(100cqh * 1.62))!important}
+html.duo-wide #sGame .ribbon{top:48px}
+html.duo-wide #sGame .console .raisesheet{left:auto;right:0;width:55%}
+/* other screens sideways: keep the split but let the bottom row run wide */
+html.duo-wide #sTitle .dbot{flex-direction:column}
+html.duo-wide #sShop .deal-grid{grid-template-columns:repeat(4,minmax(0,170px));justify-content:center}
+html.duo-wide .bo-portrait{width:min(30vw,34svh)}
 
 </style>
 </head>
@@ -3010,7 +3026,7 @@ function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return tru
   const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
   return touch&&r>=.68&&r<=1.47&&m>=540&&m<780}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&innerWidth>innerHeight);
   const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles(); setTimeout(applyDuo,450)},120)};
 addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
