@@ -317,7 +317,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 55 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 56 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
@@ -829,7 +829,7 @@ function handEnd(res){
     },1300);
   } else if(ev.bossLine&&ev.bossLine.nem) later(()=>seatSay(ev.bossLine.i,ev.bossLine.text),ev.kos.length?900:500);
   else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);
-  if(ev.nemSlain){const c=where[ev.nemSlain.i]; later(()=>{if(c){stampAt(c[0],c[1]-6,'Nemesis Slain','#f4cb5c',30); seatSay(ev.nemSlain.i,ev.nemSlain.line,c)} sfx('gun'); flash(true); shake(true); haptic('heavy')},1100)}
+  if(ev.nemSlain){const c=where[ev.nemSlain.i]; later(()=>{if(c){stampAt(c[0],c[1]-6,'Score Settled','#f4cb5c',30); seatSay(ev.nemSlain.i,ev.nemSlain.line,c)} sfx('gun'); flash(true); shake(true); haptic('heavy')},1100)}
   if(ev.nemFled!=null){const c=where[ev.nemFled]; later(()=>{if(c) stampAt(c[0],c[1]-6,'Fled','#c9a24e',24)},1200)}
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
@@ -1000,7 +1000,7 @@ function loseRun(){
   const sg=$('sGame'); hush(true); heartbeat(false); sfx('toll',60);
   let v=$('lossVeil'); if(!v){v=document.createElement('div'); v.id='lossVeil'; v.className='lv'; document.body.appendChild(v)}
   const ne=G.nemEv, nn=ne&&ne.who;
-  const nemLine=!nn?'':ne.born?`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:1})}<span><b>${nn.name}</b> took the last pot. ${nn.fem?'She':'He'}'ll remember you.<em>A nemesis is born: ${nemName(nn)}</em></span></div>`
+  const nemLine=!nn?'':ne.born?`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:1})}<span><b>${nn.name}</b> took the last pot. ${nn.fem?'She':'He'}'ll remember you.<em>Word is they call ${nn.fem?'her':'him'} ${nn.epi} now</em></span></div>`
     :`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:nn.rank})}<span><b>${nemName(nn)}</b> got you again.<em>Rises to ${nemTitle(nn)} · ${nn.kills} kills</em></span></div>`;
   v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>${nemLine}`;
   v.classList.remove('on','black'); v.hidden=false;
@@ -1112,7 +1112,7 @@ function seatSay(i,text,c){
 function nemAmbush(n,then){
   let v=$('nemCard'); if(!v){v=document.createElement('div'); v.id='nemCard'; v.className='modal nem-modal'; document.body.appendChild(v)}
   const lines=NEM_LINES.back, said=lines[Math.min(lines.length-1,(n.met||1)-1+Math.floor(Math.random()*2))];
-  v.innerHTML=`<div class="nem-sheet" role="dialog" aria-label="Nemesis"><div class="nem-k">Your nemesis is here</div>
+  v.innerHTML=`<div class="nem-sheet" role="dialog" aria-label="An old face"><div class="nem-k">${n.fem?'She':'He'} remembers you</div>
     <div class="nem-face">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</div>
     <div class="nem-name">${nemName(n)}</div><div class="nem-rank">${nemTitle(n)}${'<i>★</i>'.repeat(n.rank)}</div>
     <p class="nem-q">“${said}”</p>
@@ -1127,7 +1127,7 @@ function nemPanel(){
   const cur=n?`<div class="tp-nem"><span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><div><b>${nemName(n)}</b><em>${nemTitle(n)} · took you down ${n.kills}× · first at ${n.first}</em></div></div>`
     :`<p class="hint" style="margin:4px 0 0">Nobody's hunting you. Yet. Whoever takes your last chip will remember.</p>`;
   const graves=gv.length?`<div class="tp-graves">${gv.map(g=>`<div class="tp-grave"><span class="medal">${portraitFor({name:g.name,fem:g.fem,tier:g.tier,nem:true,nemRank:g.rank})}</span><b>${g.name.split(' ')[0]} "${g.epi}"</b><em>Buried in ${g.town}</em></div>`).join('')}</div>`:'';
-  return `<div class="tp-h">Nemesis <small>${gv.length} buried</small></div>${cur}${graves}`;
+  return `<div class="tp-h">Bad blood <small>${gv.length} buried</small></div>${cur}${graves}`;
 }
 function stampAt(xPct,yPct,text,color,size){
   const s=document.createElement('div'); s.className='stampfx'; s.textContent=text;
@@ -1273,7 +1273,7 @@ function render(){
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=tilted?'On tilt':p.nem?'Nemesis':'';
+    const tier=tilted?'On tilt':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
     const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
           <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}${p.nem&&!tilted?' nemtag':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>

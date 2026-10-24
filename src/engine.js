@@ -358,7 +358,7 @@ function finishHand(res){
         if(p.nem&&meta.nemesis&&meta.nemesis.name===p.name){
           if(me.winner){const n=meta.nemesis, ng=Math.round(25*n.rank*goldMul()); R.gold+=ng; G.koGold+=ng;
             (meta.graves=meta.graves||[]).unshift({name:n.name,epi:n.epi,rank:n.rank,kills:n.kills,town:TOWNS[R.level-1],fem:n.fem,tier:n.tier}); meta.graves=meta.graves.slice(0,12); meta.nemesis=null;
-            log(`Your nemesis ${nemName(n)} is dead. +${ng} gold.`); ev.nemSlain={i,name:n.name,gold:ng,line:pickLine(NEM_LINES.die)}}
+            log(`${nemName(n)} won't be coming back. +${ng} gold.`); ev.nemSlain={i,name:n.name,gold:ng,line:pickLine(NEM_LINES.die)}}
           else {log(`${p.name} crawls out the back door. This isn't over.`); ev.nemFled=i}
         }
       }
