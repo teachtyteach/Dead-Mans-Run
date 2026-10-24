@@ -1867,6 +1867,26 @@ html.duo-tall .modal .sheet{max-height:calc(var(--appH,100svh) - 40px);overflow:
 #rSlider::-webkit-slider-thumb{transition:transform .12s}
 #rSlider.drag::-webkit-slider-thumb{transform:scale(1.22);box-shadow:inset 0 0 0 2px rgba(60,40,10,.35),0 0 0 6px rgba(244,203,92,.18),0 3px 8px rgba(0,0,0,.6)}
 #rSlider::-webkit-slider-runnable-track{background:linear-gradient(90deg,#a87d2e,#e2c06a var(--p,0%),#1a100a var(--p,0%),#2a1a10)!important}
+/* sheets never wider than the space between the safe areas */
+html.duo-wide #more .sheet,html.duo-wide #menu .sheet{width:100%!important;max-width:980px;justify-self:center;box-sizing:border-box}
+html.duo-wide #more,html.duo-wide #menu{background:linear-gradient(rgba(5,3,2,.95) 0 50%,rgba(5,3,2,.88) 50%)!important}
+html.duo-wide #more .pane,html.duo-wide #menu .pane{min-width:0}
+/* records: two tidy rows on the counter */
+html.duo-wide #more .plaques{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:8px}
+html.duo-wide #more .stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+html.duo-wide #more .plaques>*,html.duo-wide #more .stats-grid>*{min-width:0;padding:8px 10px}
+html.duo-wide #more .stats-grid b,html.duo-wide #more .plaques b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+html.duo-wide #more .stats-grid span,html.duo-wide #more .plaques span{font-size:10px;letter-spacing:.14em}
+/* charm codex: a compact catalogue, five or six across */
+html.duo-wide #more .codex{grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:8px;max-height:none}
+html.duo-wide #more .codex .tarot{padding:6px 6px 8px;gap:3px}
+html.duo-wide #more .codex .tarot .art{height:44px}
+html.duo-wide #more .codex .tarot h4,html.duo-wide #more .codex .tarot b{font-size:13px}
+html.duo-wide #more .codex .tarot p,html.duo-wide #more .codex .tarot .desc{font-size:11.5px;line-height:1.3;margin:0}
+/* settings rows never get squeezed out of their group */
+.set-group{flex-shrink:0}
+html.duo-tall .set-row,#more .set-row{min-height:46px;padding-block:7px}
+html.duo-tall .set-l b{font-size:15.5px}
 
 </style>
 </head>
@@ -1922,7 +1942,7 @@ html.duo-tall .modal .sheet{max-height:calc(var(--appH,100svh) - 40px);overflow:
   <div class="sheet" role="dialog" aria-labelledby="moreTitle">
     <h3 id="moreTitle" class="sheet-title">How to play</h3>
     <div class="tabs" role="tablist">
-      <button role="tab" data-mtab="howto" aria-selected="true">How to play</button>
+      <button role="tab" data-mtab="howto" aria-selected="true">Rules</button>
       <button role="tab" data-mtab="trophies" aria-selected="false">Trophies</button>
       <button role="tab" data-mtab="records" aria-selected="false">Records</button>
       <button role="tab" data-mtab="charms" aria-selected="false">Charms</button>
@@ -3798,7 +3818,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 62 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 63 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
