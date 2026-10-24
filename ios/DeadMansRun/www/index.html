@@ -1565,6 +1565,73 @@ html.duo-v #poster #posterBot .ptwist:empty,html.duo-v #poster #posterBot .pline
 body{padding-left:var(--side);padding-right:var(--side)}
 .modal,#story,.lv{padding-left:var(--side)!important;padding-right:var(--side)!important}
 
+/* ================= the vista: frontier backdrop, re-lit for every saloon ================= */
+#vista{--sky1:#070b1c;--sky2:#1a1d3c;--sky3:#5b3446;--orb:#f2e8cc;--orb-glow:rgba(242,232,204,.35);--orb-x:73%;--orb-y:22%;--orb-s:clamp(70px,11vmin,130px);
+  --stars:1;--cloud:rgba(60,50,80,.35);--far:#231a2e;--mid:#150f1b;--near:#0a0708;--win:#ffc266;--haze:rgba(140,80,90,.22);--dim:1;--px:0;--py:0;
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--sky1);filter:brightness(var(--dim));transition:filter 1s ease}
+html.tall #vista{bottom:auto;height:var(--appH)}
+#vista>*{position:absolute;inset:0 -70px;width:calc(100% + 140px);height:100%}
+#vista svg{display:block}
+.vs-sky{background:linear-gradient(var(--sky1) 0%,var(--sky2) 48%,var(--sky3) 78%,var(--sky3) 100%);transition:background 1.2s}
+.vs-stars{opacity:var(--stars);fill:#fff6e0;translate:calc(var(--px) * -6px) calc(var(--py) * -4px);transition:opacity 1.2s}
+.vs-stars .tw{animation:twk var(--d) ease-in-out infinite alternate}
+.vs-stars circle{opacity:var(--o)}
+@keyframes twk{to{opacity:.12}}
+.vs-orb{inset:0!important;width:auto!important}
+.vs-orb i{position:absolute;left:var(--orb-x);top:var(--orb-y);width:var(--orb-s);aspect-ratio:1;translate:-50% -50%;border-radius:50%;
+  background:radial-gradient(circle at 38% 36%,#fff 0,var(--orb) 38%,color-mix(in srgb,var(--orb) 80%,#000) 100%);
+  box-shadow:0 0 40px 8px var(--orb-glow),0 0 160px 60px color-mix(in srgb,var(--orb-glow) 50%,transparent);transition:all 1.2s;animation:orbRise 2.4s cubic-bezier(.2,.7,.2,1) both}
+.vs-orb i::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 62% 58%,rgba(0,0,0,.12) 0 9%,transparent 10%),radial-gradient(circle at 35% 66%,rgba(0,0,0,.08) 0 7%,transparent 8%),radial-gradient(circle at 56% 30%,rgba(0,0,0,.07) 0 5%,transparent 6%);opacity:var(--craters,1)}
+@keyframes orbRise{from{translate:-50% -30%;opacity:0}}
+.vs-cloud{fill:var(--cloud);animation:cloudDrift 140s linear infinite alternate}
+@keyframes cloudDrift{to{transform:translateX(120px)}}
+.vs-far{fill:var(--far);translate:calc(var(--px) * -14px) calc(var(--py) * -5px);transition:fill 1.2s}
+.vs-mid{fill:var(--mid);translate:calc(var(--px) * -28px) calc(var(--py) * -8px);transition:fill 1.2s}
+.vs-haze{background:linear-gradient(transparent 55%,var(--haze) 82%,transparent 92%);transition:background 1.2s}
+.vs-near{fill:var(--near);stroke:var(--near);translate:calc(var(--px) * -48px) calc(var(--py) * -10px);transition:fill 1.2s}
+.vs-near .wire{stroke:color-mix(in srgb,var(--near) 70%,#555)}
+.vs-near .blades{animation:spin 11s linear infinite}
+@keyframes spin{to{rotate:360deg}}
+.vs-win{fill:var(--win);stroke:none;filter:drop-shadow(0 0 5px var(--win))}
+.vs-win .lw{opacity:var(--o,.9);animation:lw var(--d,4s) ease-in-out infinite alternate}
+@keyframes lw{60%{opacity:var(--o,.9)}100%{opacity:calc(var(--o,.9) * .55)}}
+.vs-floor{background:linear-gradient(transparent 80%,rgba(0,0,0,.55));inset:0!important;width:auto!important}
+.vs-shoot{inset:auto!important;width:140px!important;height:2px!important;left:18%;top:16%;border-radius:2px;background:linear-gradient(90deg,transparent,#fff);rotate:-24deg;opacity:0;animation:shoot 17s 5s linear infinite}
+@keyframes shoot{0%,93%{opacity:0;translate:0 0}94%{opacity:1}100%{opacity:0;translate:360px 160px}}
+.vs-weed{inset:auto!important;left:0;bottom:4.5%;width:clamp(34px,5vmin,54px)!important;height:auto!important;aspect-ratio:1;stroke:color-mix(in srgb,var(--near) 55%,#7a6040);opacity:0;animation:weedGo 26s 3s linear infinite}
+.vs-weed svg{width:100%;height:100%;stroke:inherit;animation:weedRoll 1.4s linear infinite}
+@keyframes weedRoll{to{rotate:360deg}}
+@keyframes weedGo{0%{translate:-80px 0;opacity:1}6%{translate:12vw -18px}10%{translate:22vw 0}15%{translate:32vw -12px}19%{translate:41vw 0}25%{translate:54vw -20px}30%{translate:66vw 0}36%{translate:80vw -10px}42%{translate:96vw 0}46%{translate:110vw -6px;opacity:1}47%,100%{translate:120vw 0;opacity:0}}
+html:not(:has(#sTitle:not([hidden]))) .vs-weed,html:not(:has(#sTitle:not([hidden]))) .vs-shoot{display:none}
+
+/* each screen sets how bright the world outside is */
+html:has(#sShop:not([hidden])) #vista,html:has(#sEvent:not([hidden])) #vista{--dim:.72}
+html:has(#sGame:not([hidden])) #vista{--dim:.42}
+html:has(#sEnd:not([hidden])) #vista{--dim:.6}
+
+/* the run's clock: from golden afternoon in Dry Creek to a blood moon over Graves End */
+html[data-saloon="1"] #vista{--sky1:#1c2140;--sky2:#6a3f3a;--sky3:#d98a46;--orb:#ffd98a;--orb-glow:rgba(255,190,90,.45);--orb-y:64%;--orb-x:30%;--orb-s:clamp(90px,15vmin,170px);--craters:0;--stars:0;--cloud:rgba(255,170,110,.25);--far:#6a3426;--mid:#3d1f1a;--near:#140b08;--haze:rgba(255,160,80,.3)}
+html[data-saloon="2"] #vista{--sky1:#1a1530;--sky2:#5e2a2c;--sky3:#c95a2c;--orb:#ff9a52;--orb-glow:rgba(255,120,60,.45);--orb-y:72%;--orb-x:66%;--orb-s:clamp(100px,17vmin,190px);--craters:0;--stars:.15;--cloud:rgba(240,120,80,.28);--far:#4e1e20;--mid:#2c1215;--near:#120807;--haze:rgba(230,100,50,.3)}
+html[data-saloon="3"] #vista{--sky1:#08142a;--sky2:#22365a;--sky3:#6e6a86;--orb:#e6ecff;--orb-glow:rgba(180,200,255,.25);--orb-y:20%;--orb-x:24%;--orb-s:clamp(40px,6vmin,70px);--stars:.55;--cloud:rgba(110,130,170,.3);--far:#1b2538;--mid:#111826;--near:#07090e;--win:#ffd28a;--haze:rgba(120,140,190,.2)}
+html[data-saloon="4"] #vista{--sky1:#160810;--sky2:#5a1618;--sky3:#c03c26;--orb:#ff6a3a;--orb-glow:rgba(255,80,40,.5);--orb-y:70%;--orb-x:20%;--orb-s:clamp(120px,20vmin,230px);--craters:0;--stars:.1;--cloud:rgba(200,70,50,.3);--far:#3e1214;--mid:#260a0c;--near:#100505;--haze:rgba(220,70,40,.3)}
+html[data-saloon="5"] #vista{--sky1:#05101a;--sky2:#0f2733;--sky3:#28504c;--orb:#cfe3dc;--orb-glow:rgba(160,220,210,.15);--orb-y:18%;--orb-x:80%;--orb-s:clamp(50px,7vmin,80px);--stars:.25;--cloud:rgba(40,70,80,.7);--far:#142a30;--mid:#0b1a1e;--near:#05090a;--win:#ffcf7a;--haze:rgba(80,130,130,.25)}
+html[data-saloon="6"] #vista{--sky1:#070c1e;--sky2:#202c52;--sky3:#6a7498;--orb:#f2f5ff;--orb-glow:rgba(210,220,255,.4);--orb-y:24%;--orb-x:62%;--orb-s:clamp(90px,14vmin,160px);--stars:1;--cloud:rgba(140,150,190,.25);--far:#1f2740;--mid:#131a2c;--near:#06080e;--win:#fff0c8;--haze:rgba(170,180,220,.2)}
+html[data-saloon="7"] #vista{--sky1:#040d08;--sky2:#14281a;--sky3:#41603a;--orb:#dfe9a6;--orb-glow:rgba(200,230,140,.25);--orb-y:26%;--orb-x:36%;--orb-s:clamp(60px,9vmin,100px);--stars:.6;--cloud:rgba(60,90,60,.35);--far:#13261a;--mid:#0b170f;--near:#040805;--win:#e8ff9a;--haze:rgba(110,150,80,.25)}
+html[data-saloon="8"] #vista{--sky1:#070206;--sky2:#24070f;--sky3:#4e101a;--orb:#d0362a;--orb-glow:rgba(220,40,30,.45);--orb-y:26%;--orb-x:80%;--orb-s:clamp(120px,19vmin,220px);--stars:.6;--cloud:rgba(90,20,30,.4);--far:#230a10;--mid:#14050a;--near:#070204;--win:#ff8a5a;--haze:rgba(140,20,30,.25)}
+
+/* title: a little more theatre */
+#sTitle .fan{animation:fanFloat 6s ease-in-out infinite}
+@keyframes fanFloat{50%{translate:0 -6px;rotate:-.6deg}}
+.rumor{margin:4px 0 0;font-family:var(--f-serif);font-style:italic;font-size:14.5px;color:rgba(232,212,162,.72);min-height:1.4em;text-align:center;text-wrap:balance;max-width:min(520px,90vw);transition:opacity .6s}
+.rumor.out{opacity:0}
+.rumor::before{content:"Word in town: ";font-style:normal;font-family:var(--f-label);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
+@media (prefers-reduced-motion:reduce){#vista *{animation:none!important}}
+
+.vs-far,.vs-mid{stroke:color-mix(in srgb,var(--sky3) 45%,transparent);stroke-width:1.6;stroke-linejoin:round}
+.vs-mid{stroke:color-mix(in srgb,var(--sky3) 25%,transparent)}
+.vs-near .town{transform:translate(800px,792px) scale(.72) translate(-800px,-792px)}
+.vs-floor{background:linear-gradient(transparent 62%,rgba(0,0,0,.35) 80%,rgba(0,0,0,.7))!important}
+
 </style>
 </head>
 <body>
@@ -1578,6 +1645,7 @@ body{padding-left:var(--side);padding-right:var(--side)}
     <h1 class="brass in-logo" id="inLogo">Dead Man's Run</h1>
   </div>
 </div>
+<div id="vista" aria-hidden="true"></div>
 <canvas id="dust" aria-hidden="true"></canvas>
 <div class="vignette" aria-hidden="true"></div>
 <div class="tint" aria-hidden="true"></div>
@@ -1591,6 +1659,7 @@ body{padding-left:var(--side);padding-right:var(--side)}
     <div class="est">A Hold'em Roguelite</div>
     <h1 class="brass">Dead Man's Run</h1>
     <p class="sub">Eight saloons. Eight bosses. Take them all down.</p>
+    <p class="rumor" id="rumor"></p>
   </div></div>
   <div class="dbot"><div class="row" id="titleActions"></div>
   <div class="heat" id="heatPick"></div>
@@ -3139,6 +3208,59 @@ function setScene(id){
   lightning(sl===8);
 }
 
+/* ================= the vista: a living frontier backdrop behind every screen ================= */
+function buildVista(){
+  const v=$('vista'); if(!v||v.dataset.built) return; v.dataset.built=1;
+  let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647; return seed/2147483647}, rr=(a,b)=>a+rnd()*(b-a);
+  const W=1600, H=900;
+  // ridgelines: flat-topped mesas and buttes, the way the desert actually looks
+  const ridge=(base,amp,mesas)=>{let x=-40,y=base,d=`M-40 ${H} L-40 ${base}`;
+    while(x<W+40){ if(rnd()<mesas){const s1=rr(18,46),w=rr(70,240),h=amp*rr(.55,1),s2=rr(18,46);
+        d+=` L${(x+s1*.4).toFixed(0)} ${(base-h*.35).toFixed(0)} L${(x+s1).toFixed(0)} ${(base-h).toFixed(0)} L${(x+s1+w).toFixed(0)} ${(base-h+rr(-4,4)).toFixed(0)} L${(x+s1+w+s2*.6).toFixed(0)} ${(base-h*.4).toFixed(0)} L${(x+s1+w+s2).toFixed(0)} ${base}`; x+=s1+w+s2}
+      else{const w=rr(60,160); d+=` Q${(x+w/2).toFixed(0)} ${(base-rr(4,amp*.25)).toFixed(0)} ${(x+w).toFixed(0)} ${base}`; x+=w}}
+    return d+` L${W+40} ${H} Z`};
+  const stars=Array.from({length:150},()=>{const x=rr(0,W),y=rr(0,H*.62)**1.08,r=rnd()<.08?rr(1.4,2.1):rr(.5,1.2);return `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(2)}" class="${rnd()<.3?'tw':''}" style="--d:${rr(2,6).toFixed(1)}s;--o:${rr(.35,1).toFixed(2)}"/>`}).join('');
+  // the town: false-front saloons, a church, a water tower, a windmill, lamplit windows
+  let town='', win='', bx=470; const ground=792;
+  const B=[[64,92,'step'],[48,70,'flat'],[96,128,'peak'],[58,84,'step'],[30,0,'gap'],[44,150,'church'],[30,0,'gap'],[110,118,'saloon'],[54,76,'flat'],[72,104,'step'],[40,62,'flat'],[88,96,'peak']];
+  B.forEach(([w,h,k])=>{ if(k==='gap'){bx+=w; return}
+    const y=ground-h;
+    if(k==='church'){town+=`<path d="M${bx} ${ground} V${y+40} L${bx+w/2} ${y+12} L${bx+w} ${y+40} V${ground}Z M${bx+w/2-7} ${y+14} V${y-26} L${bx+w/2} ${y-40} L${bx+w/2+7} ${y-26} V${y+14}Z M${bx+w/2-1.5} ${y-58} h3 v18 h-3z M${bx+w/2-7} ${y-52} h14 v3 h-14z"/>`;
+      win+=`<path class="lw" style="--d:${rr(3,7).toFixed(1)}s" d="M${bx+w/2-6} ${y+76} v-16 a6 6 0 0 1 12 0 v16z"/>`}
+    else{let top=k==='step'?`V${y+14} H${bx+8} V${y} H${bx+w-8} V${y+14} H${bx+w}`:k==='peak'?`V${y+18} L${bx+w/2} ${y-8} L${bx+w} ${y+18}`:k==='saloon'?`V${y+10} H${bx+14} V${y-10} H${bx+w-14} V${y+10} H${bx+w}`:`V${y} H${bx+w}`;
+      town+=`<path d="M${bx-3} ${ground} ${top.replace(/^V/,'V').replace(`V${y}`,`V${y}`)} V${ground}Z"/><rect x="${bx-6}" y="${ground-30}" width="${w+12}" height="4"/>`;
+      const rows=h>100?2:1, cols=Math.max(2,Math.round(w/26));
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(rnd()<.32) continue;
+        const wx=bx+(c+.5)*(w/cols)-5, wy=y+22+r*38; if(wy>ground-40) continue;
+        win+=`<rect class="lw" style="--d:${rr(2.5,8).toFixed(1)}s;--o:${rr(.7,1).toFixed(2)}" x="${wx.toFixed(0)}" y="${wy}" width="10" height="15" rx="1"/>`}
+      if(k==='saloon') win+=`<rect class="lw door" x="${bx+w/2-9}" y="${ground-26}" width="18" height="22"/>`;
+    }
+    bx+=w+rr(4,12)});
+  // water tower and windmill on the edges of town
+  const tw=`<g><path d="M392 ${ground} L404 712 M436 ${ground} L424 712 M398 750 L430 750 M402 730 L426 772" stroke-width="3.5" fill="none"/><path d="M394 712 h48 v-46 a24 8 0 0 0 -48 0z"/><path d="M390 668 L418 646 L446 668z"/></g>`;
+  const mill=`<g><path d="M1248 ${ground} L1262 650 L1276 ${ground} M1252 740 h20 M1256 700 h12" stroke-width="3" fill="none"/><path d="M1262 650 l26 6 v4 l-26 -4z"/><g class="blades" style="transform-origin:1262px 650px">${Array.from({length:8},(_,i)=>`<path transform="rotate(${i*45} 1262 650)" d="M1262 650 L1259 606 L1265 606Z"/>`).join('')}<circle cx="1262" cy="650" r="4"/></g></g>`;
+  const poles=[120,300,1130,1360,1520].map(x=>`<path d="M${x} ${ground+6} V${ground-74} M${x-14} ${ground-66} h28" stroke-width="3" fill="none"/>`).join('');
+  const wire=`<path class="wire" d="M120 ${ground-66} Q210 ${ground-40} 300 ${ground-66} M1130 ${ground-66} Q1245 ${ground-40} 1360 ${ground-66} Q1440 ${ground-44} 1520 ${ground-66}" fill="none" stroke-width="1.2"/>`;
+  const cactus=(x,s)=>`<path transform="translate(${x} ${ground+4}) scale(${s})" d="M-5 0 V-62 a5 5 0 0 1 10 0 V0z M-5 -30 h-10 a4 4 0 0 1 -4 -4 v-14 a4 4 0 0 1 8 0 v10 h6z M5 -22 h10 v-18 a4 4 0 0 1 8 0 v20 a6 6 0 0 1 -6 6 h-12z"/>`;
+  const svg=(cls,inner,extra='')=>`<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" ${extra}>${inner}</svg>`;
+  v.innerHTML=`<div class="vs-sky"></div>`+
+    svg('vs-stars',stars)+
+    `<div class="vs-orb"><i></i></div><i class="vs-shoot"></i>`+
+    svg('vs-cloud',`<path d="M120 300 q120 -26 260 -6 t260 -2 q-140 14 -280 10 t-240 -2z M900 210 q160 -22 330 -4 t220 2 q-150 14 -320 8 t-230 -6z"/>`)+
+    svg('vs-far',`<path d="${ridge(640,190,.55)}"/>`)+
+    svg('vs-mid',`<path d="${ridge(720,120,.45)}"/>`)+
+    `<div class="vs-haze"></div>`+
+    svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}<g class="town">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
+    `<div class="vs-weed"><svg viewBox="-30 -30 60 60"><g fill="none" stroke-width="2.2">${Array.from({length:11},(_,i)=>`<ellipse rx="${rr(14,26).toFixed(0)}" ry="${rr(8,22).toFixed(0)}" transform="rotate(${i*33})"/>`).join('')}</g></svg></div>`+
+    `<div class="vs-floor"></div>`;
+  // gentle parallax: follow the pointer on desktop, drift on its own on touch
+  let tx=0,ty=0,cx=0,cy=0;
+  addEventListener('pointermove',e=>{if(e.pointerType!=='mouse') return; tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5},{passive:true});
+  if(!REDUCED) (function loop(t){cx+=(tx-cx)*.04; cy+=(ty-cy)*.04; const a=Math.sin(t/9000)*.18, px=cx+a, py=cy+Math.cos(t/11000)*.08;
+    v.style.setProperty('--px',px.toFixed(4)); v.style.setProperty('--py',py.toFixed(4)); requestAnimationFrame(loop)})(0);
+}
+buildVista();
+
 /* ================= rendering helpers ================= */
 let SOUNDQ=[];
 // court cards are Western portraits: the Jack a young gun, the Queen a saloon lady, the King an old cattle baron
@@ -3317,7 +3439,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 52 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 53 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
@@ -3345,7 +3467,12 @@ function renderCoach(){
 }
 
 /* ================= title ================= */
+const RUMORS=["Bicah Mell hasn't lost a hand in eleven years.","Ma Spurlock charges rent on the chairs.","Somebody saw a masked rider out past Red Mesa.","The bank in Silver Fork never closes. Neither does the game.","Don't drink the water in Bitterwater. Don't play cards there either.","Nobody's walked out of Graves End with their boots on.","A good bluff is worth more than a fast horse.","They say the eighth saloon has no windows.","Cutter's Gulch deals in the rain. Every night.","Iron Jack Rourke has never folded. Not once."];
+let RUMOR_T=null, RUMOR_I=Math.floor(Math.random()*10);
+function rumorTick(){const el=$('rumor'); if(!el) return; clearTimeout(RUMOR_T); if($('sTitle').hidden) return;
+  el.classList.add('out'); setTimeout(()=>{RUMOR_I=(RUMOR_I+1)%RUMORS.length; el.textContent=RUMORS[RUMOR_I]; el.classList.remove('out')},600); RUMOR_T=setTimeout(rumorTick,7000)}
 function renderTitle(){
+  setTimeout(rumorTick,400);
   DAILY=null; TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
   drawFan($('fan')); renderToggles();
   const unlockedCount=Object.values(CHARMS).filter(c=>c.tier<=meta.unlock).length;

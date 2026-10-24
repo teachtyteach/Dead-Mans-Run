@@ -86,6 +86,59 @@ function setScene(id){
   lightning(sl===8);
 }
 
+/* ================= the vista: a living frontier backdrop behind every screen ================= */
+function buildVista(){
+  const v=$('vista'); if(!v||v.dataset.built) return; v.dataset.built=1;
+  let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647; return seed/2147483647}, rr=(a,b)=>a+rnd()*(b-a);
+  const W=1600, H=900;
+  // ridgelines: flat-topped mesas and buttes, the way the desert actually looks
+  const ridge=(base,amp,mesas)=>{let x=-40,y=base,d=`M-40 ${H} L-40 ${base}`;
+    while(x<W+40){ if(rnd()<mesas){const s1=rr(18,46),w=rr(70,240),h=amp*rr(.55,1),s2=rr(18,46);
+        d+=` L${(x+s1*.4).toFixed(0)} ${(base-h*.35).toFixed(0)} L${(x+s1).toFixed(0)} ${(base-h).toFixed(0)} L${(x+s1+w).toFixed(0)} ${(base-h+rr(-4,4)).toFixed(0)} L${(x+s1+w+s2*.6).toFixed(0)} ${(base-h*.4).toFixed(0)} L${(x+s1+w+s2).toFixed(0)} ${base}`; x+=s1+w+s2}
+      else{const w=rr(60,160); d+=` Q${(x+w/2).toFixed(0)} ${(base-rr(4,amp*.25)).toFixed(0)} ${(x+w).toFixed(0)} ${base}`; x+=w}}
+    return d+` L${W+40} ${H} Z`};
+  const stars=Array.from({length:150},()=>{const x=rr(0,W),y=rr(0,H*.62)**1.08,r=rnd()<.08?rr(1.4,2.1):rr(.5,1.2);return `<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${r.toFixed(2)}" class="${rnd()<.3?'tw':''}" style="--d:${rr(2,6).toFixed(1)}s;--o:${rr(.35,1).toFixed(2)}"/>`}).join('');
+  // the town: false-front saloons, a church, a water tower, a windmill, lamplit windows
+  let town='', win='', bx=470; const ground=792;
+  const B=[[64,92,'step'],[48,70,'flat'],[96,128,'peak'],[58,84,'step'],[30,0,'gap'],[44,150,'church'],[30,0,'gap'],[110,118,'saloon'],[54,76,'flat'],[72,104,'step'],[40,62,'flat'],[88,96,'peak']];
+  B.forEach(([w,h,k])=>{ if(k==='gap'){bx+=w; return}
+    const y=ground-h;
+    if(k==='church'){town+=`<path d="M${bx} ${ground} V${y+40} L${bx+w/2} ${y+12} L${bx+w} ${y+40} V${ground}Z M${bx+w/2-7} ${y+14} V${y-26} L${bx+w/2} ${y-40} L${bx+w/2+7} ${y-26} V${y+14}Z M${bx+w/2-1.5} ${y-58} h3 v18 h-3z M${bx+w/2-7} ${y-52} h14 v3 h-14z"/>`;
+      win+=`<path class="lw" style="--d:${rr(3,7).toFixed(1)}s" d="M${bx+w/2-6} ${y+76} v-16 a6 6 0 0 1 12 0 v16z"/>`}
+    else{let top=k==='step'?`V${y+14} H${bx+8} V${y} H${bx+w-8} V${y+14} H${bx+w}`:k==='peak'?`V${y+18} L${bx+w/2} ${y-8} L${bx+w} ${y+18}`:k==='saloon'?`V${y+10} H${bx+14} V${y-10} H${bx+w-14} V${y+10} H${bx+w}`:`V${y} H${bx+w}`;
+      town+=`<path d="M${bx-3} ${ground} ${top.replace(/^V/,'V').replace(`V${y}`,`V${y}`)} V${ground}Z"/><rect x="${bx-6}" y="${ground-30}" width="${w+12}" height="4"/>`;
+      const rows=h>100?2:1, cols=Math.max(2,Math.round(w/26));
+      for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){ if(rnd()<.32) continue;
+        const wx=bx+(c+.5)*(w/cols)-5, wy=y+22+r*38; if(wy>ground-40) continue;
+        win+=`<rect class="lw" style="--d:${rr(2.5,8).toFixed(1)}s;--o:${rr(.7,1).toFixed(2)}" x="${wx.toFixed(0)}" y="${wy}" width="10" height="15" rx="1"/>`}
+      if(k==='saloon') win+=`<rect class="lw door" x="${bx+w/2-9}" y="${ground-26}" width="18" height="22"/>`;
+    }
+    bx+=w+rr(4,12)});
+  // water tower and windmill on the edges of town
+  const tw=`<g><path d="M392 ${ground} L404 712 M436 ${ground} L424 712 M398 750 L430 750 M402 730 L426 772" stroke-width="3.5" fill="none"/><path d="M394 712 h48 v-46 a24 8 0 0 0 -48 0z"/><path d="M390 668 L418 646 L446 668z"/></g>`;
+  const mill=`<g><path d="M1248 ${ground} L1262 650 L1276 ${ground} M1252 740 h20 M1256 700 h12" stroke-width="3" fill="none"/><path d="M1262 650 l26 6 v4 l-26 -4z"/><g class="blades" style="transform-origin:1262px 650px">${Array.from({length:8},(_,i)=>`<path transform="rotate(${i*45} 1262 650)" d="M1262 650 L1259 606 L1265 606Z"/>`).join('')}<circle cx="1262" cy="650" r="4"/></g></g>`;
+  const poles=[120,300,1130,1360,1520].map(x=>`<path d="M${x} ${ground+6} V${ground-74} M${x-14} ${ground-66} h28" stroke-width="3" fill="none"/>`).join('');
+  const wire=`<path class="wire" d="M120 ${ground-66} Q210 ${ground-40} 300 ${ground-66} M1130 ${ground-66} Q1245 ${ground-40} 1360 ${ground-66} Q1440 ${ground-44} 1520 ${ground-66}" fill="none" stroke-width="1.2"/>`;
+  const cactus=(x,s)=>`<path transform="translate(${x} ${ground+4}) scale(${s})" d="M-5 0 V-62 a5 5 0 0 1 10 0 V0z M-5 -30 h-10 a4 4 0 0 1 -4 -4 v-14 a4 4 0 0 1 8 0 v10 h6z M5 -22 h10 v-18 a4 4 0 0 1 8 0 v20 a6 6 0 0 1 -6 6 h-12z"/>`;
+  const svg=(cls,inner,extra='')=>`<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" ${extra}>${inner}</svg>`;
+  v.innerHTML=`<div class="vs-sky"></div>`+
+    svg('vs-stars',stars)+
+    `<div class="vs-orb"><i></i></div><i class="vs-shoot"></i>`+
+    svg('vs-cloud',`<path d="M120 300 q120 -26 260 -6 t260 -2 q-140 14 -280 10 t-240 -2z M900 210 q160 -22 330 -4 t220 2 q-150 14 -320 8 t-230 -6z"/>`)+
+    svg('vs-far',`<path d="${ridge(640,190,.55)}"/>`)+
+    svg('vs-mid',`<path d="${ridge(720,120,.45)}"/>`)+
+    `<div class="vs-haze"></div>`+
+    svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}<g class="town">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
+    `<div class="vs-weed"><svg viewBox="-30 -30 60 60"><g fill="none" stroke-width="2.2">${Array.from({length:11},(_,i)=>`<ellipse rx="${rr(14,26).toFixed(0)}" ry="${rr(8,22).toFixed(0)}" transform="rotate(${i*33})"/>`).join('')}</g></svg></div>`+
+    `<div class="vs-floor"></div>`;
+  // gentle parallax: follow the pointer on desktop, drift on its own on touch
+  let tx=0,ty=0,cx=0,cy=0;
+  addEventListener('pointermove',e=>{if(e.pointerType!=='mouse') return; tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5},{passive:true});
+  if(!REDUCED) (function loop(t){cx+=(tx-cx)*.04; cy+=(ty-cy)*.04; const a=Math.sin(t/9000)*.18, px=cx+a, py=cy+Math.cos(t/11000)*.08;
+    v.style.setProperty('--px',px.toFixed(4)); v.style.setProperty('--py',py.toFixed(4)); requestAnimationFrame(loop)})(0);
+}
+buildVista();
+
 /* ================= rendering helpers ================= */
 let SOUNDQ=[];
 // court cards are Western portraits: the Jack a young gun, the Queen a saloon lady, the King an old cattle baron
@@ -264,7 +317,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 52 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 53 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
@@ -292,7 +345,12 @@ function renderCoach(){
 }
 
 /* ================= title ================= */
+const RUMORS=["Bicah Mell hasn't lost a hand in eleven years.","Ma Spurlock charges rent on the chairs.","Somebody saw a masked rider out past Red Mesa.","The bank in Silver Fork never closes. Neither does the game.","Don't drink the water in Bitterwater. Don't play cards there either.","Nobody's walked out of Graves End with their boots on.","A good bluff is worth more than a fast horse.","They say the eighth saloon has no windows.","Cutter's Gulch deals in the rain. Every night.","Iron Jack Rourke has never folded. Not once."];
+let RUMOR_T=null, RUMOR_I=Math.floor(Math.random()*10);
+function rumorTick(){const el=$('rumor'); if(!el) return; clearTimeout(RUMOR_T); if($('sTitle').hidden) return;
+  el.classList.add('out'); setTimeout(()=>{RUMOR_I=(RUMOR_I+1)%RUMORS.length; el.textContent=RUMORS[RUMOR_I]; el.classList.remove('out')},600); RUMOR_T=setTimeout(rumorTick,7000)}
 function renderTitle(){
+  setTimeout(rumorTick,400);
   DAILY=null; TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
   drawFan($('fan')); renderToggles();
   const unlockedCount=Object.values(CHARMS).filter(c=>c.tier<=meta.unlock).length;
