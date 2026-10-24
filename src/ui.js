@@ -319,8 +319,12 @@ function duoAuto(){if(hingeW()) return true;
   const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
   const sw=screen.width, sh=screen.height, sr=Math.min(sw,sh)/Math.max(sw,sh), smax=Math.max(sw,sh);
   const vr=Math.min(innerWidth,innerHeight)/Math.max(innerWidth,innerHeight);
+  // split screen: the game only has part of the display, so the fold isn't inside our window: use the phone layout
+  if(splitView()) return false;
   return touch&&smax<=1100&&(sr>=.6||vr>=.6)}
-function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
+function splitView(){const sw=screen.width, sh=screen.height, L=Math.max(sw,sh), S=Math.min(sw,sh), wl=Math.max(innerWidth,innerHeight), ws=Math.min(innerWidth,innerHeight);
+  return wl<L*.72||ws<S*.62}
+function duoOn(){const m=meta.duo||'auto'; return (m==='on'&&!splitView())||(m==='auto'&&duoAuto())}
 function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&innerWidth>innerHeight);
   const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 /* Duo: wanted poster sits on the top screen, its bounty and button drop to the bottom screen */
@@ -334,7 +338,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 57 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 58 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
