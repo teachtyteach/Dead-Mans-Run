@@ -372,7 +372,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 63 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 64 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -1163,9 +1163,15 @@ function burst(el,count){
   }
 }
 /* ---- nemesis presentation ---- */
-function seatSay(i,text,c){
-  const fx=$('fx'); if(!fx||!text) return; const pos=c||centerOfSeat(i); if(!pos) return;
-  const d=document.createElement('div'); d.className='seat-say'; d.textContent=`“${text}”`; d.style.left=Math.max(14,Math.min(86,pos[0]))+'%'; d.style.top=pos[1]+'%'; fx.appendChild(d); setTimeout(()=>d.remove(),3600)}
+function seatSay(i,text,c,tell,boss){
+  const fx=$('fx'); if(!fx||(!text&&!tell)) return; const pos=c||centerOfSeat(i); if(!pos) return;
+  fx.querySelectorAll(`.seat-say[data-i="${i}"]`).forEach(o=>o.remove());
+  const d=document.createElement('div'); d.className='seat-say'+(boss?' boss':'')+(pos[1]<35?' below':''); d.dataset.i=i;
+  d.innerHTML=`${text?`<span class="ss-t"></span>`:''}${tell?`<span class="ss-tell">${tell}</span>`:''}`;
+  d.style.left=Math.max(16,Math.min(84,pos[0]))+'%'; d.style.top=pos[1]+'%'; fx.appendChild(d);
+  const full=text?`“${text}”`:'', t=d.querySelector('.ss-t'); let k=0;
+  if(t){if(REDUCED) t.textContent=full; else {const iv=setInterval(()=>{k+=2; t.textContent=full.slice(0,k); if(k>=full.length) clearInterval(iv)},28)}}
+  const life=Math.min(6500,2400+full.length*45+(tell?1200:0)); setTimeout(()=>{d.classList.add('out'); setTimeout(()=>d.remove(),400)},life)}
 function nemAmbush(n,then){
   let v=$('nemCard'); if(!v){v=document.createElement('div'); v.id='nemCard'; v.className='modal nem-modal'; document.body.appendChild(v)}
   const lines=NEM_LINES.back, said=lines[Math.min(lines.length-1,(n.met||1)-1+Math.floor(Math.random()*2))];
@@ -1246,7 +1252,10 @@ function quote(text,tell){
   }
   QUOTE_FADE=setTimeout(()=>{el.classList.remove('on'); rb.classList.remove('speaking')},(4200+(text||'').length*30)*Math.max(.6,speedMul()));
 }
-function say(text,tell){quote(text,tell)}
+function say(text,tell){
+  const bi=G&&G.players?G.players.findIndex(p=>p.bossDef&&!p.out):-1;
+  if(bi>=0&&!$('sGame').hidden&&(text||tell)){seatSay(bi,text,null,tell,true); quote('',''); return}
+  quote(text,tell)}
 
 /* ================= table rendering ================= */
 document.addEventListener('pointermove',e=>{
@@ -1432,7 +1441,7 @@ function renderControls(){
     +(canFlask?`<button class="chipbtn trickbtn" id="flaskBtn" title="${CHARMS.flask.desc}"><span class="ti">${CHARMS.flask.icon}\uFE0E</span>Flask</button>`:'')
     +(canDyn?`<button class="chipbtn trickbtn" id="dynBtn" title="${CHARMS.dynamite.desc}"><span class="ti">${CHARMS.dynamite.icon}\uFE0E</span>Dynamite</button>`:'');
   ac2.innerHTML=`${canSwap||canAce||trickBtns?`<div class="swaprow">${canSwap?'<button class="chipbtn" data-swap="0">Swap left</button><button class="chipbtn" data-swap="1">Swap right</button>':''}${canAce?'<button class="chipbtn" id="aceBtn">Ace in the Sleeve</button>':''}${trickBtns}</div>`:''}
-    <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}<button class="btn call" id="bCall">${callTxt}</button></div>`;
+    <div class="actrow" style="--cols:${canRaise?3:2}"><button class="btn fold" id="bFold">Fold</button>${canRaise?`<button class="btn raise" id="bRaise">${label}…</button>`:''}<button class="btn call" id="bCall"${toCall===0?' data-sub="knock the table"':''}>${callTxt}</button></div>`;
   WASMY=true; if(!wasMy){const r=ac2.querySelector('.actrow'); if(r) r.classList.add('rise')}
   ac2.querySelectorAll('[data-swap]').forEach(b=>b.onclick=()=>{
     const k=+b.dataset.swap, old=me.hand[k], c=draw(); c.order=0; me.hand[k]=c; G.mechSwaps--; sfx('card');
