@@ -1483,6 +1483,36 @@ html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226
 .daily-sheet{text-align:center;align-items:center}
 .daily-line{margin:0;font-size:16px;color:var(--ivory-lo)}
 .daily-line b{color:var(--gold)}
-/* instant press: the button sinks the moment your finger lands */
-.btn.pressing:not(:disabled),.chipbtn.pressing,.handsbtn.pressing,.iconbtn.pressing{transform:translateY(3px) scale(.97);filter:brightness(1.08);transition-duration:.05s}
-.tabs button.pressing,.title-links button.pressing{transform:scale(.96)}
+/* the pot and plates take the weight of landing chips */
+.thud{animation:thud .28s cubic-bezier(.3,1.6,.5,1)}
+@keyframes thud{40%{translate:0 2px;scale:1.04 .96}}
+.chip.fly{transform-style:preserve-3d;backface-visibility:visible}
+
+/* ================= the opening: silent-film intertitles ================= */
+#story{position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:24px;background:#050302;cursor:pointer;animation:fadeIn .6s ease both;overflow:hidden}
+html.tall #story{bottom:auto;height:var(--appH)}
+#story[hidden]{display:none}
+#story.out{animation:boOut .7s ease forwards}
+#story::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85));animation:stFlick .18s steps(2) infinite}
+@keyframes stFlick{50%{opacity:.88}}
+.st-grain{position:absolute;inset:-50%;background:var(--noise);opacity:.5;animation:stGrain .5s steps(4) infinite;pointer-events:none}
+@keyframes stGrain{25%{transform:translate(3%,-2%)}50%{transform:translate(-2%,3%)}75%{transform:translate(2%,2%)}}
+.st-card{position:relative;z-index:1;width:min(560px,92vw);animation:stIn 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes stIn{from{opacity:0;filter:blur(6px) brightness(2);scale:1.04}}
+.st-frame{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px;padding:34px 28px;text-align:center;color:#efe4c8;
+  border:2px solid rgba(232,212,162,.75);outline:1px solid rgba(232,212,162,.35);outline-offset:6px;border-radius:4px;background:rgba(10,7,4,.6);filter:sepia(.35)}
+.st-frame::before,.st-frame::after{content:"❦";position:absolute;font-size:18px;color:rgba(232,212,162,.8);top:-14px;left:50%;translate:-50% 0;background:#050302;padding:0 10px}
+.st-frame::after{top:auto;bottom:-14px;rotate:180deg}
+.st-k{font-family:var(--f-label);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:13px;color:#d8c08a}
+.st-t{margin:0;font-family:var(--f-serif);font-size:clamp(20px,5vw,28px);line-height:1.35;text-wrap:balance}
+.st-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.st-row .medal{width:44px;height:44px;filter:grayscale(.6) sepia(.4)}
+.st-big{width:110px!important;height:110px!important;filter:grayscale(.45) sepia(.45) contrast(1.1);box-shadow:0 0 0 3px #d8c08a,0 0 0 5px #050302,0 0 40px rgba(216,192,138,.25)!important}
+.st-town{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;font-family:var(--f-label);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#bfa978}
+.st-town i{font-style:normal;opacity:0;animation:stTown .5s calc(.3s + var(--k) * .22s) forwards}
+@keyframes stTown{to{opacity:1}}
+.st-logo{font-family:var(--f-logo);font-size:clamp(38px,10vw,64px);color:var(--brass-hi);text-shadow:0 2px 0 #5a3a12,0 0 30px rgba(244,203,92,.3);line-height:1}
+.st-skip{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:2;background:none;border:1px solid rgba(232,212,162,.35);color:#d8c08a;border-radius:999px;padding:8px 16px;font-family:var(--f-label);letter-spacing:.16em;text-transform:uppercase;font-size:12px;cursor:pointer}
+.st-dots{position:absolute;bottom:max(22px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:2}
+.st-dots i{width:6px;height:6px;border-radius:50%;background:rgba(232,212,162,.3)}.st-dots i.on{background:#e8d4a2}
+@media (prefers-reduced-motion:reduce){#story::after,.st-grain{animation:none}}

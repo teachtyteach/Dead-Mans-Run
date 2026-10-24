@@ -151,19 +151,9 @@ function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-famil
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
-// instant response: buttons press the moment a finger lands, with a tick of haptic feedback
-document.addEventListener('touchstart',()=>{},{passive:true});
-document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button,.btn,.chipbtn,[data-buy],[data-stab]'); if(!b||b.disabled) return;
-  b.classList.add('pressing'); haptic(b.classList.contains('raise')||b.classList.contains('call')||b.classList.contains('gold')?'medium':'light');
-  const up=()=>{b.classList.remove('pressing'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 
-/* haptics: real taps on the native app, a buzz where the browser allows it */
-let HAPT=0;
-function haptic(k){const n=performance.now(); if(n-HAPT<35) return; HAPT=n;
-  try{if(window.webkit&&webkit.messageHandlers&&webkit.messageHandlers.haptic){webkit.messageHandlers.haptic.postMessage(k); return}}catch(e){}
-  if(navigator.vibrate){const ms={select:6,light:8,medium:14,heavy:24,success:[12,40,18],error:[30,50,30]}[k]||8; try{navigator.vibrate(ms)}catch(e){}}}
 /* buttons answer the instant a finger lands, not when it lifts */
 const PRESSABLE='.btn,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
 document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest(PRESSABLE); if(!b||b.disabled) return; b.classList.add('press'); haptic('select');
@@ -330,6 +320,7 @@ function renderTitle(){
   }).join('');
   document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>openMore(b.dataset.more));
   $('tutBtn').onclick=()=>{ac(); startTutorial(false)};
+  if($('storyBtn')) $('storyBtn').onclick=()=>{ac(); $('more').hidden=true; playStory(null)};
   show('sTitle');
 }
 function openMore(tab){
@@ -343,7 +334,29 @@ function openMore(tab){
 
 /* ================= run flow ================= */
 function saveRun(phase){if(!R||R.tutorial||R.daily) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
+/* ================= the opening: a silent-film prologue before your very first ride ================= */
+const STORY=[
+  {k:'Territory of New Mexico · 1881',t:'Eight saloons stand between Dry Creek and Graves End.',art:'town'},
+  {k:'Every table is rigged',t:'Each one is run by an outlaw the law won\'t touch.',art:'bosses'},
+  {k:'At the end of the trail',t:'Bicah Mell. He owns them all, and he never loses.',art:'bicah'},
+  {k:'Then a stranger rides in',t:'No name. A mask, a horse, and a thousand dollars in chips.',art:'rider'},
+  {k:'',t:'Take every boss down. Collect every bounty.<br>Ride the Dead Man\'s Run.',art:'title'}];
+function playStory(then){
+  let v=$('story'); if(!v){v=document.createElement('div'); v.id='story'; document.body.appendChild(v)}
+  let i=-1, t=null, gone=false;
+  const art=a=>a==='bosses'?`<div class="st-row">${BOSSES.slice(0,7).map(b=>`<span class="medal">${bossPortrait(b)}</span>`).join('')}</div>`
+    :a==='bicah'?`<span class="medal st-big">${bossPortrait(BOSSES[7])}</span>`:a==='rider'?`<span class="medal st-big">${portrait('You the rider',HUMAN_LOOK)}</span>`
+    :a==='town'?`<div class="st-town">${TOWNS.map((n,k)=>`<i style="--k:${k}">${n}</i>`).join('')}</div>`:`<div class="st-logo">Dead Man's Run</div>`;
+  const end=()=>{if(gone) return; gone=true; clearTimeout(t); meta.seenStory=true; saveMeta(); v.classList.add('out'); setTimeout(()=>{v.hidden=true; v.classList.remove('out')},700); then&&then()};
+  const next=()=>{clearTimeout(t); i++; if(i>=STORY.length){end(); return} const sc=STORY[i];
+    v.innerHTML=`<div class="st-grain"></div><div class="st-card" style="animation-delay:.05s"><div class="st-frame">${art(sc.art)}${sc.k?`<div class="st-k">${sc.k}</div>`:''}<p class="st-t">${sc.t}</p></div></div>
+      <button class="st-skip">Skip</button><div class="st-dots">${STORY.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
+    v.querySelector('.st-skip').onclick=e=>{e.stopPropagation(); end()};
+    sfx(i===STORY.length-1?'stamp':'whoosh'); t=setTimeout(next,i===STORY.length-1?3600:4300)};
+  v.hidden=false; v.onclick=()=>next(); next();
+}
 function startRun(){
+  if(!meta.seenStory){playStory(startRun); return}
   if(!meta.tutDone){startTutorial(true); return}
   R={level:1,gold:0,charms:[],lv:{},deeds:[],tricks:[],curse:null,phase:'pick',heat:Math.min(meta.heatPick||0,maxHeat()),temp:null};
   meta.runs++; saveMeta(); sset(RUN_KEY,null);
@@ -997,9 +1010,16 @@ function fly(fromEl,toEl,count,dur,cls){
   const [x1,y1]=relCenter(fromEl), [x2,y2]=relCenter(toEl);
   for(let k=0;k<count;k++){
     const s=document.createElement('span'); s.className='chip fly '+(cls||'g'); s.style.left=(x1-10)+'px'; s.style.top=(y1-10)+'px'; $('fx').appendChild(s);
-    const jx=(Math.random()-.5)*18, jy=(Math.random()-.5)*12;
-    const a=s.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${(x2-x1)/2+jx}px,${(y2-y1)/2-28+jy}px) scale(1.1)`,offset:.5},{transform:`translate(${x2-x1+jx}px,${y2-y1+jy}px) scale(.85)`}],
-      {duration:dur,delay:k*45,easing:'cubic-bezier(.3,.6,.3,1)',fill:'both'});
+    // chips have weight: they arc, tumble edge-over-edge, land a touch short and settle onto the stack
+    const jx=(Math.random()-.5)*18, jy=(Math.random()-.5)*12, dx=x2-x1+jx, dy=y2-y1+jy, lift=Math.min(70,26+Math.hypot(dx,dy)*.12), spin=(Math.random()<.5?-1:1)*(360+Math.random()*360);
+    const a=s.animate([
+      {transform:'translate(0,0) rotateX(0deg) rotateZ(0deg) scale(1)',filter:'drop-shadow(0 2px 2px rgba(0,0,0,.5))'},
+      {transform:`translate(${dx*.5}px,${dy*.5-lift}px) rotateX(${spin*.6}deg) rotateZ(${spin*.15}deg) scale(1.16)`,filter:'drop-shadow(0 14px 8px rgba(0,0,0,.35))',offset:.48},
+      {transform:`translate(${dx*.97}px,${dy*.97}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.95)`,filter:'drop-shadow(0 2px 2px rgba(0,0,0,.55))',offset:.86},
+      {transform:`translate(${dx}px,${dy-3}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.9)`,offset:.93},
+      {transform:`translate(${dx}px,${dy}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.86)`,filter:'drop-shadow(0 1px 1px rgba(0,0,0,.6))'}],
+      {duration:dur*1.15,delay:k*55,easing:'cubic-bezier(.33,.0,.35,1)',fill:'both'});
+    if(k===count-1) a.onfinish=()=>{s.remove(); const t=toEl.closest&&toEl.closest('.potrow,.plate,.bet'); if(t){t.classList.remove('thud'); void t.offsetWidth; t.classList.add('thud')}}; else
     a.onfinish=()=>s.remove();
   }
 }

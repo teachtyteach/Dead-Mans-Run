@@ -1,6 +1,7 @@
 // Dead Man's Run — the web game, packed into a native iPhone app.
 // The game files live in the app bundle (the "www" folder) and are served over a private
-// app:// address so everything works offline, sound included, and saves stay on the phone.
+// app:// address so everything works offline, sound included.
+// Native extras: Taptic Engine haptics, iCloud saves, a branded launch screen.
 import SwiftUI
 import WebKit
 import AVFoundation
@@ -12,14 +13,15 @@ struct DeadMansRunApp: App {
         // play alongside other audio and respect the ring/silent switch, like a game should
         try? AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
         try? AVAudioSession.sharedInstance().setActive(true)
+        CloudSaves.shared.start()
     }
     var body: some Scene {
         WindowGroup {
             GameView()
                 .ignoresSafeArea()
                 .background(Color(red: 0.086, green: 0.051, blue: 0.027))
-                .statusBarHidden(false)
                 .preferredColorScheme(.dark)
+                .persistentSystemOverlays(.hidden)
         }
     }
 }
@@ -31,8 +33,12 @@ struct GameView: UIViewRepresentable {
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
         config.websiteDataStore = .default()
-        config.userContentController.add(context.coordinator, name: "haptic")
-        config.userContentController.add(context.coordinator, name: "haptic")
+        let ucc = config.userContentController
+        ucc.add(context.coordinator, name: "haptic")
+        ucc.add(CloudSaves.shared, name: "cloud")
+        // hand the game whatever iCloud holds before any of its code runs
+        ucc.addUserScript(WKUserScript(source: "window.__cloud=\(CloudSaves.shared.snapshotJSON());",
+                                       injectionTime: .atDocumentStart, forMainFrameOnly: true))
         let web = WKWebView(frame: .zero, configuration: config)
         web.isOpaque = false
         web.backgroundColor = UIColor(red: 0.086, green: 0.051, blue: 0.027, alpha: 1)
@@ -54,11 +60,13 @@ struct GameView: UIViewRepresentable {
     func makeCoordinator() -> Haptics { Haptics() }
 }
 
-/// The game calls window.webkit.messageHandlers.haptic.postMessage("light"|"medium"|"heavy"|"select"|"success"|"error").
+/// Taptic Engine feedback. The game posts "light", "medium", "heavy", "soft", "rigid", "select", "success" or "error".
 final class Haptics: NSObject, WKScriptMessageHandler {
     private let light = UIImpactFeedbackGenerator(style: .light)
     private let medium = UIImpactFeedbackGenerator(style: .medium)
     private let heavy = UIImpactFeedbackGenerator(style: .heavy)
+    private let soft = UIImpactFeedbackGenerator(style: .soft)
+    private let rigid = UIImpactFeedbackGenerator(style: .rigid)
     private let select = UISelectionFeedbackGenerator()
     private let note = UINotificationFeedbackGenerator()
     func userContentController(_ c: WKUserContentController, didReceive m: WKScriptMessage) {
@@ -66,11 +74,34 @@ final class Haptics: NSObject, WKScriptMessageHandler {
         case "light": light.impactOccurred()
         case "medium": medium.impactOccurred()
         case "heavy": heavy.impactOccurred(intensity: 1)
-        case "select": select.selectionChanged()
+        case "soft": soft.impactOccurred(intensity: 0.6)
+        case "rigid": rigid.impactOccurred()
         case "success": note.notificationOccurred(.success)
         case "error": note.notificationOccurred(.error)
-        default: break
+        case "warning": note.notificationOccurred(.warning)
+        default: select.selectionChanged()
         }
+    }
+}
+
+/// iCloud key-value saves: your records and the run in progress follow you to your other devices.
+/// Works when the app is signed with the iCloud capability (paid Apple Developer account); otherwise it quietly does nothing.
+final class CloudSaves: NSObject, WKScriptMessageHandler {
+    static let shared = CloudSaves()
+    private let store = NSUbiquitousKeyValueStore.default
+    private let keys = ["deadmans-run-meta-v2", "deadmans-run-save-v3"]
+    func start() { store.synchronize() }
+    func snapshotJSON() -> String {
+        var out: [String: Any] = [:]
+        for k in keys { if let d = store.dictionary(forKey: k) { out[k] = d } }
+        let data = (try? JSONSerialization.data(withJSONObject: out)) ?? Data("{}".utf8)
+        return String(data: data, encoding: .utf8) ?? "{}"
+    }
+    func userContentController(_ c: WKUserContentController, didReceive m: WKScriptMessage) {
+        guard let b = m.body as? [String: Any], let k = b["k"] as? String, keys.contains(k) else { return }
+        var entry: [String: Any] = ["t": b["t"] as? Double ?? Date().timeIntervalSince1970 * 1000]
+        if let v = b["v"] as? String { entry["v"] = v }
+        store.set(entry, forKey: k)
     }
 }
 

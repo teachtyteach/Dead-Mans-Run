@@ -18,3 +18,9 @@ With the paid Apple Developer Program ($99/year) it lasts a year, and you can us
 
 ## Updating
 Game changes are built into `ios/DeadMansRun/www` by `build.py`. Pull the latest repo and press Run again.
+
+## iCloud saves (needs the paid Apple Developer Program)
+1. Signing & Capabilities → **+ Capability** → **iCloud** → tick **Key-value storage**.
+   (Or set Build Settings → Code Signing Entitlements to `DeadMansRun/DeadMansRun.entitlements`.)
+2. Run again. Your records and the run in progress now follow you between iPhone and iPad.
+With a free Apple ID leave this off; the game still saves on the phone.

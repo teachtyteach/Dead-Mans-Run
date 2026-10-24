@@ -1,6 +1,11 @@
 /* ================= storage + meta ================= */
 function sget(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
-function sset(k,v){try{if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function sset(k,v){const t=Date.now(); try{if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); localStorage.setItem(k+'@t',t)}catch(e){}
+  // in the iPhone app, saves also go to iCloud so a run carries between your devices
+  try{const c=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.cloud; if(c) c.postMessage({k,v:v===null?null:JSON.stringify(v),t})}catch(e){}}
+// on launch the app hands over whatever iCloud holds; take it when it is newer than this device's copy
+(function(){try{const cl=window.__cloud; if(!cl) return;
+  Object.keys(cl).forEach(k=>{const c=cl[k], lt=+(localStorage.getItem(k+'@t')||0); if(c&&c.t>lt){if(c.v==null) localStorage.removeItem(k); else localStorage.setItem(k,c.v); localStorage.setItem(k+'@t',c.t)}})}catch(e){}})();
 const META_KEY='deadmans-run-meta-v2', RUN_KEY='deadmans-run-save-v3';
 const meta=Object.assign({best:0,runs:0,wins:0,unlock:0,sound:true,music:true,speed:'normal',heatPick:0,tips:{}},sget(META_KEY)||{});
 meta.stats=Object.assign({hands:0,won:0,bigPot:0,bestHand:0,bosses:0,showdowns:0,challenges:0},meta.stats||{});

@@ -1505,9 +1505,39 @@ html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226
 .daily-sheet{text-align:center;align-items:center}
 .daily-line{margin:0;font-size:16px;color:var(--ivory-lo)}
 .daily-line b{color:var(--gold)}
-/* instant press: the button sinks the moment your finger lands */
-.btn.pressing:not(:disabled),.chipbtn.pressing,.handsbtn.pressing,.iconbtn.pressing{transform:translateY(3px) scale(.97);filter:brightness(1.08);transition-duration:.05s}
-.tabs button.pressing,.title-links button.pressing{transform:scale(.96)}
+/* the pot and plates take the weight of landing chips */
+.thud{animation:thud .28s cubic-bezier(.3,1.6,.5,1)}
+@keyframes thud{40%{translate:0 2px;scale:1.04 .96}}
+.chip.fly{transform-style:preserve-3d;backface-visibility:visible}
+
+/* ================= the opening: silent-film intertitles ================= */
+#story{position:fixed;inset:0;z-index:150;display:grid;place-items:center;padding:24px;background:#050302;cursor:pointer;animation:fadeIn .6s ease both;overflow:hidden}
+html.tall #story{bottom:auto;height:var(--appH)}
+#story[hidden]{display:none}
+#story.out{animation:boOut .7s ease forwards}
+#story::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.85));animation:stFlick .18s steps(2) infinite}
+@keyframes stFlick{50%{opacity:.88}}
+.st-grain{position:absolute;inset:-50%;background:var(--noise);opacity:.5;animation:stGrain .5s steps(4) infinite;pointer-events:none}
+@keyframes stGrain{25%{transform:translate(3%,-2%)}50%{transform:translate(-2%,3%)}75%{transform:translate(2%,2%)}}
+.st-card{position:relative;z-index:1;width:min(560px,92vw);animation:stIn 1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes stIn{from{opacity:0;filter:blur(6px) brightness(2);scale:1.04}}
+.st-frame{position:relative;display:flex;flex-direction:column;align-items:center;gap:16px;padding:34px 28px;text-align:center;color:#efe4c8;
+  border:2px solid rgba(232,212,162,.75);outline:1px solid rgba(232,212,162,.35);outline-offset:6px;border-radius:4px;background:rgba(10,7,4,.6);filter:sepia(.35)}
+.st-frame::before,.st-frame::after{content:"❦";position:absolute;font-size:18px;color:rgba(232,212,162,.8);top:-14px;left:50%;translate:-50% 0;background:#050302;padding:0 10px}
+.st-frame::after{top:auto;bottom:-14px;rotate:180deg}
+.st-k{font-family:var(--f-label);font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:13px;color:#d8c08a}
+.st-t{margin:0;font-family:var(--f-serif);font-size:clamp(20px,5vw,28px);line-height:1.35;text-wrap:balance}
+.st-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.st-row .medal{width:44px;height:44px;filter:grayscale(.6) sepia(.4)}
+.st-big{width:110px!important;height:110px!important;filter:grayscale(.45) sepia(.45) contrast(1.1);box-shadow:0 0 0 3px #d8c08a,0 0 0 5px #050302,0 0 40px rgba(216,192,138,.25)!important}
+.st-town{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 14px;font-family:var(--f-label);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#bfa978}
+.st-town i{font-style:normal;opacity:0;animation:stTown .5s calc(.3s + var(--k) * .22s) forwards}
+@keyframes stTown{to{opacity:1}}
+.st-logo{font-family:var(--f-logo);font-size:clamp(38px,10vw,64px);color:var(--brass-hi);text-shadow:0 2px 0 #5a3a12,0 0 30px rgba(244,203,92,.3);line-height:1}
+.st-skip{position:absolute;top:max(16px,env(safe-area-inset-top));right:16px;z-index:2;background:none;border:1px solid rgba(232,212,162,.35);color:#d8c08a;border-radius:999px;padding:8px 16px;font-family:var(--f-label);letter-spacing:.16em;text-transform:uppercase;font-size:12px;cursor:pointer}
+.st-dots{position:absolute;bottom:max(22px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:2}
+.st-dots i{width:6px;height:6px;border-radius:50%;background:rgba(232,212,162,.3)}.st-dots i.on{background:#e8d4a2}
+@media (prefers-reduced-motion:reduce){#story::after,.st-grain{animation:none}}
 
 </style>
 </head>
@@ -1575,7 +1605,7 @@ html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226
     <div class="pane" data-mpane="trophies" hidden><div class="trophies" id="trophies" data-scroll></div></div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
-    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button></div></div>
+    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button><button class="btn small" id="storyBtn">Watch the opening</button></div></div>
     <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
   </div>
 </div>
@@ -1889,7 +1919,12 @@ const DEEDS={
 
 /* ================= storage + meta ================= */
 function sget(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
-function sset(k,v){try{if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function sset(k,v){const t=Date.now(); try{if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,JSON.stringify(v)); localStorage.setItem(k+'@t',t)}catch(e){}
+  // in the iPhone app, saves also go to iCloud so a run carries between your devices
+  try{const c=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.cloud; if(c) c.postMessage({k,v:v===null?null:JSON.stringify(v),t})}catch(e){}}
+// on launch the app hands over whatever iCloud holds; take it when it is newer than this device's copy
+(function(){try{const cl=window.__cloud; if(!cl) return;
+  Object.keys(cl).forEach(k=>{const c=cl[k], lt=+(localStorage.getItem(k+'@t')||0); if(c&&c.t>lt){if(c.v==null) localStorage.removeItem(k); else localStorage.setItem(k,c.v); localStorage.setItem(k+'@t',c.t)}})}catch(e){}})();
 const META_KEY='deadmans-run-meta-v2', RUN_KEY='deadmans-run-save-v3';
 const meta=Object.assign({best:0,runs:0,wins:0,unlock:0,sound:true,music:true,speed:'normal',heatPick:0,tips:{}},sget(META_KEY)||{});
 meta.stats=Object.assign({hands:0,won:0,bigPot:0,bestHand:0,bosses:0,showdowns:0,challenges:0},meta.stats||{});
@@ -3143,19 +3178,9 @@ function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-famil
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
-// instant response: buttons press the moment a finger lands, with a tick of haptic feedback
-document.addEventListener('touchstart',()=>{},{passive:true});
-document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('button,.btn,.chipbtn,[data-buy],[data-stab]'); if(!b||b.disabled) return;
-  b.classList.add('pressing'); haptic(b.classList.contains('raise')||b.classList.contains('call')||b.classList.contains('gold')?'medium':'light');
-  const up=()=>{b.classList.remove('pressing'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 
-/* haptics: real taps on the native app, a buzz where the browser allows it */
-let HAPT=0;
-function haptic(k){const n=performance.now(); if(n-HAPT<35) return; HAPT=n;
-  try{if(window.webkit&&webkit.messageHandlers&&webkit.messageHandlers.haptic){webkit.messageHandlers.haptic.postMessage(k); return}}catch(e){}
-  if(navigator.vibrate){const ms={select:6,light:8,medium:14,heavy:24,success:[12,40,18],error:[30,50,30]}[k]||8; try{navigator.vibrate(ms)}catch(e){}}}
 /* buttons answer the instant a finger lands, not when it lifts */
 const PRESSABLE='.btn,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
 document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest(PRESSABLE); if(!b||b.disabled) return; b.classList.add('press'); haptic('select');
@@ -3322,6 +3347,7 @@ function renderTitle(){
   }).join('');
   document.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>openMore(b.dataset.more));
   $('tutBtn').onclick=()=>{ac(); startTutorial(false)};
+  if($('storyBtn')) $('storyBtn').onclick=()=>{ac(); $('more').hidden=true; playStory(null)};
   show('sTitle');
 }
 function openMore(tab){
@@ -3335,7 +3361,29 @@ function openMore(tab){
 
 /* ================= run flow ================= */
 function saveRun(phase){if(!R||R.tutorial||R.daily) return; R.phase=phase; if(phase!=='table') delete R.table; sset(RUN_KEY,R)}
+/* ================= the opening: a silent-film prologue before your very first ride ================= */
+const STORY=[
+  {k:'Territory of New Mexico · 1881',t:'Eight saloons stand between Dry Creek and Graves End.',art:'town'},
+  {k:'Every table is rigged',t:'Each one is run by an outlaw the law won\'t touch.',art:'bosses'},
+  {k:'At the end of the trail',t:'Bicah Mell. He owns them all, and he never loses.',art:'bicah'},
+  {k:'Then a stranger rides in',t:'No name. A mask, a horse, and a thousand dollars in chips.',art:'rider'},
+  {k:'',t:'Take every boss down. Collect every bounty.<br>Ride the Dead Man\'s Run.',art:'title'}];
+function playStory(then){
+  let v=$('story'); if(!v){v=document.createElement('div'); v.id='story'; document.body.appendChild(v)}
+  let i=-1, t=null, gone=false;
+  const art=a=>a==='bosses'?`<div class="st-row">${BOSSES.slice(0,7).map(b=>`<span class="medal">${bossPortrait(b)}</span>`).join('')}</div>`
+    :a==='bicah'?`<span class="medal st-big">${bossPortrait(BOSSES[7])}</span>`:a==='rider'?`<span class="medal st-big">${portrait('You the rider',HUMAN_LOOK)}</span>`
+    :a==='town'?`<div class="st-town">${TOWNS.map((n,k)=>`<i style="--k:${k}">${n}</i>`).join('')}</div>`:`<div class="st-logo">Dead Man's Run</div>`;
+  const end=()=>{if(gone) return; gone=true; clearTimeout(t); meta.seenStory=true; saveMeta(); v.classList.add('out'); setTimeout(()=>{v.hidden=true; v.classList.remove('out')},700); then&&then()};
+  const next=()=>{clearTimeout(t); i++; if(i>=STORY.length){end(); return} const sc=STORY[i];
+    v.innerHTML=`<div class="st-grain"></div><div class="st-card" style="animation-delay:.05s"><div class="st-frame">${art(sc.art)}${sc.k?`<div class="st-k">${sc.k}</div>`:''}<p class="st-t">${sc.t}</p></div></div>
+      <button class="st-skip">Skip</button><div class="st-dots">${STORY.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
+    v.querySelector('.st-skip').onclick=e=>{e.stopPropagation(); end()};
+    sfx(i===STORY.length-1?'stamp':'whoosh'); t=setTimeout(next,i===STORY.length-1?3600:4300)};
+  v.hidden=false; v.onclick=()=>next(); next();
+}
 function startRun(){
+  if(!meta.seenStory){playStory(startRun); return}
   if(!meta.tutDone){startTutorial(true); return}
   R={level:1,gold:0,charms:[],lv:{},deeds:[],tricks:[],curse:null,phase:'pick',heat:Math.min(meta.heatPick||0,maxHeat()),temp:null};
   meta.runs++; saveMeta(); sset(RUN_KEY,null);
@@ -3989,9 +4037,16 @@ function fly(fromEl,toEl,count,dur,cls){
   const [x1,y1]=relCenter(fromEl), [x2,y2]=relCenter(toEl);
   for(let k=0;k<count;k++){
     const s=document.createElement('span'); s.className='chip fly '+(cls||'g'); s.style.left=(x1-10)+'px'; s.style.top=(y1-10)+'px'; $('fx').appendChild(s);
-    const jx=(Math.random()-.5)*18, jy=(Math.random()-.5)*12;
-    const a=s.animate([{transform:'translate(0,0) scale(1)'},{transform:`translate(${(x2-x1)/2+jx}px,${(y2-y1)/2-28+jy}px) scale(1.1)`,offset:.5},{transform:`translate(${x2-x1+jx}px,${y2-y1+jy}px) scale(.85)`}],
-      {duration:dur,delay:k*45,easing:'cubic-bezier(.3,.6,.3,1)',fill:'both'});
+    // chips have weight: they arc, tumble edge-over-edge, land a touch short and settle onto the stack
+    const jx=(Math.random()-.5)*18, jy=(Math.random()-.5)*12, dx=x2-x1+jx, dy=y2-y1+jy, lift=Math.min(70,26+Math.hypot(dx,dy)*.12), spin=(Math.random()<.5?-1:1)*(360+Math.random()*360);
+    const a=s.animate([
+      {transform:'translate(0,0) rotateX(0deg) rotateZ(0deg) scale(1)',filter:'drop-shadow(0 2px 2px rgba(0,0,0,.5))'},
+      {transform:`translate(${dx*.5}px,${dy*.5-lift}px) rotateX(${spin*.6}deg) rotateZ(${spin*.15}deg) scale(1.16)`,filter:'drop-shadow(0 14px 8px rgba(0,0,0,.35))',offset:.48},
+      {transform:`translate(${dx*.97}px,${dy*.97}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.95)`,filter:'drop-shadow(0 2px 2px rgba(0,0,0,.55))',offset:.86},
+      {transform:`translate(${dx}px,${dy-3}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.9)`,offset:.93},
+      {transform:`translate(${dx}px,${dy}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.86)`,filter:'drop-shadow(0 1px 1px rgba(0,0,0,.6))'}],
+      {duration:dur*1.15,delay:k*55,easing:'cubic-bezier(.33,.0,.35,1)',fill:'both'});
+    if(k===count-1) a.onfinish=()=>{s.remove(); const t=toEl.closest&&toEl.closest('.potrow,.plate,.bet'); if(t){t.classList.remove('thud'); void t.offsetWidth; t.classList.add('thud')}}; else
     a.onfinish=()=>s.remove();
   }
 }
