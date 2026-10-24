@@ -325,8 +325,14 @@ function duoAuto(){if(hingeW()) return true;
 function splitView(){const sw=screen.width, sh=screen.height, L=Math.max(sw,sh), S=Math.min(sw,sh), wl=Math.max(innerWidth,innerHeight), ws=Math.min(innerWidth,innerHeight);
   return wl<L*.72||ws<S*.62}
 function duoOn(){const m=meta.duo||'auto'; return (m==='on'&&!splitView())||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&innerWidth>innerHeight);
-  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; const land=innerWidth>innerHeight;
+  // Duo postures: landscape (flat or folded like an L) puts the crease across the middle, so the game splits there —
+  // the table up top, you below. Portrait puts the crease down the middle of one tall surface, so it stays whole.
+  d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&land); d.classList.toggle('duo-tall',on&&!land);
+  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); duoEvent(on&&land); d.style.setProperty('--hinge',(land||h?((h?h.w:0)+28):12)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+/* Duo landscape: the telegram is read on the top screen, answered on the bottom one */
+function duoEvent(v){const ch=$('evChoices'), rs=$('evResult'), bot=document.querySelector('#sEvent .dbot'), tg=document.querySelector('#sEvent .telegram'); if(!ch||!bot||!tg) return;
+  if(v){if(ch.parentElement!==bot){bot.prepend(rs); bot.prepend(ch)}} else if(ch.parentElement!==tg){tg.appendChild(ch); tg.appendChild(rs)}}
 /* Duo: wanted poster sits on the top screen, its bounty and button drop to the bottom screen */
 function duoPoster(v){const m=$('poster'); if(!m) return; const pp=m.querySelector('.poster'); let bot=$('posterBot');
   if(!bot){bot=document.createElement('div'); bot.id='posterBot'; bot.className='p-bot'; m.appendChild(bot)}
@@ -338,7 +344,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 59 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 60 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
@@ -1133,10 +1139,11 @@ function seatSay(i,text,c){
 function nemAmbush(n,then){
   let v=$('nemCard'); if(!v){v=document.createElement('div'); v.id='nemCard'; v.className='modal nem-modal'; document.body.appendChild(v)}
   const lines=NEM_LINES.back, said=lines[Math.min(lines.length-1,(n.met||1)-1+Math.floor(Math.random()*2))];
-  v.innerHTML=`<div class="nem-sheet" role="dialog" aria-label="An old face"><div class="nem-k">${n.fem?'She':'He'} remembers you</div>
+  const split=document.documentElement.classList.contains('duo-wide');
+  v.innerHTML=`<div class="nem-sheet nem-top" role="dialog" aria-label="An old face"><div class="nem-k">${n.fem?'She':'He'} remembers you</div>
     <div class="nem-face">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</div>
     <div class="nem-name">${nemName(n)}</div><div class="nem-rank">${nemTitle(n)}${'<i>★</i>'.repeat(n.rank)}</div>
-    <p class="nem-q">“${said}”</p>
+    <p class="nem-q">“${said}”</p>${split?'</div><div class="nem-sheet nem-bot">':''}
     <div class="nem-facts"><span>Kills<b>${n.kills}×</b></span><span>Last seen<b>${n.last}</b></span><span>Bounty<b>${25*n.rank}g</b></span></div>
     <p class="nem-note">${n.rank>=4?'Plays like a veteran. Never tilts. Deep pockets.':n.rank>=3?'Sharp now. Never tilts.':n.rank>=2?'Tougher than last time. Never tilts.':'Take ' + (n.fem?'her':'him') + ' out yourself to collect.'}</p>
     <button class="btn raise big" id="nemGo">Settle it</button></div>`;
