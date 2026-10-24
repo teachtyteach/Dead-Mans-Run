@@ -1932,6 +1932,46 @@ html.duo-wide #actions .btn.fold,html.duo-wide #actions .btn.raise,html.duo-wide
 /* the old ribbon line is retired at the table: words now come from mouths */
 #sGame .ribbon .rib-q{display:none!important}
 
+/* ================= table talk ================= */
+.console{position:relative}
+.say-btn{position:absolute;left:10px;top:8px;z-index:4;display:inline-flex;align-items:center;gap:6px;padding:7px 12px 7px 9px;border-radius:999px;border:1px solid rgba(201,162,78,.5);
+  background:var(--grain),linear-gradient(#4a3222,#2a1b11);color:#f0dcae;font-family:var(--f-label);font-size:12px;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 3px 0 rgba(0,0,0,.5),inset 0 1px 0 rgba(255,228,175,.15);cursor:pointer}
+.say-btn[hidden]{display:none}
+.say-btn svg{width:17px;height:17px}
+.say-btn.cool{opacity:.4;filter:saturate(.5)}
+html.duo-wide #sGame .console .say-btn{left:auto;right:auto;top:auto;position:relative;grid-column:1;grid-row:5;justify-self:center;margin-top:2px}
+html:not(.duo-v) .say-btn{top:auto;bottom:calc(100% + 8px);left:8px}
+.say-menu{position:absolute;left:8px;bottom:calc(100% + 8px);z-index:20;width:min(400px,calc(100vw - 32px));display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:16px;
+  background:var(--grain),linear-gradient(#2c1c11,#1a110a);border:1px solid rgba(201,162,78,.45);box-shadow:0 18px 40px rgba(0,0,0,.65);animation:sayIn .28s cubic-bezier(.2,1.3,.4,1) both;transform-origin:15% 100%}
+.say-menu[hidden]{display:none}
+html.duo-v .say-menu{bottom:auto;top:46px}
+html.duo-wide .say-menu{left:12px;top:auto;bottom:12px}
+.sm-h{font-family:var(--f-label);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);padding:2px 4px 4px}
+.sm-h b{color:#f3e6c6;letter-spacing:.06em}
+.sm-row{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:10px;row-gap:2px;align-items:baseline;text-align:left;padding:9px 12px;border-radius:12px;border:1px solid rgba(201,162,78,.18);background:rgba(0,0,0,.25);color:#f3e6c6;cursor:pointer;font:inherit}
+.sm-k{grid-row:1/3;align-self:center;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:74px;font-family:var(--f-label);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass-hi)}
+.sm-k i{font-style:normal;font-family:var(--f-serif);font-size:15px;letter-spacing:0;color:#f3e6c6}
+.sm-l{font-family:var(--f-body);font-style:italic;font-size:15.5px;line-height:1.25}
+.sm-x{font-size:12px;color:#b8a27a}
+.sm-needle .sm-k{color:#ff9a7a}.sm-dig .sm-k{color:#ff7a62}.sm-friendly .sm-k{color:#bfe0a0}.sm-draw{border-color:rgba(216,52,31,.45);background:rgba(60,8,4,.35)}.sm-draw .sm-k{color:#ffcf6a}
+.seat-say.me{background:#2a1a0e!important;color:#f3e6c6!important;border-color:#c9a24e!important}
+.seat-say.me::after{border-top-color:#2a1a0e!important}
+/* the stare-down */
+.draw-ov{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(ellipse at center,rgba(40,10,4,.82),rgba(4,2,1,.96));touch-action:none;cursor:pointer;animation:fadeIn .3s both}
+html.tall .draw-ov{bottom:auto;height:var(--appH)}
+.draw-ov[hidden]{display:none}
+.dr-faces{display:flex;align-items:center;gap:22px}
+.dr-faces .medal{width:clamp(70px,14vmin,120px);height:auto;aspect-ratio:1;box-shadow:0 0 0 3px #c9a24e,0 0 30px rgba(0,0,0,.8)}
+.dr-faces b{font-family:var(--f-display);font-size:26px;color:#d8341f}
+.dr-word{font-family:var(--f-logo);font-size:clamp(40px,11vmin,96px);color:#efe2c4;text-shadow:0 4px 0 #3a0e06,0 0 30px rgba(0,0,0,.8);min-height:1.2em}
+.draw-ov.go .dr-word{color:#ffcf5a;animation:drawPop .25s cubic-bezier(.2,1.6,.4,1) both}
+.draw-ov.won .dr-word{color:#f4cb5c}.draw-ov.lost .dr-word{color:#d8341f}
+@keyframes drawPop{from{transform:scale(1.8);opacity:0}}
+.dr-hint{font-family:var(--f-label);letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:#c9a07a;min-height:1em}
+.say-menu{position:fixed!important;bottom:auto!important;right:auto!important;z-index:65!important;max-height:calc(100svh - 20px);overflow:auto}
+html.duo-wide .say-menu{width:min(440px,46vw)}
+html.duo-v:not(.duo-wide) #sGame .console .say-btn{left:auto;right:14px;top:42%;bottom:auto}
+
 </style>
 </head>
 <body>
@@ -2087,6 +2127,8 @@ html.duo-wide #actions .btn.fold,html.duo-wide #actions .btn.raise,html.duo-wide
   </div>
 
   <div class="console">
+    <button class="say-btn" id="sayBtn" hidden aria-label="Say something"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-4 4v-4H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Say…</span></button>
+    <div class="say-menu" id="sayMenu" hidden></div>
     <div class="duohand" id="duoHand"></div>
     <div class="status" id="status">Shuffling up…</div>
     <div class="odds" id="odds" hidden></div>
@@ -2169,6 +2211,9 @@ html.duo-wide #actions .btn.fold,html.duo-wide #actions .btn.raise,html.duo-wide
     <div class="row"><button class="btn gold" id="resumeBtn" style="flex:1">Resume</button><button class="btn dark" id="quitBtn" style="flex:1">Quit to title</button></div>
   </div>
 </div>
+
+<!-- ============ STARE-DOWN ============ -->
+<div class="draw-ov" id="drawOv" hidden><div class="dr-faces"><span class="medal" id="drYou"></span><b>vs</b><span class="medal" id="drThem"></span></div><div class="dr-word" id="drWord">Steady…</div><div class="dr-hint" id="drHint">Tap the moment it says DRAW</div></div>
 
 <script>window.__DMR_SND_KEYS=["amb1", "amb2", "amb3", "amb4", "amb5", "amb6", "amb7", "amb8", "bigwin", "boss", "boss_banker", "boss_bicah", "boss_iron", "boss_ma", "boss_pete", "boss_snake", "boss_under", "boss_vesper", "card0", "card1", "card2", "card3", "chip0", "chip1", "chip2", "chip3", "chip4", "chipd0", "chipd1", "chipd2", "chipd3", "chipt", "door", "gun0", "gun1", "gun2", "heart", "lose", "menu", "paid", "pen", "piano", "stamp", "tick", "toll", "whoosh", "win"];</script>
 <script>
@@ -2273,6 +2318,7 @@ const CHARMS={
   marked:{name:'Marked Cards',icon:'◈',desc:'See the suit of every face-down card at the table.',price:60,tier:1},
   flask:{name:'Whiskey Flask',icon:'⬮',desc:'Once per saloon, see every opponent\'s cards for one hand.',price:55,tier:1},
   dynamite:{name:'Dynamite',icon:'✷',desc:'Once per saloon, blow up the flop and deal a new one.',price:60,tier:1},
+  tongue:{name:'Silver Tongue',icon:'❝',desc:'Your talk lands more often and backfires less. Your quick draw gets faster.',price:40,tier:1},
   badge:{name:"Sheriff's Badge",icon:'★',desc:'Drifters and gunhands won\'t raise into you. They call instead.',price:55,tier:1},
   rattler:{name:'Rattlesnake',icon:'∿',desc:'Win a hand after going all in and the house pays 250 chips.',price:45,tier:1},
   shovel:{name:"Undertaker's Shovel",icon:'⚔',desc:'Every outlaw tapped out at your table pays you 100 chips.',price:60,tier:2},
@@ -2497,7 +2543,7 @@ function setupTable(){
   G.players.forEach(p=>{p.out=false; p.hand=[]; p.bet=0; p.total=0});
   G.bossStart=bChips;
   G.dealer=Math.floor(Math.random()*G.players.length);
-  G.tableHands=0; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
+  G.tableHands=0; G.drawUsed=false; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
   G.outcome=null; G.nemEv=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
   G.challenge=CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)]; G.challengeDone=false;
   G.bounty=Math.round(bountyFor(L)*goldMul());
@@ -2526,7 +2572,8 @@ function startHand(){
   }
   G.handLog=[];
   G.winCards=new Set(); G.outcome=null; G.seen=new Map(); G.lastWinners=[];
-  G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0}));
+  G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0,steel:false,spooked:false,sticky:false,calm:false,drawn:false}));
+  G.talks=0; G.lastTalk=0;
   G.board=[]; G.deck=(typeof DAILY!=='undefined'&&DAILY&&DAILY.rng)?shuffleWith(FULL.map(c=>Object.assign({},c)),DAILY.rng):shuffle(FULL.map(c=>Object.assign({},c)));
   // a scripted deal (tutorial): rigDeck lists [rank,suit] in the order cards come off the deck
   if(G.rigDeck){const pick=G.rigDeck.map(([r,s])=>G.deck.find(c=>c.r===r&&c.s===s)); G.deck=G.deck.filter(c=>!pick.includes(c)).concat(pick.reverse()); G.rigDeck=null}
@@ -2697,6 +2744,7 @@ function finishHand(res){
     if(has('rattler')&&me.allIn) bonus('Rattlesnake',250,0);
     if(has('crown')&&cat>=4) bonus('Royal Crown',0,15);
   }
+  G.players.forEach(p=>{if(p.bossDef&&p.tilt>0) p.tilt--});
   G.players.forEach(p=>{
     if(p.isHuman||p.bossDef||p.out) return;
     if(p.tilt>0) p.tilt--;
@@ -2734,6 +2782,42 @@ function finishHand(res){
   return ev;
 }
 
+/* ================= table talk: say something, and sometimes it costs you ================= */
+const TALK={
+  needle:{name:'Needle',hint:'May put them on tilt. May wake them up.',base:.52,lines:["That all you got?","My grandma bets bigger than that.","You play cards like you ride. Badly.","Sweatin' already?","I've seen scarecrows with more nerve."]},
+  bluff:{name:'Bluff talk',hint:'May scare them off your bets. May dig them in.',base:.5,lines:["I'd fold if I were you.","Go on. Call. I dare you.","This one's already mine.","You don't want to see what I'm holding.","Smart money's on the door."]},
+  friendly:{name:'Tip your hat',hint:'May cool them down. Little risk, little reward.',base:.78,lines:["Good hand, partner.","Easy now. Just a friendly game.","Tip of the hat to you.","Drinks are on me after this one."]},
+  dig:{name:'Personal',hint:'Cuts deep. Tilts the boss for hands, or makes them hunt you.',base:.48,lines:[]},
+  draw:{name:'Stare-down',hint:'Quick draw. Win and they fold and show a card. Lose and they come for you.',base:0,lines:["Reach for it.","This table ain't big enough for the both of us.","Draw, if you've got the nerve.","High noon, partner."]}};
+const DIGS={pete:"Pete, you smell like the bottom of a barrel.",ma:"Rent's late, Ma. Permanently.",iron:"Ever fold, Jack? Or can't you bend?",under:"Measuring me for a box? Measure twice.",snake:"Keep your eyes on your own cards, Crane.",banker:"Your vault's about to get a lot lighter.",vesper:"That veil hides a whole lot of nothing.",bicah:"Eleven years is a long time to be lucky."};
+const TALK_BACK={tilt:["Why you—!","You'll pay for that.","Shut your mouth and deal.","Say that again. I dare you."],fire:["Cute. Now I'm interested.","Keep talking. I'm listening.","That's a mistake, stranger.","Now you've got my attention."],
+  spook:["...","Huh. Maybe.","Don't push your luck.","We'll see."],dig:["Big talk for a dead man.","I'll remember that.","Go ahead. Keep digging."],calm:["Likewise.","Much obliged.","Friendly enough."],
+  draw_win:["Fast hands. Fine. I'm out.","...You win this one."],draw_lose:["Too slow, stranger.","Bang. Now play."]};
+function talkTarget(){const live_=G.players.map((p,i)=>[p,i]).filter(([p])=>!p.isHuman&&p.inHand&&!p.folded&&!p.out);
+  const b=live_.find(([p])=>p.bossDef); if(b) return b[1]; live_.sort((a,c)=>c[0].chips-a[0].chips); return live_.length?live_[0][1]:-1}
+function talkOdds(kind,p){let o=TALK[kind].base+(lvl('tongue')>=2?.25:has('tongue')?.15:0);
+  if(p.bossDef) o-=.08; if(p.tier==='v') o-=.06; if(p.tier==='d') o+=.1; if(p.nem) o-=.05*(p.nemRank||1); return Math.max(.08,Math.min(.95,o))}
+// returns {ok,tag,reply}
+function resolveTalk(kind,i){
+  const p=G.players[i], ok=Math.random()<talkOdds(kind,p), pick=a=>a[Math.floor(Math.random()*a.length)];
+  G.talks++; if(kind==='draw') G.drawUsed=true;
+  if(kind==='needle'){ if(ok){p.tilt=Math.max(p.tilt,3); log(`${p.name} takes the bait. On tilt.`); return {ok,tag:'On tilt',reply:pick(TALK_BACK.tilt)}}
+    p.steel=true; p.tilt=0; log(`${p.name} shrugs it off and sharpens up.`); return {ok,tag:'Sharpened',reply:pick(TALK_BACK.fire)}}
+  if(kind==='bluff'){ const tgts=G.players.filter(q=>!q.isHuman&&q.inHand&&!q.folded); let n=0;
+    tgts.forEach(q=>{if(Math.random()<talkOdds('bluff',q)){q.spooked=true; n++} else if(Math.random()<.45) q.sticky=true});
+    log(n?`Your talk rattles ${n} at the table.`:'Nobody buys it.'); return {ok:n>0,tag:n?'Rattled':'Dug in',reply:n?pick(TALK_BACK.spook):pick(TALK_BACK.fire),all:true}}
+  if(kind==='friendly'){ if(ok){p.calm=true; p.tilt=0; log(`${p.name} eases off.`); return {ok,tag:'Easy',reply:pick(TALK_BACK.calm)}}
+    return {ok,tag:'Unmoved',reply:'Save it.'}}
+  if(kind==='dig'){ if(ok){p.tilt=Math.max(p.tilt,5); log(`${p.name} is rattled for good.`); return {ok,tag:'On tilt',reply:pick(TALK_BACK.dig)}}
+    p.steel=true; p.sticky=false; log(`${p.name} is coming for you now.`); return {ok,tag:'Hunting you',reply:(p.bossDef&&p.bossDef.lines.raise?pick(p.bossDef.lines.raise):pick(TALK_BACK.fire))}}
+  return {ok:false};
+}
+// the quick draw: how fast you must be (ms) against this opponent
+function drawWindow(p){let w=p.bossDef?330:p.tier==='v'?370:p.tier==='g'?430:520; if(p.nem) w-=12*(p.nemRank||1); w+=lvl('tongue')>=2?120:has('tongue')?80:0; return w}
+function settleDraw(i,won){const p=G.players[i]; G.drawUsed=true; G.talks++;
+  if(won){p.drawn=true; p.peek=Math.floor(Math.random()*p.hand.length); log(`You out-draw ${p.name}. They fold and show a card.`); return {tag:'Out-drawn',reply:TALK_BACK.draw_win[Math.floor(Math.random()*2)]}}
+  p.steel=true; p.tilt=0; log(`${p.name} is faster. They're coming for you.`); return {tag:'Faster',reply:TALK_BACK.draw_lose[Math.floor(Math.random()*2)]}}
+
 /* ================= AI ================= */
 // returns {type,to,bluff,tell,line}
 function aiDecide(i){
@@ -2745,14 +2829,15 @@ function aiDecide(i){
   const noise=heat>=2?T.noise*0.5:T.noise;
   let eq=equity(p.hand,G.board,opps,opps>4?Math.min(T.sims,140):T.sims,pin);
   const trueEq=eq;
-  eq=Math.max(0,Math.min(1,eq+(Math.random()-0.5)*2*noise));
+  eq=Math.max(0,Math.min(1,eq+(Math.random()-0.5)*2*(p.steel?noise*0.2:noise)));
   const toCall=G.currentBet-p.bet, pot=potTotal();
   const odds=toCall>0?toCall/(pot+toCall):0;
   const fair=1/(opps+1), r=Math.random(), tilt=p.tilt>0;
+  if(p.drawn&&toCall>=0&&me.inHand&&!me.folded) return {type:'fold'};  // lost the stare-down: they walk
   const pre=G.street==='preflop'&&opps>=3&&p.tier!=='d'?0.03:0;
   const adj=s.adj+T.adj+(tw('pete')?-0.04:0)+(tilt?-0.1:0)+(heat>=2?0.02:0)+pre;
   const bluff=s.bluff+(tw('pete')?0.16:0)+(tilt?0.12:0);
-  const aggr=s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0);
+  const aggr=s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0)+(p.steel&&me.inHand?0.18:0)-(p.calm?0.4:0);
   const sizeMul=tw('banker')?1.6:1;
   const strongBar=Math.min(0.86,fair*1.6)+adj;
   const canRaise=p.chips>toCall;
@@ -2786,6 +2871,7 @@ function aiDecide(i){
   }
   let callBar=odds+adj*0.6+(bigCall?0.06:0);
   if(has('face')&&G.aggressor===0) callBar+=lvl('face')>=2?0.14:0.07;
+  if(G.aggressor===0){if(p.spooked) callBar+=0.16; if(p.sticky) callBar-=0.14}
   if(eq>callBar||tw('iron')) return {type:'call'};
   if(canRaise&&!bigCall&&r<bluff*0.5) return R_(raiseTo(0.7),true);
   return {type:'fold'};
@@ -3862,7 +3948,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 64 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 65 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -4656,7 +4742,7 @@ function burst(el,count){
 function seatSay(i,text,c,tell,boss){
   const fx=$('fx'); if(!fx||(!text&&!tell)) return; const pos=c||centerOfSeat(i); if(!pos) return;
   fx.querySelectorAll(`.seat-say[data-i="${i}"]`).forEach(o=>o.remove());
-  const d=document.createElement('div'); d.className='seat-say'+(boss?' boss':'')+(pos[1]<35?' below':''); d.dataset.i=i;
+  const d=document.createElement('div'); d.className='seat-say'+(boss?' boss':'')+(i===0?' me':'')+(pos[1]<35?' below':''); d.dataset.i=i;
   d.innerHTML=`${text?`<span class="ss-t"></span>`:''}${tell?`<span class="ss-tell">${tell}</span>`:''}`;
   d.style.left=Math.max(16,Math.min(84,pos[0]))+'%'; d.style.top=pos[1]+'%'; fx.appendChild(d);
   const full=text?`“${text}”`:'', t=d.querySelector('.ss-t'); let k=0;
@@ -4829,8 +4915,8 @@ function render(){
     const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.nem?'nem':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
-    const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=tilted?'On tilt':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
+    const tilted=p.tilt>0&&!p.isHuman;
+    const tier=tilted?'On tilt':p.steel?'Sharpened':p.spooked?'Rattled':p.drawn?'Out-drawn':p.calm?'Easy':p.sticky?'Dug in':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
     const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
           <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}${p.nem&&!tilted?' nemtag':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
@@ -4875,7 +4961,7 @@ function render(){
   const potH=(pot>0?chipStack(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
   const sp=G.street!=='done'&&G.street!=='idle'&&G.players.some(p=>p.allIn&&p.inHand)?pots():[];
   $('sidepots').innerHTML=sp.length>1?sp.map((x,k)=>`${k?'Side':'Main'} <b>${money(x.amt)}</b>`).join(' · '):'';
-  renderControls();
+  renderControls(); updateSay();
   runRolls();
   renderCoach();
   if(SOUNDQ.length){const q=SOUNDQ.slice(0,18); SOUNDQ=[]; q.forEach(d=>sfx('card',d))}
@@ -4884,6 +4970,48 @@ $('seats').addEventListener('click',e=>{
   const c=e.target.closest('.seat.human .card:not(.back)'); if(!c||c.classList.contains('deal')) return;
   c.classList.remove('wobble'); void c.offsetWidth; c.classList.add('wobble'); sfx('card'); setTimeout(()=>c.classList.remove('wobble'),520);
 });
+
+/* ================= table talk ================= */
+function talkOpen(){const me=human(); return G&&['preflop','flop','turn','river'].includes(G.street)&&me&&me.inHand&&!me.folded&&talkTarget()>=0&&!(R&&R.tutorial)}
+function updateSay(){const b=$('sayBtn'); if(!b) return; const on=talkOpen(); b.hidden=!on; if(!on){$('sayMenu').hidden=true; return}
+  const cool=(G.talks||0)>=2||(G.lastTalk&&performance.now()-G.lastTalk<4000); b.classList.toggle('cool',cool); b.disabled=cool}
+$('sayBtn').onclick=()=>{ac(); const m=$('sayMenu'); if(!m.hidden){m.hidden=true; return}
+  const ti=talkTarget(); if(ti<0) return; const t=G.players[ti], pick=a=>a[Math.floor(Math.random()*a.length)];
+  const items=[['needle',pick(TALK.needle.lines)],['bluff',pick(TALK.bluff.lines)],['friendly',pick(TALK.friendly.lines)]];
+  if(t.bossDef&&DIGS[t.boss]) items.push(['dig',DIGS[t.boss]]);
+  if(!G.drawUsed) items.push(['draw',pick(TALK.draw.lines)]);
+  const pct=k=>k==='draw'?'':`<i>${Math.round(talkOdds(k,t)*100)}%</i>`;
+  m.innerHTML=`<div class="sm-h">Say to <b>${t.bossDef?t.name:shortName(t)}</b>${(G.talks||0)?' · one more this hand':''}</div>`+items.map(([k,l])=>`<button class="sm-row sm-${k}" data-talk="${k}" data-line="${l.replace(/"/g,'&quot;')}"><span class="sm-k">${TALK[k].name}${pct(k)}</span><span class="sm-l">“${l}”</span><span class="sm-x">${TALK[k].hint}</span></button>`).join('');
+  if(m.parentElement!==document.body) document.body.appendChild(m);
+  m.hidden=false; sfx('card');
+  { const r=$('sayBtn').getBoundingClientRect(), mh=m.offsetHeight, mw=m.offsetWidth, vh=innerHeight, vw=innerWidth;
+    const left=Math.max(10,Math.min(vw-mw-10,r.left)); let top=r.top-mh-10; if(top<10) top=Math.min(vh-mh-10,r.bottom+10);
+    m.style.left=left+'px'; m.style.top=Math.max(10,top)+'px'; m.style.transformOrigin=(top<r.top?'15% 100%':'15% 0%') }
+  m.querySelectorAll('[data-talk]').forEach(x=>x.onclick=()=>{m.hidden=true; speak(x.dataset.talk,x.dataset.line,ti)});
+};
+document.addEventListener('pointerdown',e=>{const m=$('sayMenu'); if(m&&!m.hidden&&!e.target.closest('#sayMenu,#sayBtn')) m.hidden=true},true);
+function speak(kind,line,ti){
+  G.lastTalk=performance.now(); updateSay(); seatSay(0,line); sfx('whoosh'); haptic('light');
+  if(kind==='draw'){later(()=>standoff(ti),900); return}
+  later(()=>{if(!talkOpen()&&kind!=='bluff'&&G.players[ti].folded) return;
+    const r=resolveTalk(kind,ti), c=centerOfSeat(ti);
+    if(r.all){G.players.forEach((q,i)=>{if(!q.isHuman&&q.inHand&&!q.folded){const cc=centerOfSeat(i); if(cc&&(q.spooked||q.sticky)) stampAt(cc[0],cc[1]-8,q.spooked?'Rattled':'Dug in',q.spooked?'#f4cb5c':'#d8341f',18)}})}
+    else if(c) stampAt(c[0],c[1]-8,r.tag,r.ok?'#f4cb5c':'#d8341f',r.tag.length>9?18:22);
+    seatSay(ti,r.reply); sfx(r.ok?'stamp':'boss'); haptic(r.ok?'success':'warning'); render()},1100);
+}
+function standoff(ti){
+  const p=G.players[ti], ov=$('drawOv'), w=$('drWord'), hint=$('drHint'); if(!p||p.folded) return;
+  PAUSED=true; $('drYou').innerHTML=portraitFor(human()); $('drThem').innerHTML=portraitFor(p);
+  ov.className='draw-ov'; ov.hidden=false; w.textContent='Steady…'; hint.textContent='Tap the moment it says DRAW'; sfx('heart'); haptic('soft');
+  const win=drawWindow(p); let t0=0, done=false, timer=null;
+  const finish=(won,why)=>{if(done) return; done=true; clearTimeout(timer); ov.onpointerdown=null;
+    const r=settleDraw(ti,won); w.textContent=won?'You win the draw':why||'Too slow'; ov.classList.add(won?'won':'lost');
+    sfx(won?'gun':'boss'); haptic(won?'heavy':'error'); if(won){flash(true); shake(true)}
+    setTimeout(()=>{ov.hidden=true; PAUSED=false; const c=centerOfSeat(ti); if(c) stampAt(c[0],c[1]-8,r.tag,won?'#f4cb5c':'#d8341f',22); seatSay(ti,r.reply); render()},1300)};
+  ov.onpointerdown=e=>{e.preventDefault(); if(!t0) finish(false,'Jumped the gun'); else finish(performance.now()-t0<=win,null)};
+  timer=setTimeout(()=>{if(done) return; t0=performance.now(); w.textContent='DRAW!'; ov.classList.add('go'); hint.textContent=''; sfx('gun'); haptic('heavy');
+    timer=setTimeout(()=>finish(false,'Too slow'),Math.max(700,win*2.2))},1400+Math.random()*1800);
+}
 
 /* ================= controls ================= */
 let raiseVal=0, RAISE_OPEN=false;

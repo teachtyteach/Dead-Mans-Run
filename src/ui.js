@@ -372,7 +372,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 64 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 65 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -1166,7 +1166,7 @@ function burst(el,count){
 function seatSay(i,text,c,tell,boss){
   const fx=$('fx'); if(!fx||(!text&&!tell)) return; const pos=c||centerOfSeat(i); if(!pos) return;
   fx.querySelectorAll(`.seat-say[data-i="${i}"]`).forEach(o=>o.remove());
-  const d=document.createElement('div'); d.className='seat-say'+(boss?' boss':'')+(pos[1]<35?' below':''); d.dataset.i=i;
+  const d=document.createElement('div'); d.className='seat-say'+(boss?' boss':'')+(i===0?' me':'')+(pos[1]<35?' below':''); d.dataset.i=i;
   d.innerHTML=`${text?`<span class="ss-t"></span>`:''}${tell?`<span class="ss-tell">${tell}</span>`:''}`;
   d.style.left=Math.max(16,Math.min(84,pos[0]))+'%'; d.style.top=pos[1]+'%'; fx.appendChild(d);
   const full=text?`“${text}”`:'', t=d.querySelector('.ss-t'); let k=0;
@@ -1339,8 +1339,8 @@ function render(){
     const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.nem?'nem':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
-    const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=tilted?'On tilt':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
+    const tilted=p.tilt>0&&!p.isHuman;
+    const tier=tilted?'On tilt':p.steel?'Sharpened':p.spooked?'Rattled':p.drawn?'Out-drawn':p.calm?'Easy':p.sticky?'Dug in':p.nem?NEM_RANKS[Math.min(5,p.nemRank||1)]:'';
     const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
           <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}${p.nem&&!tilted?' nemtag':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
@@ -1385,7 +1385,7 @@ function render(){
   const potH=(pot>0?chipStack(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
   const sp=G.street!=='done'&&G.street!=='idle'&&G.players.some(p=>p.allIn&&p.inHand)?pots():[];
   $('sidepots').innerHTML=sp.length>1?sp.map((x,k)=>`${k?'Side':'Main'} <b>${money(x.amt)}</b>`).join(' · '):'';
-  renderControls();
+  renderControls(); updateSay();
   runRolls();
   renderCoach();
   if(SOUNDQ.length){const q=SOUNDQ.slice(0,18); SOUNDQ=[]; q.forEach(d=>sfx('card',d))}
@@ -1394,6 +1394,48 @@ $('seats').addEventListener('click',e=>{
   const c=e.target.closest('.seat.human .card:not(.back)'); if(!c||c.classList.contains('deal')) return;
   c.classList.remove('wobble'); void c.offsetWidth; c.classList.add('wobble'); sfx('card'); setTimeout(()=>c.classList.remove('wobble'),520);
 });
+
+/* ================= table talk ================= */
+function talkOpen(){const me=human(); return G&&['preflop','flop','turn','river'].includes(G.street)&&me&&me.inHand&&!me.folded&&talkTarget()>=0&&!(R&&R.tutorial)}
+function updateSay(){const b=$('sayBtn'); if(!b) return; const on=talkOpen(); b.hidden=!on; if(!on){$('sayMenu').hidden=true; return}
+  const cool=(G.talks||0)>=2||(G.lastTalk&&performance.now()-G.lastTalk<4000); b.classList.toggle('cool',cool); b.disabled=cool}
+$('sayBtn').onclick=()=>{ac(); const m=$('sayMenu'); if(!m.hidden){m.hidden=true; return}
+  const ti=talkTarget(); if(ti<0) return; const t=G.players[ti], pick=a=>a[Math.floor(Math.random()*a.length)];
+  const items=[['needle',pick(TALK.needle.lines)],['bluff',pick(TALK.bluff.lines)],['friendly',pick(TALK.friendly.lines)]];
+  if(t.bossDef&&DIGS[t.boss]) items.push(['dig',DIGS[t.boss]]);
+  if(!G.drawUsed) items.push(['draw',pick(TALK.draw.lines)]);
+  const pct=k=>k==='draw'?'':`<i>${Math.round(talkOdds(k,t)*100)}%</i>`;
+  m.innerHTML=`<div class="sm-h">Say to <b>${t.bossDef?t.name:shortName(t)}</b>${(G.talks||0)?' · one more this hand':''}</div>`+items.map(([k,l])=>`<button class="sm-row sm-${k}" data-talk="${k}" data-line="${l.replace(/"/g,'&quot;')}"><span class="sm-k">${TALK[k].name}${pct(k)}</span><span class="sm-l">“${l}”</span><span class="sm-x">${TALK[k].hint}</span></button>`).join('');
+  if(m.parentElement!==document.body) document.body.appendChild(m);
+  m.hidden=false; sfx('card');
+  { const r=$('sayBtn').getBoundingClientRect(), mh=m.offsetHeight, mw=m.offsetWidth, vh=innerHeight, vw=innerWidth;
+    const left=Math.max(10,Math.min(vw-mw-10,r.left)); let top=r.top-mh-10; if(top<10) top=Math.min(vh-mh-10,r.bottom+10);
+    m.style.left=left+'px'; m.style.top=Math.max(10,top)+'px'; m.style.transformOrigin=(top<r.top?'15% 100%':'15% 0%') }
+  m.querySelectorAll('[data-talk]').forEach(x=>x.onclick=()=>{m.hidden=true; speak(x.dataset.talk,x.dataset.line,ti)});
+};
+document.addEventListener('pointerdown',e=>{const m=$('sayMenu'); if(m&&!m.hidden&&!e.target.closest('#sayMenu,#sayBtn')) m.hidden=true},true);
+function speak(kind,line,ti){
+  G.lastTalk=performance.now(); updateSay(); seatSay(0,line); sfx('whoosh'); haptic('light');
+  if(kind==='draw'){later(()=>standoff(ti),900); return}
+  later(()=>{if(!talkOpen()&&kind!=='bluff'&&G.players[ti].folded) return;
+    const r=resolveTalk(kind,ti), c=centerOfSeat(ti);
+    if(r.all){G.players.forEach((q,i)=>{if(!q.isHuman&&q.inHand&&!q.folded){const cc=centerOfSeat(i); if(cc&&(q.spooked||q.sticky)) stampAt(cc[0],cc[1]-8,q.spooked?'Rattled':'Dug in',q.spooked?'#f4cb5c':'#d8341f',18)}})}
+    else if(c) stampAt(c[0],c[1]-8,r.tag,r.ok?'#f4cb5c':'#d8341f',r.tag.length>9?18:22);
+    seatSay(ti,r.reply); sfx(r.ok?'stamp':'boss'); haptic(r.ok?'success':'warning'); render()},1100);
+}
+function standoff(ti){
+  const p=G.players[ti], ov=$('drawOv'), w=$('drWord'), hint=$('drHint'); if(!p||p.folded) return;
+  PAUSED=true; $('drYou').innerHTML=portraitFor(human()); $('drThem').innerHTML=portraitFor(p);
+  ov.className='draw-ov'; ov.hidden=false; w.textContent='Steady…'; hint.textContent='Tap the moment it says DRAW'; sfx('heart'); haptic('soft');
+  const win=drawWindow(p); let t0=0, done=false, timer=null;
+  const finish=(won,why)=>{if(done) return; done=true; clearTimeout(timer); ov.onpointerdown=null;
+    const r=settleDraw(ti,won); w.textContent=won?'You win the draw':why||'Too slow'; ov.classList.add(won?'won':'lost');
+    sfx(won?'gun':'boss'); haptic(won?'heavy':'error'); if(won){flash(true); shake(true)}
+    setTimeout(()=>{ov.hidden=true; PAUSED=false; const c=centerOfSeat(ti); if(c) stampAt(c[0],c[1]-8,r.tag,won?'#f4cb5c':'#d8341f',22); seatSay(ti,r.reply); render()},1300)};
+  ov.onpointerdown=e=>{e.preventDefault(); if(!t0) finish(false,'Jumped the gun'); else finish(performance.now()-t0<=win,null)};
+  timer=setTimeout(()=>{if(done) return; t0=performance.now(); w.textContent='DRAW!'; ov.classList.add('go'); hint.textContent=''; sfx('gun'); haptic('heavy');
+    timer=setTimeout(()=>finish(false,'Too slow'),Math.max(700,win*2.2))},1400+Math.random()*1800);
+}
 
 /* ================= controls ================= */
 let raiseVal=0, RAISE_OPEN=false;

@@ -98,6 +98,7 @@ const CHARMS={
   marked:{name:'Marked Cards',icon:'◈',desc:'See the suit of every face-down card at the table.',price:60,tier:1},
   flask:{name:'Whiskey Flask',icon:'⬮',desc:'Once per saloon, see every opponent\'s cards for one hand.',price:55,tier:1},
   dynamite:{name:'Dynamite',icon:'✷',desc:'Once per saloon, blow up the flop and deal a new one.',price:60,tier:1},
+  tongue:{name:'Silver Tongue',icon:'❝',desc:'Your talk lands more often and backfires less. Your quick draw gets faster.',price:40,tier:1},
   badge:{name:"Sheriff's Badge",icon:'★',desc:'Drifters and gunhands won\'t raise into you. They call instead.',price:55,tier:1},
   rattler:{name:'Rattlesnake',icon:'∿',desc:'Win a hand after going all in and the house pays 250 chips.',price:45,tier:1},
   shovel:{name:"Undertaker's Shovel",icon:'⚔',desc:'Every outlaw tapped out at your table pays you 100 chips.',price:60,tier:2},

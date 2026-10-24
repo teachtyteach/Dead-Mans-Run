@@ -181,7 +181,7 @@ function setupTable(){
   G.players.forEach(p=>{p.out=false; p.hand=[]; p.bet=0; p.total=0});
   G.bossStart=bChips;
   G.dealer=Math.floor(Math.random()*G.players.length);
-  G.tableHands=0; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
+  G.tableHands=0; G.drawUsed=false; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
   G.outcome=null; G.nemEv=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
   G.challenge=CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)]; G.challengeDone=false;
   G.bounty=Math.round(bountyFor(L)*goldMul());
@@ -210,7 +210,8 @@ function startHand(){
   }
   G.handLog=[];
   G.winCards=new Set(); G.outcome=null; G.seen=new Map(); G.lastWinners=[];
-  G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0}));
+  G.players.forEach(p=>Object.assign(p,{hand:[],folded:false,allIn:false,bet:0,total:0,acted:false,action:'',show:false,result:'',winner:false,peek:-1,handName:'',score:0,tell:'',startChips:p.chips,inHand:!p.out&&p.chips>0,steel:false,spooked:false,sticky:false,calm:false,drawn:false}));
+  G.talks=0; G.lastTalk=0;
   G.board=[]; G.deck=(typeof DAILY!=='undefined'&&DAILY&&DAILY.rng)?shuffleWith(FULL.map(c=>Object.assign({},c)),DAILY.rng):shuffle(FULL.map(c=>Object.assign({},c)));
   // a scripted deal (tutorial): rigDeck lists [rank,suit] in the order cards come off the deck
   if(G.rigDeck){const pick=G.rigDeck.map(([r,s])=>G.deck.find(c=>c.r===r&&c.s===s)); G.deck=G.deck.filter(c=>!pick.includes(c)).concat(pick.reverse()); G.rigDeck=null}
@@ -381,6 +382,7 @@ function finishHand(res){
     if(has('rattler')&&me.allIn) bonus('Rattlesnake',250,0);
     if(has('crown')&&cat>=4) bonus('Royal Crown',0,15);
   }
+  G.players.forEach(p=>{if(p.bossDef&&p.tilt>0) p.tilt--});
   G.players.forEach(p=>{
     if(p.isHuman||p.bossDef||p.out) return;
     if(p.tilt>0) p.tilt--;
@@ -418,6 +420,42 @@ function finishHand(res){
   return ev;
 }
 
+/* ================= table talk: say something, and sometimes it costs you ================= */
+const TALK={
+  needle:{name:'Needle',hint:'May put them on tilt. May wake them up.',base:.52,lines:["That all you got?","My grandma bets bigger than that.","You play cards like you ride. Badly.","Sweatin' already?","I've seen scarecrows with more nerve."]},
+  bluff:{name:'Bluff talk',hint:'May scare them off your bets. May dig them in.',base:.5,lines:["I'd fold if I were you.","Go on. Call. I dare you.","This one's already mine.","You don't want to see what I'm holding.","Smart money's on the door."]},
+  friendly:{name:'Tip your hat',hint:'May cool them down. Little risk, little reward.',base:.78,lines:["Good hand, partner.","Easy now. Just a friendly game.","Tip of the hat to you.","Drinks are on me after this one."]},
+  dig:{name:'Personal',hint:'Cuts deep. Tilts the boss for hands, or makes them hunt you.',base:.48,lines:[]},
+  draw:{name:'Stare-down',hint:'Quick draw. Win and they fold and show a card. Lose and they come for you.',base:0,lines:["Reach for it.","This table ain't big enough for the both of us.","Draw, if you've got the nerve.","High noon, partner."]}};
+const DIGS={pete:"Pete, you smell like the bottom of a barrel.",ma:"Rent's late, Ma. Permanently.",iron:"Ever fold, Jack? Or can't you bend?",under:"Measuring me for a box? Measure twice.",snake:"Keep your eyes on your own cards, Crane.",banker:"Your vault's about to get a lot lighter.",vesper:"That veil hides a whole lot of nothing.",bicah:"Eleven years is a long time to be lucky."};
+const TALK_BACK={tilt:["Why you—!","You'll pay for that.","Shut your mouth and deal.","Say that again. I dare you."],fire:["Cute. Now I'm interested.","Keep talking. I'm listening.","That's a mistake, stranger.","Now you've got my attention."],
+  spook:["...","Huh. Maybe.","Don't push your luck.","We'll see."],dig:["Big talk for a dead man.","I'll remember that.","Go ahead. Keep digging."],calm:["Likewise.","Much obliged.","Friendly enough."],
+  draw_win:["Fast hands. Fine. I'm out.","...You win this one."],draw_lose:["Too slow, stranger.","Bang. Now play."]};
+function talkTarget(){const live_=G.players.map((p,i)=>[p,i]).filter(([p])=>!p.isHuman&&p.inHand&&!p.folded&&!p.out);
+  const b=live_.find(([p])=>p.bossDef); if(b) return b[1]; live_.sort((a,c)=>c[0].chips-a[0].chips); return live_.length?live_[0][1]:-1}
+function talkOdds(kind,p){let o=TALK[kind].base+(lvl('tongue')>=2?.25:has('tongue')?.15:0);
+  if(p.bossDef) o-=.08; if(p.tier==='v') o-=.06; if(p.tier==='d') o+=.1; if(p.nem) o-=.05*(p.nemRank||1); return Math.max(.08,Math.min(.95,o))}
+// returns {ok,tag,reply}
+function resolveTalk(kind,i){
+  const p=G.players[i], ok=Math.random()<talkOdds(kind,p), pick=a=>a[Math.floor(Math.random()*a.length)];
+  G.talks++; if(kind==='draw') G.drawUsed=true;
+  if(kind==='needle'){ if(ok){p.tilt=Math.max(p.tilt,3); log(`${p.name} takes the bait. On tilt.`); return {ok,tag:'On tilt',reply:pick(TALK_BACK.tilt)}}
+    p.steel=true; p.tilt=0; log(`${p.name} shrugs it off and sharpens up.`); return {ok,tag:'Sharpened',reply:pick(TALK_BACK.fire)}}
+  if(kind==='bluff'){ const tgts=G.players.filter(q=>!q.isHuman&&q.inHand&&!q.folded); let n=0;
+    tgts.forEach(q=>{if(Math.random()<talkOdds('bluff',q)){q.spooked=true; n++} else if(Math.random()<.45) q.sticky=true});
+    log(n?`Your talk rattles ${n} at the table.`:'Nobody buys it.'); return {ok:n>0,tag:n?'Rattled':'Dug in',reply:n?pick(TALK_BACK.spook):pick(TALK_BACK.fire),all:true}}
+  if(kind==='friendly'){ if(ok){p.calm=true; p.tilt=0; log(`${p.name} eases off.`); return {ok,tag:'Easy',reply:pick(TALK_BACK.calm)}}
+    return {ok,tag:'Unmoved',reply:'Save it.'}}
+  if(kind==='dig'){ if(ok){p.tilt=Math.max(p.tilt,5); log(`${p.name} is rattled for good.`); return {ok,tag:'On tilt',reply:pick(TALK_BACK.dig)}}
+    p.steel=true; p.sticky=false; log(`${p.name} is coming for you now.`); return {ok,tag:'Hunting you',reply:(p.bossDef&&p.bossDef.lines.raise?pick(p.bossDef.lines.raise):pick(TALK_BACK.fire))}}
+  return {ok:false};
+}
+// the quick draw: how fast you must be (ms) against this opponent
+function drawWindow(p){let w=p.bossDef?330:p.tier==='v'?370:p.tier==='g'?430:520; if(p.nem) w-=12*(p.nemRank||1); w+=lvl('tongue')>=2?120:has('tongue')?80:0; return w}
+function settleDraw(i,won){const p=G.players[i]; G.drawUsed=true; G.talks++;
+  if(won){p.drawn=true; p.peek=Math.floor(Math.random()*p.hand.length); log(`You out-draw ${p.name}. They fold and show a card.`); return {tag:'Out-drawn',reply:TALK_BACK.draw_win[Math.floor(Math.random()*2)]}}
+  p.steel=true; p.tilt=0; log(`${p.name} is faster. They're coming for you.`); return {tag:'Faster',reply:TALK_BACK.draw_lose[Math.floor(Math.random()*2)]}}
+
 /* ================= AI ================= */
 // returns {type,to,bluff,tell,line}
 function aiDecide(i){
@@ -429,14 +467,15 @@ function aiDecide(i){
   const noise=heat>=2?T.noise*0.5:T.noise;
   let eq=equity(p.hand,G.board,opps,opps>4?Math.min(T.sims,140):T.sims,pin);
   const trueEq=eq;
-  eq=Math.max(0,Math.min(1,eq+(Math.random()-0.5)*2*noise));
+  eq=Math.max(0,Math.min(1,eq+(Math.random()-0.5)*2*(p.steel?noise*0.2:noise)));
   const toCall=G.currentBet-p.bet, pot=potTotal();
   const odds=toCall>0?toCall/(pot+toCall):0;
   const fair=1/(opps+1), r=Math.random(), tilt=p.tilt>0;
+  if(p.drawn&&toCall>=0&&me.inHand&&!me.folded) return {type:'fold'};  // lost the stare-down: they walk
   const pre=G.street==='preflop'&&opps>=3&&p.tier!=='d'?0.03:0;
   const adj=s.adj+T.adj+(tw('pete')?-0.04:0)+(tilt?-0.1:0)+(heat>=2?0.02:0)+pre;
   const bluff=s.bluff+(tw('pete')?0.16:0)+(tilt?0.12:0);
-  const aggr=s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0);
+  const aggr=s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0)+(p.steel&&me.inHand?0.18:0)-(p.calm?0.4:0);
   const sizeMul=tw('banker')?1.6:1;
   const strongBar=Math.min(0.86,fair*1.6)+adj;
   const canRaise=p.chips>toCall;
@@ -470,6 +509,7 @@ function aiDecide(i){
   }
   let callBar=odds+adj*0.6+(bigCall?0.06:0);
   if(has('face')&&G.aggressor===0) callBar+=lvl('face')>=2?0.14:0.07;
+  if(G.aggressor===0){if(p.spooked) callBar+=0.16; if(p.sticky) callBar-=0.14}
   if(eq>callBar||tw('iron')) return {type:'call'};
   if(canRaise&&!bigCall&&r<bluff*0.5) return R_(raiseTo(0.7),true);
   return {type:'fold'};

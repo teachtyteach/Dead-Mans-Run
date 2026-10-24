@@ -150,6 +150,8 @@
   </div>
 
   <div class="console">
+    <button class="say-btn" id="sayBtn" hidden aria-label="Say something"><svg viewBox="0 0 24 24"><path d="M4 5h16v10H9l-4 4v-4H4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 9h8M8 12h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Say…</span></button>
+    <div class="say-menu" id="sayMenu" hidden></div>
     <div class="duohand" id="duoHand"></div>
     <div class="status" id="status">Shuffling up…</div>
     <div class="odds" id="odds" hidden></div>
@@ -232,3 +234,6 @@
     <div class="row"><button class="btn gold" id="resumeBtn" style="flex:1">Resume</button><button class="btn dark" id="quitBtn" style="flex:1">Quit to title</button></div>
   </div>
 </div>
+
+<!-- ============ STARE-DOWN ============ -->
+<div class="draw-ov" id="drawOv" hidden><div class="dr-faces"><span class="medal" id="drYou"></span><b>vs</b><span class="medal" id="drThem"></span></div><div class="dr-word" id="drWord">Steady…</div><div class="dr-hint" id="drHint">Tap the moment it says DRAW</div></div>
