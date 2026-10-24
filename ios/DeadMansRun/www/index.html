@@ -1722,6 +1722,13 @@ html[data-screen="sGame"] #vista *{animation-play-state:paused!important}
 .tarot .art::after{inset:0 auto 0 -160%!important;width:260%!important;background-size:100% 100%!important;background-position:0 0!important;will-change:transform;animation:sheenT 4s ease-in-out infinite!important}
 @keyframes sheenT{0%,15%{transform:translate3d(0,0,0)}85%,100%{transform:translate3d(61.5%,0,0)}}
 .card.gold:not(.back)::after{animation:goldSheen 2.2s ease-in-out .2s 1 both}
+/* Duo landscape: bottom screen as a balanced console — your hand left, the decision right, both centred */
+html.duo-wide #sGame .console{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);grid-template-rows:auto auto auto auto;align-content:center;align-items:center;column-gap:28px;padding:12px 22px 14px}
+html.duo-wide #sGame .console .duohand{grid-row:1/5;justify-content:center}
+html.duo-wide #sGame .console .status{text-align:center;justify-self:stretch}
+html.duo-wide #sGame .console #actions{align-self:center;width:100%}
+html.duo-wide .duohand .seat.duo-me{--cw:clamp(56px,7.6vw,88px)}
+html.duo-wide #sGame .table-wrap{padding-top:clamp(16px,3.4svh,30px);padding-bottom:4px}
 
 </style>
 </head>
@@ -3614,7 +3621,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 58 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 59 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
