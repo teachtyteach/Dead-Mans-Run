@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0c0805">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}@media (display-mode:standalone),(display-mode:fullscreen){:root{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}</style>
-<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width),sw=p?Math.min(screen.height,screen.width):Math.max(screen.height,screen.width),h=Math.max(sh,innerHeight),ch=d.clientHeight;if(Math.abs(sw-innerWidth)>24||h-innerHeight>140)h=innerHeight;window.__dims=[sh,innerHeight,ch,(visualViewport||{}).height|0];if(h>ch+2){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',function(){f();setTimeout(f,300);setTimeout(f,900)});addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
+<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width),sw=p?Math.min(screen.height,screen.width):Math.max(screen.height,screen.width),h=Math.max(sh,innerHeight),ch=d.clientHeight;if(Math.abs(sw-innerWidth)>24||h-innerHeight>140)h=innerHeight;window.__dims=[sh,innerHeight,ch,(visualViewport||{}).height|0];d.style.setProperty('--appH',(h>ch+2?h:innerHeight)+'px');if(h>ch+2){d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',function(){f();setTimeout(f,300);setTimeout(f,900)});addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta charset="utf-8">
@@ -1457,7 +1457,7 @@ html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226
 @keyframes deal{0%{translate:var(--fx,0) var(--fy,-40px);rotate:-160deg;scale:.55;opacity:0}12%{opacity:1}68%{translate:0 0;rotate:5deg;scale:1.07}84%{rotate:-1.5deg;scale:.985}100%{translate:0 0;rotate:0deg;scale:1;opacity:1}}
 .card.flip{animation:flip3 .5s cubic-bezier(.3,1.4,.5,1) both}
 @keyframes flip3{0%{rotate:y 90deg;scale:1.1}55%{rotate:y -14deg;scale:1.06}100%{rotate:y 0deg;scale:1}}
-.press{transform:translateY(3px) scale(.965)!important;filter:brightness(1.12);transition:none!important}
+.press{transform:translateY(1px)!important;filter:brightness(1.15);transition:none!important}
 /* slow-motion runout: the room darkens, the board grows, every card lands like a gunshot */
 #sGame::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity .6s;
   background:radial-gradient(ellipse 60% 45% at 50% 42%,transparent 40%,rgba(0,0,0,.72) 100%)}
@@ -1800,6 +1800,66 @@ html.duo-tall #sShop .deal-grid{grid-template-columns:repeat(4,minmax(0,1fr))!im
 html.duo-wide #sTitle .est{display:none}
 html.duo-wide #sTitle .dtop{padding-top:16px!important}
 
+/* ================= title: the deck of choices ================= */
+.title-links button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.title-links button svg{width:15px;height:15px;flex:none;opacity:.85}
+.title-links button span{display:inline!important}
+.cont-btn{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.1}
+.cont-btn b{font:inherit}
+.cont-btn em{font-style:normal;font-family:var(--f-serif);font-size:12.5px;letter-spacing:.04em;text-transform:none;opacity:.75}
+.daily-btn{display:inline-flex!important;align-items:center;gap:10px;padding-left:8px!important;text-align:left}
+.daily-btn .medal{width:34px;height:34px;flex:none}
+.daily-btn .db-t{display:flex;flex-direction:column;line-height:1.1}
+.daily-btn .db-t em{font-style:normal;font-family:var(--f-serif);font-size:12px;letter-spacing:.02em;text-transform:none;color:var(--muted,#bfa978)}
+#statLine{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+#statLine:empty{display:none}
+#statLine span{display:flex;flex-direction:column;align-items:center;min-width:66px;padding:5px 10px;border-radius:10px;background:rgba(14,9,5,.55);border:1px solid rgba(201,162,78,.18)}
+#statLine em{font-style:normal;font-family:var(--f-label);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,162,78,.75)}
+#statLine b{font-family:var(--f-serif);font-size:15px;color:#f0dfb6}
+#sTitle h1.brass{background-size:100% 100%,220% 100%;animation:logoShine 2.6s 1s ease-in-out 1 both}
+@keyframes logoShine{from{filter:brightness(1)}45%{filter:brightness(1.35) drop-shadow(0 0 12px rgba(244,203,92,.35))}to{filter:brightness(1)}}
+
+/* ================= settings: grouped rows, real switches ================= */
+.audio-toggles{display:flex;flex-direction:column;gap:12px;width:100%}
+.set-group{display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:rgba(10,6,3,.45);border:1px solid rgba(201,162,78,.16)}
+.set-h{padding:9px 14px 6px;font-family:var(--f-label);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass)}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:52px;padding:8px 14px;background:none;border:0;border-top:1px solid rgba(201,162,78,.1);color:var(--ivory);text-align:left;cursor:pointer;font:inherit}
+.set-row:first-of-type{border-top:0}
+.set-h+.set-row{border-top:0}
+.set-l{display:flex;flex-direction:column;gap:2px;min-width:0}
+.set-l b{font-family:var(--f-serif);font-weight:600;font-size:16px;color:#f2e4c4}
+.set-l em{font-style:normal;font-size:12.5px;color:#b8a27a}
+.sw{position:relative;flex:none;width:50px;height:30px;border-radius:999px;background:#3a2a1c;box-shadow:inset 0 1px 3px rgba(0,0,0,.6);transition:background .2s}
+.sw>i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:linear-gradient(#f6ecd2,#cdb98c);box-shadow:0 2px 4px rgba(0,0,0,.5);transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
+.sw.on{background:linear-gradient(#d9b25a,#a87d2e)}
+.sw.on>i{transform:translateX(20px)}
+.seg{display:inline-flex;flex:none;padding:3px;border-radius:999px;background:#24170e;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.seg button{border:0;background:none;color:#cbb58a;font-family:var(--f-label);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:linear-gradient(#d9b25a,#a87d2e);color:#1c1108;font-weight:700}
+.set-foot{font-size:11px;color:rgba(201,162,78,.5);text-align:center;letter-spacing:.06em}
+.chev{font-style:normal;font-size:22px;color:var(--brass);flex:none}
+/* the five tabs always sit on one line */
+#more .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#more .tabs button{font-size:clamp(10.5px,2.6vw,13px);letter-spacing:.04em;padding:8px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pane[data-mpane="settings"],.pane[data-pane="settings"]{display:flex;flex-direction:column;gap:12px}
+.pane[hidden]{display:none!important}
+/* Duo landscape: the sheet's name hangs in the sky; the sheet itself is a wide two-column console on the counter */
+html.duo-wide #more .sheet,html.duo-wide #menu .sheet{display:grid;grid-template-columns:190px minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;column-gap:14px;row-gap:8px;width:min(980px,97vw)!important;height:calc((var(--appH,100svh) - var(--hinge,28px)) / 2 - 16px);max-height:none!important;padding:12px!important;overflow:hidden}
+html.duo-wide #more .sheet-title,html.duo-wide #menu .sheet-title{display:none}
+html.duo-wide #more::before,html.duo-wide #menu::before{content:attr(data-title);position:absolute;left:0;right:0;top:calc((var(--appH,100svh) - var(--hinge,28px)) / 4);translate:0 -50%;text-align:center;font-family:var(--f-display);font-size:clamp(38px,9svh,64px);color:var(--brass-hi);text-shadow:0 2px 0 #4a2e10,0 6px 26px rgba(0,0,0,.85);pointer-events:none;animation:halfDown .5s cubic-bezier(.2,.8,.2,1) both}
+html.duo-wide #more,html.duo-wide #menu{background:linear-gradient(rgba(6,4,2,.8) 0 50%,rgba(6,4,2,.85) 50%)!important}
+html.duo-wide #more .tabs,html.duo-wide #menu .tabs{grid-column:1;grid-row:1;display:flex!important;flex-direction:column;gap:4px;align-self:stretch}
+html.duo-wide #more .tabs button,html.duo-wide #menu .tabs button{text-align:left;padding:10px 14px;font-size:12.5px;min-height:0;flex:1 1 0}
+html.duo-wide #more .pane,html.duo-wide #menu .pane{grid-column:2;grid-row:1/3;min-height:0;overflow:auto}
+html.duo-wide #more .sheet>.row,html.duo-wide #menu .sheet>.row{grid-column:1;grid-row:2;margin:0}
+html.duo-wide #menu .sheet>.row{flex-direction:column}
+html.duo-wide .pane[data-mpane="settings"],html.duo-wide .pane[data-pane="settings"]{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start;align-items:start}
+html.duo-wide .pane[data-mpane="settings"][hidden],html.duo-wide .pane[data-pane="settings"][hidden]{display:none!important}
+html.duo-wide .audio-toggles{display:contents}
+html.duo-wide .set-foot{grid-column:1/-1}
+html.duo-wide .set-row{min-height:44px}
+html.duo-wide .seg-row{flex-direction:column;align-items:flex-start;gap:6px}
+
 </style>
 </head>
 <body>
@@ -1835,7 +1895,7 @@ html.duo-wide #sTitle .dtop{padding-top:16px!important}
   <div class="heat" id="heatPick"></div>
   <div class="statline" id="statLine"></div>
   <div class="title-links">
-    <button data-more="trophies">Trophies</button><span>·</span><button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
+    <button data-more="trophies"><svg viewBox="0 0 24 24"><path d="M7 4h10v3a5 5 0 0 1-10 0z M7 5H4v2a3 3 0 0 0 3 3 M17 5h3v2a3 3 0 0 1-3 3 M12 12v4 M8 20h8 M9 16h6v4H9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Trophies</span></button><button id="tutBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5v.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg><span>Tutorial</span></button><button data-more="howto"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 7 6 7 10a4 4 0 0 1-6 3.4l1 3.6h-4l1-3.6A4 4 0 0 1 5 13c0-4 4-6 7-10z" fill="currentColor"/></svg><span>How to play</span></button><button data-more="records"><svg viewBox="0 0 24 24"><path d="M5 20V10 M10 20V5 M15 20v-7 M20 20V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Records</span></button><button data-more="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Settings</span></button>
   </div></div>
 </section>
 
@@ -1870,7 +1930,7 @@ html.duo-wide #sTitle .dtop{padding-top:16px!important}
     <div class="pane" data-mpane="trophies" hidden><div class="trophies" id="trophies" data-scroll></div></div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
-    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button><button class="btn small" id="storyBtn">Watch the opening</button></div></div>
+    <div class="pane" data-mpane="settings" hidden><div class="audio-toggles"></div><div class="set-group"><div class="set-h">Story &amp; help</div><button class="set-row" id="tipsBtn"><span class="set-l"><b>Replay tutorial tips</b><em>See the table hints again</em></span><i class="chev">›</i></button><button class="set-row" id="storyBtn"><span class="set-l"><b>Watch the opening</b><em>The stranger rides in</em></span><i class="chev">›</i></button></div><div class="set-foot"></div></div>
     <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
   </div>
 </div>
@@ -2033,7 +2093,7 @@ html.duo-wide #sTitle .dtop{padding-top:16px!important}
     </div>
     <div class="pane" data-pane="hand" hidden><div class="ledger" id="lastHand"></div></div>
     <div class="pane" data-pane="ranks" hidden><div class="ranks" id="ranks"></div><p class="hint">Highest at the top. Best five cards from your two plus the board.</p></div>
-    <div class="pane" data-pane="settings" hidden><div class="row audio-toggles"></div><p class="hint">Your run saves after every hand.</p></div>
+    <div class="pane" data-pane="settings" hidden><div class="audio-toggles"></div><div class="set-foot"></div><p class="hint">Your run saves after every hand.</p></div>
     <div class="row"><button class="btn gold" id="resumeBtn" style="flex:1">Resume</button><button class="btn dark" id="quitBtn" style="flex:1">Quit to title</button></div>
   </div>
 </div>
@@ -3204,9 +3264,12 @@ let HAPT_T=0;
 function haptic(kind){if(meta.haptics===false) return; const n=performance.now(); if(n-HAPT_T<35&&kind!=='heavy'&&kind!=='success'&&kind!=='error') return; HAPT_T=n;
   try{const h=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.haptic; if(h){h.postMessage(kind); return}
     if(navigator.vibrate) navigator.vibrate({light:8,soft:6,medium:14,rigid:18,heavy:26,success:[14,40,22],error:[30,50,30]}[kind]||10)}catch(e){}}
+// a big shove of chips: a rolling rumble whose length grows with the size of the bet (in big blinds)
+function rumble(bbs,delay=0){if(meta.haptics===false) return; const n=Math.max(2,Math.min(7,Math.round(1+Math.log2(Math.max(1,bbs/4)))));
+  const seq=['heavy'].concat(Array.from({length:n-1},(_,k)=>k%2?'rigid':'medium'));
+  seq.forEach((k,j)=>setTimeout(()=>{HAPT_T=0; haptic(k)},delay+j*55))}
 function sfx(type,delay=0,pitch=1){
   if(HAPTIC_FOR[type]){if(delay>0) setTimeout(()=>haptic(HAPTIC_FOR[type]),delay); else haptic(HAPTIC_FOR[type])}
-  if(typeof haptic==='function'&&!(SND.hush&&type!=='toll')){const hk={chip:'light',chips:'medium',card:'light',stamp:'heavy',gun:'heavy',boss:'heavy',bigwin:'success',paid:'success',win:'success',toll:'error',lose:'error'}[type]; if(hk) setTimeout(()=>haptic(hk),delay||0)}
   if(!meta.sound||!SND.ctx) return;
   if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;
@@ -3573,16 +3636,31 @@ function runRolls(){
 function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-family:${bd.font},var(--f-display);font-size:${bd.fs||1}em">${bd.name}</${tag}>`}
 /* no pinch zoom, no double-tap zoom, no rubber-banding: it should feel like an app, not a web page */
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+// a finger that wobbles a few pixels is still a tap: only a real drag is held still, so iOS never swallows the click
+let T0=null; document.addEventListener('touchstart',e=>{const t=e.touches[0]; T0=t?[t.clientX,t.clientY]:null},{passive:true});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
+  const t=e.touches[0]; if(T0&&t&&Math.hypot(t.clientX-T0[0],t.clientY-T0[1])<12) return;
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 
 /* buttons answer the instant a finger lands, not when it lifts */
-const PRESSABLE='.btn,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
+const PRESSABLE='.btn,.set-row,.seg button,.hunt-line,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
+// every press is guaranteed: if the browser drops the click (the button re-rendered under the finger, the layout
+// shifted after a rotation, a tiny drag), the release itself fires it — once.
+let TAP=null, CLICKED={t:0,el:null};
+document.addEventListener('click',e=>{CLICKED={t:performance.now(),el:e.target}},true);
 document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest(PRESSABLE); if(!b||b.disabled) return; b.classList.add('press'); haptic('select');
-  const up=()=>{b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
+  TAP={b,x:e.clientX,y:e.clientY,t:performance.now(),key:(b.id||'')+'|'+b.textContent.trim().slice(0,24)};
+  const up=ev=>{b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up);
+    if(ev.type!=='pointerup'||!TAP||TAP.b!==b) return; const tp=TAP, ux=ev.clientX, uy=ev.clientY; TAP=null;
+    if(Math.hypot(ux-tp.x,uy-tp.y)>24||performance.now()-tp.t>900) return;
+    setTimeout(()=>{if(CLICKED.t>tp.t&&CLICKED.el&&(tp.b.contains(CLICKED.el)||(CLICKED.el.closest&&CLICKED.el.closest(PRESSABLE)))) return;
+      let tgt=tp.b.isConnected?tp.b:null;
+      if(!tgt){const under=document.elementFromPoint(ux,uy), c=under&&under.closest&&under.closest(PRESSABLE); if(c&&((c.id||'')+'|'+c.textContent.trim().slice(0,24))===tp.key) tgt=c}
+      if(tgt&&!tgt.disabled&&tgt.offsetParent!==null) tgt.click()},120)};
+  addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
 
 /* ================= daily table: one boss, one deck order, the same for everyone today ================= */
 let DAILY=null;
@@ -3684,7 +3762,7 @@ function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), wa
   // Duo postures: landscape (flat or folded like an L) puts the crease across the middle, so the game splits there —
   // the table up top, you below. Portrait puts the crease down the middle of one tall surface, so it stays whole.
   d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&land); d.classList.toggle('duo-tall',on&&!land);
-  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); duoEvent(on&&land); d.style.setProperty('--hinge',(land||h?((h?h.w:0)+28):12)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); duoEvent(on&&land); d.style.setProperty('--hinge',(land||h?((h?h.w:0)+28):12)+'px'); if(d.className!==was&&typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 /* Duo landscape: the telegram is read on the top screen, answered on the bottom one */
 function duoEvent(v){const ch=$('evChoices'), rs=$('evResult'), bot=document.querySelector('#sEvent .dbot'), tg=document.querySelector('#sEvent .telegram'); if(!ch||!bot||!tg) return;
   if(v){if(ch.parentElement!==bot){bot.prepend(rs); bot.prepend(ch)}} else if(ch.parentElement!==tg){tg.appendChild(ch); tg.appendChild(rs)}}
@@ -3693,23 +3771,34 @@ function duoPoster(v){const m=$('poster'); if(!m) return; const pp=m.querySelect
   if(!bot){bot=document.createElement('div'); bot.id='posterBot'; bot.className='p-bot'; m.appendChild(bot)}
   const parts=[$('posterTwist'),$('posterLine'),pp.querySelector('.reward')||bot.querySelector('.reward'),$('posterBtn')];
   const host=v?bot:pp; if(parts[3].parentElement!==host) parts.forEach(e=>e&&host.appendChild(e)); bot.hidden=!v}
-const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles(); setTimeout(applyDuo,450)},120)};
+const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{const was=document.documentElement.className; applyDuo(); if(document.documentElement.className!==was&&!$('more').hidden) renderToggles(); clearTimeout(applyDuo.t2); applyDuo.t2=setTimeout(applyDuo,450)},150)};
 addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
 if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
+  const sw=(k,label,sub,on)=>`<button class="set-row" data-audio="${k}" role="switch" aria-checked="${on}"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><i class="sw${on?' on':''}"><i></i></i></button>`;
+  const seg=(k,label,sub,opts,cur)=>`<div class="set-row seg-row"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><span class="seg">${opts.map(([v,t])=>`<button data-audio="${k}" data-val="${v}" aria-pressed="${cur===v}">${t}</button>`).join('')}</span></div>`;
+  const duoNow=duoOn()?(innerWidth>innerHeight?'Using: two screens, split at the fold':'Using: one tall screen'):(splitView()?'Split screen: using the phone layout':'Not detected');
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 60 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<div class="set-group"><div class="set-h">Sound &amp; feel</div>
+      ${sw('sound','Sound effects','Cards, chips, the bell',!!meta.sound)}
+      ${sw('music','Music','Saloon songs and the room',!!meta.music)}
+      ${sw('haptics','Haptics','Feel every chip and card',meta.haptics!==false)}</div>
+      <div class="set-group"><div class="set-h">Play</div>
+      ${seg('speed','Game speed','How fast the others act',[['normal','Normal'],['fast','Fast']],meta.speed==='fast'?'fast':'normal')}
+      ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
+`;
   });
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 61 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
-  const k=b.dataset.audio;
-  if(k==='speed') meta.speed=meta.speed==='fast'?'normal':'fast';
+  const k=b.dataset.audio, v=b.dataset.val;
+  if(k==='speed') meta.speed=v||(meta.speed==='fast'?'normal':'fast');
   else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
-  else if(k==='duo'){meta.duo={auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
+  else if(k==='duo'){meta.duo=v||{auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
-  saveMeta(); renderToggles();
+  haptic('select'); saveMeta(); renderToggles();
 });
 const TIPS={
   start:'<b>Goal:</b> take all of the boss\'s chips.',
@@ -3743,8 +3832,10 @@ function renderTitle(){
     <div class="plaque"><span>Charms</span><b>${unlockedCount} / ${Object.keys(CHARMS).length}</b></div>`;
   const saved=sget(RUN_KEY);
   const dk=dayKey(), dd=(meta.daily||{})[dk];
-  $('titleActions').innerHTML=(saved?`<button class="btn gold big" id="contBtn">Continue · Saloon ${saved.level}</button>`:'')+
-    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`+`<button class="btn dark daily-btn" id="dailyBtn">Daily table${dd&&dd.won?` · ${dd.hands} hands`:''}</button>`;
+  const dlv=2+Math.floor(seeded('boss'+dk)()*6), dboss=BOSSES[dlv-1];
+  $('titleActions').innerHTML=(saved?`<button class="btn gold big cont-btn" id="contBtn"><b>Continue</b><em>Saloon ${saved.level} · ${saved.gold||0}g · ${(saved.charms||[]).length} charm${(saved.charms||[]).length===1?'':'s'}</em></button>`:'')+
+    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`+
+    `<button class="btn dark daily-btn" id="dailyBtn"><span class="medal">${bossPortrait(dboss)}</span><span class="db-t"><b>Daily table</b><em>${dd&&dd.won?`Beaten in ${dd.hands} hands`:dd?'Try again today':`Today: ${dboss.name}`}</em></span></button>`;
   if(saved) $('contBtn').onclick=()=>{ac(); continueRun(saved)};
   $('newBtn').onclick=()=>{ac(); startRun()};
   $('dailyBtn').onclick=()=>{ac(); startDaily()};
@@ -3752,7 +3843,7 @@ function renderTitle(){
   $('heatPick').hidden=mh<1;
   { let h=$('huntLine'); if(!h){h=document.createElement('button'); h.id='huntLine'; h.className='hunt-line'; $('statLine').after(h); h.onclick=()=>{ac(); openMore('trophies')}}
     const n=meta.nemesis; h.hidden=!n; if(n) h.innerHTML=`<span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><span>Hunted by <b>${nemName(n)}</b><em>${nemTitle(n)}</em></span>`; }
-  $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
+  $('statLine').innerHTML=meta.runs?`<span><em>Best</em><b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b></span><span><em>Runs</em><b>${meta.runs}</b></span><span><em>Wins</em><b>${meta.wins}</b></span><span><em>Bosses</em><b>${Object.keys(meta.beaten||{}).length}/8</b></span>`:'';
   $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
   const st=meta.stats;
@@ -3775,7 +3866,7 @@ function openMore(tab){
   if(tab==='trophies') renderTrophies();
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
-  $('moreTitle').textContent=names[tab]; renderToggles(); $('more').hidden=false;
+  $('moreTitle').textContent=names[tab]; $('more').dataset.title=names[tab]; renderToggles(); $('more').hidden=false;
   $('moreClose').onclick=()=>{$('more').hidden=true};
 }
 
@@ -4176,7 +4267,7 @@ function doAct(i,type,to){
   const put=applyAction(i,type,to);
   step();
   if(put>0){
-    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip');
+    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip'); if(p.allIn||put>=G.bb*10) rumble(put/G.bb);
     if(p.allIn){const c=centerOfSeat(i); if(c) stampAt(c[0],c[1],'All in','#d8341f',p.isHuman?34:26); sfx('stamp',80); shake(false)}
   }
 }
@@ -4196,6 +4287,7 @@ function handEnd(res){
   const me=human(), potEl=$('potrow');
   res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(10,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt)));
   if(res.winners.length) sfx('chips',60);
+  {const big=res.pot/G.bb; if(big>=12) rumble(big,120)}
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
   ev.kos.forEach((i,k)=>{const c=where[i]; if(c) later(()=>{stampAt(c[0],c[1],G.players[i].bossDef?'Taken Down':'Tapped Out','#d8341f',G.players[i].bossDef?40:26); sfx('stamp'); shake(!!G.players[i].bossDef)},500+k*250)});
@@ -4806,7 +4898,7 @@ function renderRaise(minTo,maxTo,toCall,pot,label){
 function openMenu(){
   const bd=BOSSES[R.level-1];
   PAUSED=true;
-  $('menuTitle').textContent=TOWNS[R.level-1];
+  $('menuTitle').textContent=TOWNS[R.level-1]; $('menu').dataset.title=TOWNS[R.level-1];
   $('menuBoss').innerHTML=`<span class="medal">${bossPortrait(bd)}</span><div>${bossName(bd,'b')}<em>${bd.twist}</em>${G.challenge?`<em class="mchal">Challenge: ${G.challenge.text} · +${G.challenge.gold}g${G.challengeDone?' ✓':''}</em>`:''}<em class="mchal">Blinds ${num(G.bb/2)}/${num(G.bb)}, rising every ${G.riseEvery} hands</em></div>`;
   $('menuCharms').innerHTML=charmPills(true)||'<span class="hint">No charms yet.</span>';
   $('ledger').innerHTML=G.log.slice(0,11).map(t=>`<div>${t}</div>`).join('');

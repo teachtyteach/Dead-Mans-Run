@@ -1435,7 +1435,7 @@ html{background:var(--grain),radial-gradient(ellipse 80% 55% at 50% 30%,rgba(226
 @keyframes deal{0%{translate:var(--fx,0) var(--fy,-40px);rotate:-160deg;scale:.55;opacity:0}12%{opacity:1}68%{translate:0 0;rotate:5deg;scale:1.07}84%{rotate:-1.5deg;scale:.985}100%{translate:0 0;rotate:0deg;scale:1;opacity:1}}
 .card.flip{animation:flip3 .5s cubic-bezier(.3,1.4,.5,1) both}
 @keyframes flip3{0%{rotate:y 90deg;scale:1.1}55%{rotate:y -14deg;scale:1.06}100%{rotate:y 0deg;scale:1}}
-.press{transform:translateY(3px) scale(.965)!important;filter:brightness(1.12);transition:none!important}
+.press{transform:translateY(1px)!important;filter:brightness(1.15);transition:none!important}
 /* slow-motion runout: the room darkens, the board grows, every card lands like a gunshot */
 #sGame::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;opacity:0;transition:opacity .6s;
   background:radial-gradient(ellipse 60% 45% at 50% 42%,transparent 40%,rgba(0,0,0,.72) 100%)}
@@ -1777,3 +1777,63 @@ html.duo-wide #poster{place-items:start center!important;padding-top:10px!import
 html.duo-tall #sShop .deal-grid{grid-template-columns:repeat(4,minmax(0,1fr))!important;max-width:min(860px,96vw)}
 html.duo-wide #sTitle .est{display:none}
 html.duo-wide #sTitle .dtop{padding-top:16px!important}
+
+/* ================= title: the deck of choices ================= */
+.title-links button{display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.title-links button svg{width:15px;height:15px;flex:none;opacity:.85}
+.title-links button span{display:inline!important}
+.cont-btn{display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.1}
+.cont-btn b{font:inherit}
+.cont-btn em{font-style:normal;font-family:var(--f-serif);font-size:12.5px;letter-spacing:.04em;text-transform:none;opacity:.75}
+.daily-btn{display:inline-flex!important;align-items:center;gap:10px;padding-left:8px!important;text-align:left}
+.daily-btn .medal{width:34px;height:34px;flex:none}
+.daily-btn .db-t{display:flex;flex-direction:column;line-height:1.1}
+.daily-btn .db-t em{font-style:normal;font-family:var(--f-serif);font-size:12px;letter-spacing:.02em;text-transform:none;color:var(--muted,#bfa978)}
+#statLine{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+#statLine:empty{display:none}
+#statLine span{display:flex;flex-direction:column;align-items:center;min-width:66px;padding:5px 10px;border-radius:10px;background:rgba(14,9,5,.55);border:1px solid rgba(201,162,78,.18)}
+#statLine em{font-style:normal;font-family:var(--f-label);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(201,162,78,.75)}
+#statLine b{font-family:var(--f-serif);font-size:15px;color:#f0dfb6}
+#sTitle h1.brass{background-size:100% 100%,220% 100%;animation:logoShine 2.6s 1s ease-in-out 1 both}
+@keyframes logoShine{from{filter:brightness(1)}45%{filter:brightness(1.35) drop-shadow(0 0 12px rgba(244,203,92,.35))}to{filter:brightness(1)}}
+
+/* ================= settings: grouped rows, real switches ================= */
+.audio-toggles{display:flex;flex-direction:column;gap:12px;width:100%}
+.set-group{display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:rgba(10,6,3,.45);border:1px solid rgba(201,162,78,.16)}
+.set-h{padding:9px 14px 6px;font-family:var(--f-label);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass)}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:52px;padding:8px 14px;background:none;border:0;border-top:1px solid rgba(201,162,78,.1);color:var(--ivory);text-align:left;cursor:pointer;font:inherit}
+.set-row:first-of-type{border-top:0}
+.set-h+.set-row{border-top:0}
+.set-l{display:flex;flex-direction:column;gap:2px;min-width:0}
+.set-l b{font-family:var(--f-serif);font-weight:600;font-size:16px;color:#f2e4c4}
+.set-l em{font-style:normal;font-size:12.5px;color:#b8a27a}
+.sw{position:relative;flex:none;width:50px;height:30px;border-radius:999px;background:#3a2a1c;box-shadow:inset 0 1px 3px rgba(0,0,0,.6);transition:background .2s}
+.sw>i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:linear-gradient(#f6ecd2,#cdb98c);box-shadow:0 2px 4px rgba(0,0,0,.5);transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
+.sw.on{background:linear-gradient(#d9b25a,#a87d2e)}
+.sw.on>i{transform:translateX(20px)}
+.seg{display:inline-flex;flex:none;padding:3px;border-radius:999px;background:#24170e;box-shadow:inset 0 1px 3px rgba(0,0,0,.6)}
+.seg button{border:0;background:none;color:#cbb58a;font-family:var(--f-label);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:linear-gradient(#d9b25a,#a87d2e);color:#1c1108;font-weight:700}
+.set-foot{font-size:11px;color:rgba(201,162,78,.5);text-align:center;letter-spacing:.06em}
+.chev{font-style:normal;font-size:22px;color:var(--brass);flex:none}
+/* the five tabs always sit on one line */
+#more .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#more .tabs button{font-size:clamp(10.5px,2.6vw,13px);letter-spacing:.04em;padding:8px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pane[data-mpane="settings"],.pane[data-pane="settings"]{display:flex;flex-direction:column;gap:12px}
+.pane[hidden]{display:none!important}
+/* Duo landscape: the sheet's name hangs in the sky; the sheet itself is a wide two-column console on the counter */
+html.duo-wide #more .sheet,html.duo-wide #menu .sheet{display:grid;grid-template-columns:190px minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;column-gap:14px;row-gap:8px;width:min(980px,97vw)!important;height:calc((var(--appH,100svh) - var(--hinge,28px)) / 2 - 16px);max-height:none!important;padding:12px!important;overflow:hidden}
+html.duo-wide #more .sheet-title,html.duo-wide #menu .sheet-title{display:none}
+html.duo-wide #more::before,html.duo-wide #menu::before{content:attr(data-title);position:absolute;left:0;right:0;top:calc((var(--appH,100svh) - var(--hinge,28px)) / 4);translate:0 -50%;text-align:center;font-family:var(--f-display);font-size:clamp(38px,9svh,64px);color:var(--brass-hi);text-shadow:0 2px 0 #4a2e10,0 6px 26px rgba(0,0,0,.85);pointer-events:none;animation:halfDown .5s cubic-bezier(.2,.8,.2,1) both}
+html.duo-wide #more,html.duo-wide #menu{background:linear-gradient(rgba(6,4,2,.8) 0 50%,rgba(6,4,2,.85) 50%)!important}
+html.duo-wide #more .tabs,html.duo-wide #menu .tabs{grid-column:1;grid-row:1;display:flex!important;flex-direction:column;gap:4px;align-self:stretch}
+html.duo-wide #more .tabs button,html.duo-wide #menu .tabs button{text-align:left;padding:10px 14px;font-size:12.5px;min-height:0;flex:1 1 0}
+html.duo-wide #more .pane,html.duo-wide #menu .pane{grid-column:2;grid-row:1/3;min-height:0;overflow:auto}
+html.duo-wide #more .sheet>.row,html.duo-wide #menu .sheet>.row{grid-column:1;grid-row:2;margin:0}
+html.duo-wide #menu .sheet>.row{flex-direction:column}
+html.duo-wide .pane[data-mpane="settings"],html.duo-wide .pane[data-pane="settings"]{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-content:start;align-items:start}
+html.duo-wide .pane[data-mpane="settings"][hidden],html.duo-wide .pane[data-pane="settings"][hidden]{display:none!important}
+html.duo-wide .audio-toggles{display:contents}
+html.duo-wide .set-foot{grid-column:1/-1}
+html.duo-wide .set-row{min-height:44px}
+html.duo-wide .seg-row{flex-direction:column;align-items:flex-start;gap:6px}

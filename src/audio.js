@@ -68,9 +68,12 @@ let HAPT_T=0;
 function haptic(kind){if(meta.haptics===false) return; const n=performance.now(); if(n-HAPT_T<35&&kind!=='heavy'&&kind!=='success'&&kind!=='error') return; HAPT_T=n;
   try{const h=window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.haptic; if(h){h.postMessage(kind); return}
     if(navigator.vibrate) navigator.vibrate({light:8,soft:6,medium:14,rigid:18,heavy:26,success:[14,40,22],error:[30,50,30]}[kind]||10)}catch(e){}}
+// a big shove of chips: a rolling rumble whose length grows with the size of the bet (in big blinds)
+function rumble(bbs,delay=0){if(meta.haptics===false) return; const n=Math.max(2,Math.min(7,Math.round(1+Math.log2(Math.max(1,bbs/4)))));
+  const seq=['heavy'].concat(Array.from({length:n-1},(_,k)=>k%2?'rigid':'medium'));
+  seq.forEach((k,j)=>setTimeout(()=>{HAPT_T=0; haptic(k)},delay+j*55))}
 function sfx(type,delay=0,pitch=1){
   if(HAPTIC_FOR[type]){if(delay>0) setTimeout(()=>haptic(HAPTIC_FOR[type]),delay); else haptic(HAPTIC_FOR[type])}
-  if(typeof haptic==='function'&&!(SND.hush&&type!=='toll')){const hk={chip:'light',chips:'medium',card:'light',stamp:'heavy',gun:'heavy',boss:'heavy',bigwin:'success',paid:'success',win:'success',toll:'error',lose:'error'}[type]; if(hk) setTimeout(()=>haptic(hk),delay||0)}
   if(!meta.sound||!SND.ctx) return;
   if(SND.hush&&type!=='toll') return;
   const c=SND.ctx;

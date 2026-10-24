@@ -30,7 +30,7 @@
   <div class="heat" id="heatPick"></div>
   <div class="statline" id="statLine"></div>
   <div class="title-links">
-    <button data-more="trophies">Trophies</button><span>·</span><button id="tutBtn">Tutorial</button><span>·</span><button data-more="howto">How to play</button><span>·</span><button data-more="records">Records</button><span>·</span><button data-more="settings">Settings</button>
+    <button data-more="trophies"><svg viewBox="0 0 24 24"><path d="M7 4h10v3a5 5 0 0 1-10 0z M7 5H4v2a3 3 0 0 0 3 3 M17 5h3v2a3 3 0 0 1-3 3 M12 12v4 M8 20h8 M9 16h6v4H9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Trophies</span></button><button id="tutBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5v.7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg><span>Tutorial</span></button><button data-more="howto"><svg viewBox="0 0 24 24"><path d="M12 3c3 4 7 6 7 10a4 4 0 0 1-6 3.4l1 3.6h-4l1-3.6A4 4 0 0 1 5 13c0-4 4-6 7-10z" fill="currentColor"/></svg><span>How to play</span></button><button data-more="records"><svg viewBox="0 0 24 24"><path d="M5 20V10 M10 20V5 M15 20v-7 M20 20V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Records</span></button><button data-more="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Settings</span></button>
   </div></div>
 </section>
 
@@ -65,7 +65,7 @@
     <div class="pane" data-mpane="trophies" hidden><div class="trophies" id="trophies" data-scroll></div></div>
     <div class="pane" data-mpane="records" hidden><div class="plaques" id="metaPlaques"></div><div class="stats-grid" id="statsGrid"></div></div>
     <div class="pane" data-mpane="charms" hidden><div class="codex" id="codex"></div></div>
-    <div class="pane" data-mpane="settings" hidden><div class="row audio-toggles"></div><div class="row"><button class="btn small" id="tipsBtn">Replay tutorial tips</button><button class="btn small" id="storyBtn">Watch the opening</button></div></div>
+    <div class="pane" data-mpane="settings" hidden><div class="audio-toggles"></div><div class="set-group"><div class="set-h">Story &amp; help</div><button class="set-row" id="tipsBtn"><span class="set-l"><b>Replay tutorial tips</b><em>See the table hints again</em></span><i class="chev">›</i></button><button class="set-row" id="storyBtn"><span class="set-l"><b>Watch the opening</b><em>The stranger rides in</em></span><i class="chev">›</i></button></div><div class="set-foot"></div></div>
     <div class="row"><button class="btn gold" id="moreClose" style="flex:1">Done</button></div>
   </div>
 </div>
@@ -228,7 +228,7 @@
     </div>
     <div class="pane" data-pane="hand" hidden><div class="ledger" id="lastHand"></div></div>
     <div class="pane" data-pane="ranks" hidden><div class="ranks" id="ranks"></div><p class="hint">Highest at the top. Best five cards from your two plus the board.</p></div>
-    <div class="pane" data-pane="settings" hidden><div class="row audio-toggles"></div><p class="hint">Your run saves after every hand.</p></div>
+    <div class="pane" data-pane="settings" hidden><div class="audio-toggles"></div><div class="set-foot"></div><p class="hint">Your run saves after every hand.</p></div>
     <div class="row"><button class="btn gold" id="resumeBtn" style="flex:1">Resume</button><button class="btn dark" id="quitBtn" style="flex:1">Quit to title</button></div>
   </div>
 </div>

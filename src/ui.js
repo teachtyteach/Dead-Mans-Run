@@ -218,16 +218,31 @@ function runRolls(){
 function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-family:${bd.font},var(--f-display);font-size:${bd.fs||1}em">${bd.name}</${tag}>`}
 /* no pinch zoom, no double-tap zoom, no rubber-banding: it should feel like an app, not a web page */
 ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+// a finger that wobbles a few pixels is still a tap: only a real drag is held still, so iOS never swallows the click
+let T0=null; document.addEventListener('touchstart',e=>{const t=e.touches[0]; T0=t?[t.clientX,t.clientY]:null},{passive:true});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
+  const t=e.touches[0]; if(T0&&t&&Math.hypot(t.clientX-T0[0],t.clientY-T0[1])<12) return;
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
 
 /* buttons answer the instant a finger lands, not when it lifts */
-const PRESSABLE='.btn,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
+const PRESSABLE='.btn,.set-row,.seg button,.hunt-line,.chipbtn,.tabs button,.title-links button,.handsbtn,.iconbtn,.tg-choices button,[data-stab]';
+// every press is guaranteed: if the browser drops the click (the button re-rendered under the finger, the layout
+// shifted after a rotation, a tiny drag), the release itself fires it — once.
+let TAP=null, CLICKED={t:0,el:null};
+document.addEventListener('click',e=>{CLICKED={t:performance.now(),el:e.target}},true);
 document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest(PRESSABLE); if(!b||b.disabled) return; b.classList.add('press'); haptic('select');
-  const up=()=>{b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up)}; addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
+  TAP={b,x:e.clientX,y:e.clientY,t:performance.now(),key:(b.id||'')+'|'+b.textContent.trim().slice(0,24)};
+  const up=ev=>{b.classList.remove('press'); removeEventListener('pointerup',up); removeEventListener('pointercancel',up);
+    if(ev.type!=='pointerup'||!TAP||TAP.b!==b) return; const tp=TAP, ux=ev.clientX, uy=ev.clientY; TAP=null;
+    if(Math.hypot(ux-tp.x,uy-tp.y)>24||performance.now()-tp.t>900) return;
+    setTimeout(()=>{if(CLICKED.t>tp.t&&CLICKED.el&&(tp.b.contains(CLICKED.el)||(CLICKED.el.closest&&CLICKED.el.closest(PRESSABLE)))) return;
+      let tgt=tp.b.isConnected?tp.b:null;
+      if(!tgt){const under=document.elementFromPoint(ux,uy), c=under&&under.closest&&under.closest(PRESSABLE); if(c&&((c.id||'')+'|'+c.textContent.trim().slice(0,24))===tp.key) tgt=c}
+      if(tgt&&!tgt.disabled&&tgt.offsetParent!==null) tgt.click()},120)};
+  addEventListener('pointerup',up); addEventListener('pointercancel',up)},{passive:true});
 
 /* ================= daily table: one boss, one deck order, the same for everyone today ================= */
 let DAILY=null;
@@ -329,7 +344,7 @@ function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), wa
   // Duo postures: landscape (flat or folded like an L) puts the crease across the middle, so the game splits there —
   // the table up top, you below. Portrait puts the crease down the middle of one tall surface, so it stays whole.
   d.classList.toggle('duo',on); d.classList.toggle('duo-v',on); d.classList.toggle('duo-wide',on&&land); d.classList.toggle('duo-tall',on&&!land);
-  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); duoEvent(on&&land); d.style.setProperty('--hinge',(land||h?((h?h.w:0)+28):12)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+  const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} duoPoster(d.classList.contains('duo-v')); duoEvent(on&&land); d.style.setProperty('--hinge',(land||h?((h?h.w:0)+28):12)+'px'); if(d.className!==was&&typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 /* Duo landscape: the telegram is read on the top screen, answered on the bottom one */
 function duoEvent(v){const ch=$('evChoices'), rs=$('evResult'), bot=document.querySelector('#sEvent .dbot'), tg=document.querySelector('#sEvent .telegram'); if(!ch||!bot||!tg) return;
   if(v){if(ch.parentElement!==bot){bot.prepend(rs); bot.prepend(ch)}} else if(ch.parentElement!==tg){tg.appendChild(ch); tg.appendChild(rs)}}
@@ -338,23 +353,34 @@ function duoPoster(v){const m=$('poster'); if(!m) return; const pp=m.querySelect
   if(!bot){bot=document.createElement('div'); bot.id='posterBot'; bot.className='p-bot'; m.appendChild(bot)}
   const parts=[$('posterTwist'),$('posterLine'),pp.querySelector('.reward')||bot.querySelector('.reward'),$('posterBtn')];
   const host=v?bot:pp; if(parts[3].parentElement!==host) parts.forEach(e=>e&&host.appendChild(e)); bot.hidden=!v}
-const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles(); setTimeout(applyDuo,450)},120)};
+const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{const was=document.documentElement.className; applyDuo(); if(document.documentElement.className!==was&&!$('more').hidden) renderToggles(); clearTimeout(applyDuo.t2); applyDuo.t2=setTimeout(applyDuo,450)},150)};
 addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
 if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
+  const sw=(k,label,sub,on)=>`<button class="set-row" data-audio="${k}" role="switch" aria-checked="${on}"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><i class="sw${on?' on':''}"><i></i></i></button>`;
+  const seg=(k,label,sub,opts,cur)=>`<div class="set-row seg-row"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><span class="seg">${opts.map(([v,t])=>`<button data-audio="${k}" data-val="${v}" aria-pressed="${cur===v}">${t}</button>`).join('')}</span></div>`;
+  const duoNow=duoOn()?(innerWidth>innerHeight?'Using: two screens, split at the fold':'Using: one tall screen'):(splitView()?'Split screen: using the phone layout':'Not detected');
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 60 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<div class="set-group"><div class="set-h">Sound &amp; feel</div>
+      ${sw('sound','Sound effects','Cards, chips, the bell',!!meta.sound)}
+      ${sw('music','Music','Saloon songs and the room',!!meta.music)}
+      ${sw('haptics','Haptics','Feel every chip and card',meta.haptics!==false)}</div>
+      <div class="set-group"><div class="set-h">Play</div>
+      ${seg('speed','Game speed','How fast the others act',[['normal','Normal'],['fast','Fast']],meta.speed==='fast'?'fast':'normal')}
+      ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
+`;
   });
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 61 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
-  const k=b.dataset.audio;
-  if(k==='speed') meta.speed=meta.speed==='fast'?'normal':'fast';
+  const k=b.dataset.audio, v=b.dataset.val;
+  if(k==='speed') meta.speed=v||(meta.speed==='fast'?'normal':'fast');
   else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
-  else if(k==='duo'){meta.duo={auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
+  else if(k==='duo'){meta.duo=v||{auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
-  saveMeta(); renderToggles();
+  haptic('select'); saveMeta(); renderToggles();
 });
 const TIPS={
   start:'<b>Goal:</b> take all of the boss\'s chips.',
@@ -388,8 +414,10 @@ function renderTitle(){
     <div class="plaque"><span>Charms</span><b>${unlockedCount} / ${Object.keys(CHARMS).length}</b></div>`;
   const saved=sget(RUN_KEY);
   const dk=dayKey(), dd=(meta.daily||{})[dk];
-  $('titleActions').innerHTML=(saved?`<button class="btn gold big" id="contBtn">Continue · Saloon ${saved.level}</button>`:'')+
-    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`+`<button class="btn dark daily-btn" id="dailyBtn">Daily table${dd&&dd.won?` · ${dd.hands} hands`:''}</button>`;
+  const dlv=2+Math.floor(seeded('boss'+dk)()*6), dboss=BOSSES[dlv-1];
+  $('titleActions').innerHTML=(saved?`<button class="btn gold big cont-btn" id="contBtn"><b>Continue</b><em>Saloon ${saved.level} · ${saved.gold||0}g · ${(saved.charms||[]).length} charm${(saved.charms||[]).length===1?'':'s'}</em></button>`:'')+
+    `<button class="btn ${saved?'dark':'gold big'}" id="newBtn">${saved?'New run':'Start a run'}</button>`+
+    `<button class="btn dark daily-btn" id="dailyBtn"><span class="medal">${bossPortrait(dboss)}</span><span class="db-t"><b>Daily table</b><em>${dd&&dd.won?`Beaten in ${dd.hands} hands`:dd?'Try again today':`Today: ${dboss.name}`}</em></span></button>`;
   if(saved) $('contBtn').onclick=()=>{ac(); continueRun(saved)};
   $('newBtn').onclick=()=>{ac(); startRun()};
   $('dailyBtn').onclick=()=>{ac(); startDaily()};
@@ -397,7 +425,7 @@ function renderTitle(){
   $('heatPick').hidden=mh<1;
   { let h=$('huntLine'); if(!h){h=document.createElement('button'); h.id='huntLine'; h.className='hunt-line'; $('statLine').after(h); h.onclick=()=>{ac(); openMore('trophies')}}
     const n=meta.nemesis; h.hidden=!n; if(n) h.innerHTML=`<span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><span>Hunted by <b>${nemName(n)}</b><em>${nemTitle(n)}</em></span>`; }
-  $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
+  $('statLine').innerHTML=meta.runs?`<span><em>Best</em><b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b></span><span><em>Runs</em><b>${meta.runs}</b></span><span><em>Wins</em><b>${meta.wins}</b></span><span><em>Bosses</em><b>${Object.keys(meta.beaten||{}).length}/8</b></span>`:'';
   $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
   const st=meta.stats;
@@ -420,7 +448,7 @@ function openMore(tab){
   if(tab==='trophies') renderTrophies();
   document.querySelectorAll('#more [data-mtab]').forEach(b=>{b.setAttribute('aria-selected',b.dataset.mtab===tab); b.onclick=()=>openMore(b.dataset.mtab)});
   document.querySelectorAll('#more [data-mpane]').forEach(p=>p.hidden=p.dataset.mpane!==tab);
-  $('moreTitle').textContent=names[tab]; renderToggles(); $('more').hidden=false;
+  $('moreTitle').textContent=names[tab]; $('more').dataset.title=names[tab]; renderToggles(); $('more').hidden=false;
   $('moreClose').onclick=()=>{$('more').hidden=true};
 }
 
@@ -821,7 +849,7 @@ function doAct(i,type,to){
   const put=applyAction(i,type,to);
   step();
   if(put>0){
-    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip');
+    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip'); if(p.allIn||put>=G.bb*10) rumble(put/G.bb);
     if(p.allIn){const c=centerOfSeat(i); if(c) stampAt(c[0],c[1],'All in','#d8341f',p.isHuman?34:26); sfx('stamp',80); shake(false)}
   }
 }
@@ -841,6 +869,7 @@ function handEnd(res){
   const me=human(), potEl=$('potrow');
   res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(10,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt)));
   if(res.winners.length) sfx('chips',60);
+  {const big=res.pot/G.bb; if(big>=12) rumble(big,120)}
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
   ev.kos.forEach((i,k)=>{const c=where[i]; if(c) later(()=>{stampAt(c[0],c[1],G.players[i].bossDef?'Taken Down':'Tapped Out','#d8341f',G.players[i].bossDef?40:26); sfx('stamp'); shake(!!G.players[i].bossDef)},500+k*250)});
@@ -1451,7 +1480,7 @@ function renderRaise(minTo,maxTo,toCall,pot,label){
 function openMenu(){
   const bd=BOSSES[R.level-1];
   PAUSED=true;
-  $('menuTitle').textContent=TOWNS[R.level-1];
+  $('menuTitle').textContent=TOWNS[R.level-1]; $('menu').dataset.title=TOWNS[R.level-1];
   $('menuBoss').innerHTML=`<span class="medal">${bossPortrait(bd)}</span><div>${bossName(bd,'b')}<em>${bd.twist}</em>${G.challenge?`<em class="mchal">Challenge: ${G.challenge.text} · +${G.challenge.gold}g${G.challengeDone?' ✓':''}</em>`:''}<em class="mchal">Blinds ${num(G.bb/2)}/${num(G.bb)}, rising every ${G.riseEvery} hands</em></div>`;
   $('menuCharms').innerHTML=charmPills(true)||'<span class="hint">No charms yet.</span>';
   $('ledger').innerHTML=G.log.slice(0,11).map(t=>`<div>${t}</div>`).join('');
