@@ -1516,3 +1516,8 @@ html.tall #story{bottom:auto;height:var(--appH)}
 .st-dots{position:absolute;bottom:max(22px,env(safe-area-inset-bottom));left:0;right:0;display:flex;justify-content:center;gap:8px;z-index:2}
 .st-dots i{width:6px;height:6px;border-radius:50%;background:rgba(232,212,162,.3)}.st-dots i.on{background:#e8d4a2}
 @media (prefers-reduced-motion:reduce){#story::after,.st-grain{animation:none}}
+
+/* title link row: never overlap — 3 + 2 on phones, one clean row on wide screens */
+.title-links{display:flex!important;flex-wrap:wrap;justify-content:center;gap:8px;width:min(420px,100%)!important;max-width:none}
+.title-links button{flex:0 0 calc((100% - 16px)/3);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:11px 4px;letter-spacing:.12em}
+@media (min-width:700px){.title-links{flex-wrap:nowrap;width:auto!important}.title-links button{flex:0 0 auto;padding:10px 18px;letter-spacing:.16em}}

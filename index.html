@@ -1539,6 +1539,11 @@ html.tall #story{bottom:auto;height:var(--appH)}
 .st-dots i{width:6px;height:6px;border-radius:50%;background:rgba(232,212,162,.3)}.st-dots i.on{background:#e8d4a2}
 @media (prefers-reduced-motion:reduce){#story::after,.st-grain{animation:none}}
 
+/* title link row: never overlap — 3 + 2 on phones, one clean row on wide screens */
+.title-links{display:flex!important;flex-wrap:wrap;justify-content:center;gap:8px;width:min(420px,100%)!important;max-width:none}
+.title-links button{flex:0 0 calc((100% - 16px)/3);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:11px 4px;letter-spacing:.12em}
+@media (min-width:700px){.title-links{flex-wrap:nowrap;width:auto!important}.title-links button{flex:0 0 auto;padding:10px 18px;letter-spacing:.16em}}
+
 </style>
 </head>
 <body>
@@ -3286,7 +3291,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 48 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 49 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
