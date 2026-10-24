@@ -222,6 +222,7 @@ function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-famil
 let T0=null; document.addEventListener('touchstart',e=>{const t=e.touches[0]; T0=t?[t.clientX,t.clientY]:null},{passive:true});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
   const t=e.touches[0]; if(T0&&t&&Math.hypot(t.clientX-T0[0],t.clientY-T0[1])<12) return;
+  if(e.target.closest&&e.target.closest('input[type=range],.raisesheet')) return;
   const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
   if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
 document.addEventListener('contextmenu',e=>e.preventDefault());
@@ -371,7 +372,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 61 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 62 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -1459,6 +1460,7 @@ function renderRaise(minTo,maxTo,toCall,pot,label){
   const rs=$('raiseSheet');
   if(!RAISE_OPEN){closeRaise(); return}
   if(!(raiseVal>=minTo&&raiseVal<=maxTo)) raiseVal=minTo;
+  const sig=[minTo,maxTo,toCall,pot,label].join('|'); if(rs._sig===sig&&!rs.hidden&&$('rSlider')) return; rs._sig=sig;
   const q=[['Min',minTo],['½ Pot',G.currentBet+Math.round((pot+toCall)*0.5)],['Pot',G.currentBet+pot+toCall],['All in',maxTo]];
   rs.innerHTML=`<div class="rs-head"><span>${label==='Bet'?'Bet':'Raise to'}</span><b id="rsAmt">${money(raiseVal)}</b></div>
     <div class="rs-quick">${q.map(([t,v])=>`<button class="chipbtn" data-qv="${Math.max(minTo,Math.min(maxTo,v))}">${t}</button>`).join('')}</div>
@@ -1466,11 +1468,18 @@ function renderRaise(minTo,maxTo,toCall,pot,label){
     <div class="rs-actions"><button class="btn dark" id="rsCancel">Cancel</button><button class="btn raise" id="rsGo">${label} ${money(raiseVal)}</button></div>`;
   rs.hidden=false; requestAnimationFrame(()=>rs.classList.add('open'));
   const sl=$('rSlider'), go=$('rsGo'), amt=$('rsAmt');
-  const setV=v=>{v=Math.max(minTo,Math.min(maxTo,v)); if(v!==maxTo) v=Math.max(minTo,Math.round(v/10)*10); raiseVal=v; sl.value=v;
+  const setV=v=>{v=Math.max(minTo,Math.min(maxTo,v)); if(v!==maxTo) v=Math.max(minTo,Math.round(v/10)*10); raiseVal=v; sl.value=v; sl.style.setProperty('--p',((v-minTo)/Math.max(1,maxTo-minTo)*100).toFixed(1)+'%');
     amt.textContent=money(v); go.textContent=v===maxTo?`All in ${money(v)}`:`${label} ${money(v)}`;
     rs.querySelectorAll('[data-qv]').forEach(b=>b.classList.toggle('on',+b.dataset.qv===v))};
   setV(raiseVal);
   sl.oninput=()=>setV(+sl.value);
+  // drag anywhere on the rail: the thumb jumps to your finger and follows it, with a click of feel per step
+  const marks=q.slice(1,3).map(x=>Math.max(minTo,Math.min(maxTo,x[1])));
+  const fromX=x=>{const r=sl.getBoundingClientRect(), th=30, f=Math.max(0,Math.min(1,(x-r.left-th/2)/(r.width-th))); return minTo+f*(maxTo-minTo)};
+  const drag=x=>{const before=raiseVal; setV(fromX(x)); if(raiseVal!==before){const hit=marks.some(m=>(before<m&&raiseVal>=m)||(before>m&&raiseVal<=m)); haptic(raiseVal===maxTo||hit?'rigid':'select'); if(raiseVal===maxTo&&before!==maxTo) sfx('chips')}};
+  sl.addEventListener('pointerdown',e=>{e.preventDefault(); try{sl.setPointerCapture(e.pointerId)}catch(_){} sl.classList.add('drag'); drag(e.clientX)});
+  sl.addEventListener('pointermove',e=>{if(sl.hasPointerCapture&&sl.hasPointerCapture(e.pointerId)) drag(e.clientX)});
+  const end=e=>{sl.classList.remove('drag'); try{sl.releasePointerCapture(e.pointerId)}catch(_){}}; sl.addEventListener('pointerup',end); sl.addEventListener('pointercancel',end);
   rs.querySelectorAll('[data-qv]').forEach(b=>b.onclick=()=>{setV(+b.dataset.qv); sfx('chip')});
   $('rsCancel').onclick=()=>{closeRaise(); renderCoach(); if(TUT&&TUT.back) tutStep(TUT.back)};
   go.onclick=()=>{const v=raiseVal; closeRaise(); doAct(0,'raise',v)};
