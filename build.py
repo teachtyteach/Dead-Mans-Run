@@ -28,3 +28,14 @@ open('index.html','w',encoding='utf-8').write(page)
 os.makedirs('dist',exist_ok=True); open('dist/artifact.html','w',encoding='utf-8').write(fragment)
 open('d.js','w',encoding='utf-8').write(js)   # for `node --check d.js`
 print('index.html',len(page),'bytes')
+
+# the iPhone app bundles the same game: copy the page, sounds and icons into ios/DeadMansRun/www
+import shutil, os
+www=os.path.join(os.path.dirname(os.path.abspath(__file__)),'ios','DeadMansRun','www')
+if os.path.isdir(os.path.dirname(www)):
+    shutil.rmtree(www,ignore_errors=True); os.makedirs(www)
+    base=os.path.dirname(os.path.abspath(__file__))
+    shutil.copy(os.path.join(base,'index.html'),www)
+    shutil.copytree(os.path.join(base,'audio'),os.path.join(www,'audio'))
+    shutil.copytree(os.path.join(base,'icons'),os.path.join(www,'icons'))
+    shutil.copy(os.path.join(base,'manifest.webmanifest'),www)

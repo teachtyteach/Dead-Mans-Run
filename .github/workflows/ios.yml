@@ -1,0 +1,16 @@
+name: iPhone app build check
+on:
+  push:
+    paths: ['ios/**', '.github/workflows/ios.yml']
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build for the iPhone simulator (no signing needed)
+        run: |
+          cd ios
+          xcodebuild -project DeadMansRun.xcodeproj -scheme DeadMansRun -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
