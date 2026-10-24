@@ -2862,7 +2862,7 @@ const SALOON_MIX={1:3600,2:2800,3:2200,4:3200,5:2600,6:4500,7:3000,8:1900};
 function ac(){
   if(!SND.ctx){
     const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
-    try{if(navigator.audioSession) navigator.audioSession.type='playback'}catch(e){}  // play even with the iPhone ringer switch on silent
+    try{if(navigator.audioSession) navigator.audioSession.type='ambient'}catch(e){}  // game audio: no Now Playing widget, mixes with your music, follows the silent switch
     try{SND.ctx=new C()}catch(e){return null}
     const c=SND.ctx;
     c.onstatechange=()=>{const h=document.getElementById('tapSound'); if(h) h.hidden=c.state==='running'};
@@ -3317,7 +3317,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 51 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 52 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{

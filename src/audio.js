@@ -8,7 +8,7 @@ const SALOON_MIX={1:3600,2:2800,3:2200,4:3200,5:2600,6:4500,7:3000,8:1900};
 function ac(){
   if(!SND.ctx){
     const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
-    try{if(navigator.audioSession) navigator.audioSession.type='playback'}catch(e){}  // play even with the iPhone ringer switch on silent
+    try{if(navigator.audioSession) navigator.audioSession.type='ambient'}catch(e){}  // game audio: no Now Playing widget, mixes with your music, follows the silent switch
     try{SND.ctx=new C()}catch(e){return null}
     const c=SND.ctx;
     c.onstatechange=()=>{const h=document.getElementById('tapSound'); if(h) h.hidden=c.state==='running'};
