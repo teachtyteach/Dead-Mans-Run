@@ -160,9 +160,9 @@ function trailMap(level,victory){
 function hingeW(){try{const p=document.createElement('div');p.style.cssText='position:fixed;left:env(viewport-segment-right 0 0,-1px);visibility:hidden';document.body.appendChild(p);const r=parseFloat(getComputedStyle(p).left);p.style.left='env(viewport-segment-left 1 0,-1px)';const l=parseFloat(getComputedStyle(p).left);p.remove();return r>0&&l>=r?{w:l-r}:null}catch(e){return null}}
 function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return true;
   const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
-  return touch&&r>=.72&&r<=1.38&&m>=540&&m<900}
+  return touch&&r>=.68&&r<=1.47&&m>=540&&m<900}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth); d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
 addEventListener('resize',()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles()},150)});
 setTimeout(applyDuo,0);
 function renderToggles(){
