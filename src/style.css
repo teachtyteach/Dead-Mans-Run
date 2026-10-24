@@ -1537,3 +1537,8 @@ html.duo-v #poster #posterBot .ptwist,html.duo-v #poster #posterBot .pline{displ
 html.duo-v #poster #posterBot .ptwist:empty,html.duo-v #poster #posterBot .pline:empty{display:none}
 #posterBot .pline{font-size:clamp(13px,2svh,15px);color:#bfae8a;font-style:italic}
 #posterBot{background:linear-gradient(rgba(8,5,3,.9),rgba(8,5,3,.96));border-top:1px solid rgba(201,162,78,.18)}
+
+/* keep everything optically centred: equal side margins even when the camera sits on one side */
+:root{--side:max(14px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))}
+body{padding-left:var(--side);padding-right:var(--side)}
+.modal,#story,.lv{padding-left:var(--side)!important;padding-right:var(--side)!important}
