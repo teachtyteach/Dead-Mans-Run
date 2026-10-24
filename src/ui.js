@@ -163,9 +163,11 @@ function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return tru
   const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
   return touch&&r>=.68&&r<=1.47&&m>=540&&m<780}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
   const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
-addEventListener('resize',()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles()},150)});
+const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles(); setTimeout(applyDuo,450)},120)};
+addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
+if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{

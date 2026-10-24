@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0805">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}@media (display-mode:standalone),(display-mode:fullscreen){:root{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}</style>
-<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width),h=Math.max(sh,innerHeight),ch=d.clientHeight;window.__dims=[sh,innerHeight,ch,(visualViewport||{}).height|0];if(h>ch+2){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',f);addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
+<script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width),sw=p?Math.min(screen.height,screen.width):Math.max(screen.height,screen.width),h=Math.max(sh,innerHeight),ch=d.clientHeight;if(Math.abs(sw-innerWidth)>24||h-innerHeight>140)h=innerHeight;window.__dims=[sh,innerHeight,ch,(visualViewport||{}).height|0];if(h>ch+2){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',function(){f();setTimeout(f,300);setTimeout(f,900)});addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta charset="utf-8">
@@ -3000,9 +3000,11 @@ function duoAuto(){const W=innerWidth,H=innerHeight,h=hingeW(); if(h) return tru
   const touch=matchMedia('(pointer:coarse)').matches, r=W/H, m=Math.min(W,H);
   return touch&&r>=.68&&r<=1.47&&m>=540&&m<780}
 function duoOn(){const m=meta.duo||'auto'; return m==='on'||(m==='auto'&&duoAuto())}
-function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(); d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
+function applyDuo(){const on=duoOn(), d=document.documentElement, h=hingeW(), was=d.className; d.classList.toggle('duo',on); d.classList.toggle('duo-v',on&&innerHeight>innerWidth);
   const rs=$('raiseSheet'), con=document.querySelector('#sGame .console'); if(rs&&con){const want=d.classList.contains('duo-v')?con:$('table'); if(rs.parentElement!==want) want.appendChild(rs)} d.style.setProperty('--hinge',((h?h.w:0)+28)+'px'); if(typeof render==='function'&&G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
-addEventListener('resize',()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles()},150)});
+const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{applyDuo(); renderToggles(); setTimeout(applyDuo,450)},120)};
+addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
+if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
