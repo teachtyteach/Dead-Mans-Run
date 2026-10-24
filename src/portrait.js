@@ -466,5 +466,6 @@ function bossPortrait(bd,frame){return portrait(bd.key,Object.assign({boss:true}
 function portraitFor(p,frame){
   if(p.isHuman) return portrait('You the rider',HUMAN_LOOK,frame);
   if(p.bossDef) return bossPortrait(p.bossDef,frame);
+  if(p.nem) return portrait(p.name,Object.assign({fem:p.fem,tier:p.tier},OUTLAW_LOOK[p.name]?{mask:false,badge:false}:{},OUTLAW_LOOK[p.name]||{},{scar:p.nemRank>=4?'deep':p.nemRank>=2?'cheek':'brow'}),frame);
   return portrait(p.name,Object.assign({fem:p.fem,tier:p.tier},OUTLAW_LOOK[p.name]?{mask:false,badge:false}:{},OUTLAW_LOOK[p.name]||{},p.tier==='v'&&!(OUTLAW_LOOK[p.name]||{}).scar?{scar:'brow'}:{}),frame);
 }

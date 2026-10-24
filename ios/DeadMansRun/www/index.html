@@ -1633,6 +1633,52 @@ html[data-saloon="8"] #vista{--sky1:#070206;--sky2:#24070f;--sky3:#4e101a;--orb:
 .vs-floor{background:linear-gradient(transparent 62%,rgba(0,0,0,.35) 80%,rgba(0,0,0,.7))!important}
 html.duo-v #sGame .hud{position:relative}
 
+/* ================= nemesis ================= */
+.seat.nem .plate{box-shadow:0 0 0 1.5px #b3261e,0 0 18px rgba(200,40,30,.45),0 6px 14px rgba(0,0,0,.6)!important;animation:nemPulse 2.4s ease-in-out infinite}
+@keyframes nemPulse{50%{box-shadow:0 0 0 1.5px #d8341f,0 0 26px rgba(220,50,30,.65),0 6px 14px rgba(0,0,0,.6)}}
+.seat.nem .medal{box-shadow:0 0 0 2px #b3261e!important}
+.tier.nemtag{color:#ffb3a6!important;background:rgba(150,20,15,.55)!important;border-color:rgba(230,80,60,.6)!important}
+.seat-say{position:absolute;z-index:8;translate:-50% -130%;max-width:min(260px,42cqw);padding:7px 12px;border-radius:12px;background:rgba(20,8,6,.92);border:1px solid rgba(216,52,31,.6);
+  color:#f6e2d0;font-family:var(--f-serif);font-style:italic;font-size:clamp(12.5px,1.9cqw,15px);line-height:1.3;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.6);pointer-events:none;animation:saySay 3.6s ease both}
+.seat-say::after{content:"";position:absolute;left:50%;bottom:-6px;translate:-50% 0;border:6px solid transparent;border-bottom:0;border-top-color:rgba(216,52,31,.6)}
+@keyframes saySay{0%{opacity:0;translate:-50% -110%}10%,85%{opacity:1;translate:-50% -130%}100%{opacity:0;translate:-50% -140%}}
+.nem-modal{z-index:60;background:radial-gradient(ellipse at center,rgba(60,6,4,.82),rgba(6,2,2,.97))}
+.nem-sheet{position:relative;width:min(420px,92vw);display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px 22px 20px;text-align:center;border-radius:16px;
+  background:var(--grain),linear-gradient(#2a0f0b,#150806);border:1px solid rgba(216,52,31,.5);box-shadow:0 0 0 4px rgba(0,0,0,.6),0 0 60px rgba(200,30,20,.35),0 30px 60px rgba(0,0,0,.7);animation:nemIn .7s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes nemIn{from{opacity:0;scale:1.25;filter:blur(4px)}}
+.nem-k{font-family:var(--f-label);font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:#ff7a62}
+.nem-face{width:clamp(96px,22vmin,140px);aspect-ratio:1;border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px #b3261e,0 0 0 6px #140504,0 0 40px rgba(220,40,30,.5);animation:nemShake .5s .5s both}
+.nem-face svg{width:100%;height:100%;display:block}
+@keyframes nemShake{20%{translate:-4px 0}40%{translate:4px 0}60%{translate:-2px 0}80%{translate:2px 0}}
+.nem-name{font-family:var(--f-logo);font-size:clamp(24px,5.4vmin,32px);color:#f3d8b8;line-height:1.1;text-wrap:balance}
+.nem-rank{font-family:var(--f-label);letter-spacing:.2em;text-transform:uppercase;font-size:13px;color:#e8a24a;display:flex;gap:6px;align-items:center}
+.nem-rank i{font-style:normal;color:#d8341f}
+.nem-q{margin:4px 0;font-family:var(--f-serif);font-style:italic;font-size:clamp(17px,3.6vmin,21px);color:#f6e2d0}
+.nem-facts{display:flex;gap:8px;width:100%;justify-content:center}
+.nem-facts span{flex:1;display:flex;flex-direction:column;gap:2px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.35);border:1px solid rgba(216,52,31,.25);font-family:var(--f-label);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#c9a07a}
+.nem-facts b{font-family:var(--f-num,var(--f-serif));font-size:17px;letter-spacing:0;color:#f3d8b8;text-transform:none}
+.nem-note{margin:2px 0 6px;font-size:13.5px;color:#d8b8a0}
+.nem-sheet .btn{width:100%}
+.lv-nem{display:flex;align-items:center;gap:12px;margin-top:18px;padding:10px 16px;border-radius:14px;background:rgba(40,6,4,.75);border:1px solid rgba(216,52,31,.5);max-width:min(460px,90vw);text-align:left;color:#f3d8b8;font-family:var(--f-serif);font-size:15px;opacity:0;animation:fadeIn .8s 1.6s forwards}
+@keyframes lvNem{to{opacity:1}}
+.lv-nem{animation:lvNem .8s 1.6s forwards}
+.lv-nem>svg{width:56px;height:56px;flex:none;border-radius:50%;box-shadow:0 0 0 2px #b3261e}
+.lv-nem em{display:block;font-style:normal;font-family:var(--f-label);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#ff8a72;margin-top:4px}
+.hunt-line{display:flex;align-items:center;gap:10px;margin:2px auto 0;padding:6px 14px 6px 6px;border-radius:999px;background:rgba(40,8,6,.6);border:1px solid rgba(216,52,31,.4);color:#e9cdb8;font-family:var(--f-serif);font-size:14px;cursor:pointer;animation:nemPulse2 3s ease-in-out infinite}
+.hunt-line[hidden]{display:none}
+.hunt-line .medal{width:32px;height:32px;flex:none}
+.hunt-line b{color:#ffd0b8}
+.hunt-line em{margin-left:8px;font-style:normal;font-family:var(--f-label);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#ff7a62}
+@keyframes nemPulse2{50%{box-shadow:0 0 18px rgba(216,52,31,.35)}}
+.tp-nem{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;background:rgba(40,8,6,.5);border:1px solid rgba(216,52,31,.35)}
+.tp-nem .medal{width:54px;height:54px;flex:none}
+.tp-nem b{display:block;color:#ffd0b8;font-family:var(--f-serif);font-size:17px}
+.tp-nem em{font-style:normal;font-size:12.5px;color:#d8a890}
+.tp-graves{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:8px}
+.tp-grave{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;background:rgba(0,0,0,.3);text-align:center;filter:grayscale(.8)}
+.tp-grave .medal{width:40px;height:40px}
+.tp-grave b{font-size:12px;color:#e8d4a2}.tp-grave em{font-style:normal;font-size:11px;color:#a89070}
+
 </style>
 </head>
 <body>
@@ -2141,6 +2187,33 @@ function pots(){
   return out;
 }
 
+/* ================= the nemesis: the outlaw who killed you remembers, rises, and comes back ================= */
+const NEM_RANKS=['','Rival','Gunslinger','Desperado','Legend','Reaper'];
+const NEM_EPI=['Snake-Eyes','Two-Guns','Coldwater','Gravedigger','Blackjack','Dead-Eye','Smiling','Iron-Hand','Whisper','Sidewinder','Hangman','Rattler','Ghost','Six-Bits','Lucky'];
+const NEM_LINES={
+  back:["Thought you'd stay buried.","I kept your seat warm.","Same table. Same ending.","They told me you were dead. I was there.","Pull up a chair. Last one you'll need."],
+  win:["Like old times.","You never learn.","I remember how you play.","Still bleeding the same way."],
+  lose:["Lucky. Won't last.","Enjoy it.","That's one.","I've been shot worse."],
+  kill:["Twice now.","Stay down this time.","Say hello to the undertaker.","I'll be here when you crawl back."],
+  die:["Took you long enough...","Tell them... it was a fair game.","Well. Hell."]};
+function nemName(n){return n?`${n.name.split(' ')[0]} "${n.epi}" ${n.name.split(' ').slice(1).join(' ')}`:''}
+function nemTitle(n){return NEM_RANKS[Math.min(5,n.rank)]}
+function nemPlayer(n){
+  const tier=n.rank>=4?'v':n.rank>=2&&n.tier==='d'?'g':n.tier, T=TIERS[tier];
+  return {name:n.name,fem:!!n.fem,tier,style:n.rank>=3?'sharp':n.style,chips:Math.round(T.chips*(1+.2*(n.rank-1))/10)*10,isHuman:false,tilt:0,nem:true,nemRank:n.rank};
+}
+// you went down: the outlaw who took the last pot becomes (or grows as) your nemesis
+function nemesisOnLoss(res){
+  if(typeof DAILY!=='undefined'&&DAILY) return null;
+  const top=(res.winners||[]).filter(w=>!G.players[w.i].isHuman).sort((a,b)=>b.amt-a.amt)[0]; if(!top) return null;
+  const k=G.players[top.i]; if(k.bossDef) return null;
+  const n=meta.nemesis;
+  if(n&&n.name===k.name){n.rank=Math.min(5,n.rank+1); n.kills++; n.last=TOWNS[R.level-1]; n.lastRun=meta.runs; return {who:n,promoted:true}}
+  if(n) return null;
+  meta.nemesis={name:k.name,fem:!!k.fem,tier:k.tier,style:k.style,rank:1,kills:1,met:0,epi:NEM_EPI[Math.floor(Math.random()*NEM_EPI.length)],first:TOWNS[R.level-1],last:TOWNS[R.level-1],lastRun:meta.runs};
+  return {who:meta.nemesis,born:true};
+}
+
 /* ================= table setup ================= */
 function setupTable(){
   const L=R.level, bd=BOSSES[L-1];
@@ -2153,11 +2226,15 @@ function setupTable(){
   let start=START+(has('deep')?(lvl('deep')>=2?600:300):0)+((R.temp&&R.temp.chips)||0)+(hasDeed('stake')?200:0);
   if(G.curse==='short') start=Math.round(start*0.67/10)*10;
   G.start=start; G.tempWind=!!(R.temp&&R.temp.wind); R.temp=null;
-  const used=new Set(), pool=shuffle(NAMES.slice());
+  const NEM=meta.nemesis, used=new Set(NEM?[NEM.name]:[]), pool=shuffle(NAMES.slice());
   const minors=shuffle(lineup).map(t=>{
     const [name,fem]=pool.find(([nm])=>!used.has(nm)); used.add(name);
     const T=TIERS[t]; return {name,fem:!!fem,tier:t,style:T.styles[Math.floor(Math.random()*T.styles.length)],chips:T.chips,isHuman:false,tilt:0};
   });
+  // the nemesis rides in: from the second saloon on, likelier the higher they've risen, once a run
+  G.nemIntro=null;
+  if(NEM&&R&&!R.nemMet&&L>=2&&!(typeof DAILY!=='undefined'&&DAILY)&&!R.tutorial&&Math.random()<.3+.1*NEM.rank){
+    R.nemMet=true; NEM.met=(NEM.met||0)+1; minors[0]=nemPlayer(NEM); G.nemIntro=NEM; log(`${nemName(NEM)} is at the table. ${NEM.fem?'She':'He'} remembers you.`)}
   const bChips=Math.round(((bd.key==='banker'&&!has('silver'))?3000:1500+100*(L-1))*(heat>=1?1.25:1)/10)*10;
   const bp={name:bd.name,bossDef:bd,boss:bd.key,style:bd.style,chips:bChips,isHuman:false,fem:!!bd.fem,tilt:0};
   minors.splice(Math.floor(minors.length/2),0,bp);
@@ -2166,14 +2243,14 @@ function setupTable(){
   G.bossStart=bChips;
   G.dealer=Math.floor(Math.random()*G.players.length);
   G.tableHands=0; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
-  G.outcome=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
+  G.outcome=null; G.nemEv=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
   G.challenge=CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)]; G.challengeDone=false;
   G.bounty=Math.round(bountyFor(L)*goldMul());
   log(`You ride into ${TOWNS[L-1]}. ${bd.name} is waiting.`);
   if(G.curse) log(`Cursed: ${CURSES[G.curse].name}.`);
 }
 function serializeTable(){
-  return {players:G.players.map(p=>({name:p.name,fem:p.fem,tier:p.tier,style:p.style,chips:p.chips,out:p.out,tilt:p.tilt||0,boss:p.boss||null,isHuman:!!p.isHuman})),
+  return {players:G.players.map(p=>({name:p.name,fem:p.fem,tier:p.tier,nem:!!p.nem,nemRank:p.nemRank||0,style:p.style,chips:p.chips,out:p.out,tilt:p.tilt||0,boss:p.boss||null,isHuman:!!p.isHuman})),
     dealer:G.dealer,bb:G.bb,riseEvery:G.riseEvery,tableHands:G.tableHands,start:G.start,bossStart:G.bossStart,curse:G.curse,lineup:G.lineup,
     challenge:G.challenge&&G.challenge.key,challengeDone:G.challengeDone,windUsed:G.windUsed,vesperUsed:G.vesperUsed,horseUsed:G.horseUsed,aceUsed:G.aceUsed,
     streak:G.streak,koGold:G.koGold,bounty:G.bounty,tempWind:G.tempWind,log:G.log.slice(0,12)};
@@ -2339,6 +2416,12 @@ function finishHand(res){
       else {
         const g=Math.round(TIERS[p.tier].gold*goldMul());
         if(me.winner){R.gold+=g; G.koGold+=g; log(`${p.name} is tapped out. +${g} gold.`)} else log(`${p.name} is tapped out.`);
+        if(p.nem&&meta.nemesis&&meta.nemesis.name===p.name){
+          if(me.winner){const n=meta.nemesis, ng=Math.round(25*n.rank*goldMul()); R.gold+=ng; G.koGold+=ng;
+            (meta.graves=meta.graves||[]).unshift({name:n.name,epi:n.epi,rank:n.rank,kills:n.kills,town:TOWNS[R.level-1],fem:n.fem,tier:n.tier}); meta.graves=meta.graves.slice(0,12); meta.nemesis=null;
+            log(`Your nemesis ${nemName(n)} is dead. +${ng} gold.`); ev.nemSlain={i,name:n.name,gold:ng,line:pickLine(NEM_LINES.die)}}
+          else {log(`${p.name} crawls out the back door. This isn't over.`); ev.nemFled=i}
+        }
       }
     }
   });
@@ -2362,11 +2445,16 @@ function finishHand(res){
   G.players.forEach(p=>{
     if(p.isHuman||p.bossDef||p.out) return;
     if(p.tilt>0) p.tilt--;
-    if(p.inHand&&!p.winner&&p.total>=Math.max(G.bb*4,p.startChips*0.35)){p.tilt=3; log(`${p.name} is on tilt.`)}
+    if(p.inHand&&!p.winner&&!(p.nem&&p.nemRank>=2)&&p.total>=Math.max(G.bb*4,p.startChips*0.35)){p.tilt=3; log(`${p.name} is on tilt.`)}
   });
   if(bp&&!bp.out&&bp.inHand&&!ev.bossLine){
     if(bp.winner&&res.pot>=G.bb*4&&Math.random()<0.6) ev.bossLine={i:G.players.indexOf(bp),text:pickLine(bp.bossDef.lines.win)};
     else if(!bp.winner&&bp.total>=G.bb*4&&Math.random()<0.6) ev.bossLine={i:G.players.indexOf(bp),text:pickLine(bp.bossDef.lines.lose)};
+  }
+  const np=G.players.find(p=>p.nem&&!p.out&&p.inHand);
+  if(np&&!ev.bossLine&&me.inHand&&Math.random()<.55){
+    if(np.winner&&!me.winner&&res.pot>=G.bb*3) ev.bossLine={i:G.players.indexOf(np),text:pickLine(NEM_LINES.win),nem:true};
+    else if(me.winner&&!np.winner&&np.total>=G.bb*3) ev.bossLine={i:G.players.indexOf(np),text:pickLine(NEM_LINES.lose),nem:true};
   }
   if(me.inHand){
     const st=meta.stats; st.hands++;
@@ -2383,7 +2471,7 @@ function finishHand(res){
   if(me.chips<=0){
     const winds=(has('wind')?(lvl('wind')>=2?2:1):0)+(G.tempWind?1:0);
     if(G.windUsed<winds){G.windUsed++; me.chips=Math.round(G.start/4/10)*10; log('Second Wind. You claw back to your feet.'); ev.wind=true}
-    else G.outcome='lose';
+    else {G.outcome='lose'; const nk=nemesisOnLoss(res); G.nemEv=nk; if(nk) ev.nemesis=nk}
   }
   if(G.outcome!=='lose'&&bp&&bp.out) G.outcome='win';
   G.lastHandLog=G.handLog.slice();
@@ -2916,6 +3004,7 @@ function bossPortrait(bd,frame){return portrait(bd.key,Object.assign({boss:true}
 function portraitFor(p,frame){
   if(p.isHuman) return portrait('You the rider',HUMAN_LOOK,frame);
   if(p.bossDef) return bossPortrait(p.bossDef,frame);
+  if(p.nem) return portrait(p.name,Object.assign({fem:p.fem,tier:p.tier},OUTLAW_LOOK[p.name]?{mask:false,badge:false}:{},OUTLAW_LOOK[p.name]||{},{scar:p.nemRank>=4?'deep':p.nemRank>=2?'cheek':'brow'}),frame);
   return portrait(p.name,Object.assign({fem:p.fem,tier:p.tier},OUTLAW_LOOK[p.name]?{mask:false,badge:false}:{},OUTLAW_LOOK[p.name]||{},p.tier==='v'&&!(OUTLAW_LOOK[p.name]||{}).scar?{scar:'brow'}:{}),frame);
 }
 
@@ -3406,7 +3495,7 @@ function renderTrophies(){
     .concat(BACK_NAMES.map((nm,i)=>{const n=i+1, ok=backUnlocked(n); return `<button class="tp-back${String(cur)===String(n)?' on':''}" data-back="${n}" ${ok?'':'disabled'}><span class="bk-swatch" data-bk="${n}"></span><em>${ok?nm:'Locked'}</em></button>`})).join('');
   const done=ACH.filter(a=>a[2]()).length;
   const ach=ACH.map(([t,d,f])=>{const ok=f(); return `<div class="tp-ach${ok?' got':''}"><i>${ok?'★':'☆'}</i><div><b>${t}</b><span>${d}</span></div></div>`}).join('');
-  $('trophies').innerHTML=`<div class="tp-h">Wanted posters <small>${Object.keys(beaten).length}/8</small></div><div class="tp-posters">${posters}</div>
+  $('trophies').innerHTML=nemPanel()+`<div class="tp-h">Wanted posters <small>${Object.keys(beaten).length}/8</small></div><div class="tp-posters">${posters}</div>
     <div class="tp-h">Card backs <small>beat a saloon's boss to win its deck</small></div><div class="tp-backs">${backs}</div>
     <div class="tp-h">Achievements <small>${done}/${ACH.length}</small></div><div class="tp-achs">${ach}</div>`;
   $('trophies').querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(b.disabled) return; meta.back=b.dataset.back; saveMeta(); setScene(SND.scene||'sTitle'); sfx('card'); renderTrophies()});
@@ -3460,7 +3549,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 54 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 55 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
@@ -3511,6 +3600,8 @@ function renderTitle(){
   $('dailyBtn').onclick=()=>{ac(); startDaily()};
   const mh=maxHeat();
   $('heatPick').hidden=mh<1;
+  { let h=$('huntLine'); if(!h){h=document.createElement('button'); h.id='huntLine'; h.className='hunt-line'; $('statLine').after(h); h.onclick=()=>{ac(); openMore('trophies')}}
+    const n=meta.nemesis; h.hidden=!n; if(n) h.innerHTML=`<span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><span>Hunted by <b>${nemName(n)}</b><em>${nemTitle(n)}</em></span>`; }
   $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
   $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
@@ -3875,7 +3966,7 @@ function startTable(){
   posterFor(bd,'intro');
   $('poster').hidden=false;
   later(()=>sfx('boss'),150); later(()=>sfx('door'),700);
-  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} say(bd.lines.intro); later(newHand,350)};
+  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} const go=()=>{say(bd.lines.intro); later(newHand,350)}; if(G.nemIntro){const n=G.nemIntro; G.nemIntro=null; nemAmbush(n,go)} else go()};
 }
 function resumeTable(){
   TOKEN++;
@@ -3968,7 +4059,10 @@ function handEnd(res){
         later(()=>{fly(ghost,bEl,10,700,chipCls(rv.amt)); sfx('chips',150); setTimeout(()=>ghost.remove(),1200)},500)}
       say(ev.bossLine.text);
     },1300);
-  } else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);
+  } else if(ev.bossLine&&ev.bossLine.nem) later(()=>seatSay(ev.bossLine.i,ev.bossLine.text),ev.kos.length?900:500);
+  else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);
+  if(ev.nemSlain){const c=where[ev.nemSlain.i]; later(()=>{if(c){stampAt(c[0],c[1]-6,'Nemesis Slain','#f4cb5c',30); seatSay(ev.nemSlain.i,ev.nemSlain.line,c)} sfx('gun'); flash(true); shake(true); haptic('heavy')},1100)}
+  if(ev.nemFled!=null){const c=where[ev.nemFled]; later(()=>{if(c) stampAt(c[0],c[1]-6,'Fled','#c9a24e',24)},1200)}
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
@@ -4137,7 +4231,10 @@ function tableWon(){
 function loseRun(){
   const sg=$('sGame'); hush(true); heartbeat(false); sfx('toll',60);
   let v=$('lossVeil'); if(!v){v=document.createElement('div'); v.id='lossVeil'; v.className='lv'; document.body.appendChild(v)}
-  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>`;
+  const ne=G.nemEv, nn=ne&&ne.who;
+  const nemLine=!nn?'':ne.born?`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:1})}<span><b>${nn.name}</b> took the last pot. ${nn.fem?'She':'He'}'ll remember you.<em>A nemesis is born: ${nemName(nn)}</em></span></div>`
+    :`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:nn.rank})}<span><b>${nemName(nn)}</b> got you again.<em>Rises to ${nemTitle(nn)} · ${nn.kills} kills</em></span></div>`;
+  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>${nemLine}`;
   v.classList.remove('on','black'); v.hidden=false;
   const fitStamp=()=>{const st=v.querySelector('.lv-stamp'); if(!st) return; st.style.fontSize=''; const mw=Math.min(innerWidth,v.clientWidth||innerWidth)*.84; if(st.offsetWidth>mw) st.style.fontSize=(parseFloat(getComputedStyle(st).fontSize)*mw/st.offsetWidth).toFixed(1)+'px'};
   fitStamp(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitStamp);
@@ -4145,7 +4242,7 @@ function loseRun(){
   sg.classList.add('lost'); R.phase='over'; sset(RUN_KEY,null);
   let gone=false; const go=()=>{if(gone) return; gone=true; leaveLost()};
   setTimeout(()=>{v.onclick=go},1800);
-  later(go,5200);
+  later(go,nn?7200:5200);
 }
 function leaveLost(){
   const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
@@ -4239,6 +4336,30 @@ function burst(el,count){
       {duration:800+Math.random()*600,easing:'cubic-bezier(.15,.7,.4,1)',fill:'forwards'});
     a.onfinish=()=>s.remove();
   }
+}
+/* ---- nemesis presentation ---- */
+function seatSay(i,text,c){
+  const fx=$('fx'); if(!fx||!text) return; const pos=c||centerOfSeat(i); if(!pos) return;
+  const d=document.createElement('div'); d.className='seat-say'; d.textContent=`“${text}”`; d.style.left=Math.max(14,Math.min(86,pos[0]))+'%'; d.style.top=pos[1]+'%'; fx.appendChild(d); setTimeout(()=>d.remove(),3600)}
+function nemAmbush(n,then){
+  let v=$('nemCard'); if(!v){v=document.createElement('div'); v.id='nemCard'; v.className='modal nem-modal'; document.body.appendChild(v)}
+  const lines=NEM_LINES.back, said=lines[Math.min(lines.length-1,(n.met||1)-1+Math.floor(Math.random()*2))];
+  v.innerHTML=`<div class="nem-sheet" role="dialog" aria-label="Nemesis"><div class="nem-k">Your nemesis is here</div>
+    <div class="nem-face">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</div>
+    <div class="nem-name">${nemName(n)}</div><div class="nem-rank">${nemTitle(n)}${'<i>★</i>'.repeat(n.rank)}</div>
+    <p class="nem-q">“${said}”</p>
+    <div class="nem-facts"><span>Kills<b>${n.kills}×</b></span><span>Last seen<b>${n.last}</b></span><span>Bounty<b>${25*n.rank}g</b></span></div>
+    <p class="nem-note">${n.rank>=4?'Plays like a veteran. Never tilts. Deep pockets.':n.rank>=3?'Sharp now. Never tilts.':n.rank>=2?'Tougher than last time. Never tilts.':'Take ' + (n.fem?'her':'him') + ' out yourself to collect.'}</p>
+    <button class="btn raise big" id="nemGo">Settle it</button></div>`;
+  v.hidden=false; sfx('boss'); haptic('heavy'); setTimeout(()=>sfx('stamp'),500);
+  $('nemGo').onclick=()=>{ac(); v.hidden=true; sfx('card'); then&&then()};
+}
+function nemPanel(){
+  const n=meta.nemesis, gv=meta.graves||[];
+  const cur=n?`<div class="tp-nem"><span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><div><b>${nemName(n)}</b><em>${nemTitle(n)} · took you down ${n.kills}× · first at ${n.first}</em></div></div>`
+    :`<p class="hint" style="margin:4px 0 0">Nobody's hunting you. Yet. Whoever takes your last chip will remember.</p>`;
+  const graves=gv.length?`<div class="tp-graves">${gv.map(g=>`<div class="tp-grave"><span class="medal">${portraitFor({name:g.name,fem:g.fem,tier:g.tier,nem:true,nemRank:g.rank})}</span><b>${g.name.split(' ')[0]} "${g.epi}"</b><em>Buried in ${g.town}</em></div>`).join('')}</div>`:'';
+  return `<div class="tp-h">Nemesis <small>${gv.length} buried</small></div>${cur}${graves}`;
 }
 function stampAt(xPct,yPct,text,color,size){
   const s=document.createElement('div'); s.className='stampfx'; s.textContent=text;
@@ -4380,13 +4501,13 @@ function render(){
       if(p.peek===k) return cardHTML(c,true,'peek','h'+i,anim);
       return cardHTML(c,false,has('marked')?'marked':'','h'+i,anim);
     }).join('');
-    const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
+    const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.nem?'nem':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=tilted?'On tilt':'';
+    const tier=tilted?'On tilt':p.nem?'Nemesis':'';
     const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
-          <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}">${tier}</span>`:''}</div>
+          <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}${p.nem&&!tilted?' nemtag':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
         ${G.dealer===i&&G.street!=='idle'?'<div class="dealer" title="Dealer">D</div>':''}
         ${p.bossDef?`<div class="bossmeter"><i style="width:${Math.max(0,Math.min(100,p.chips/G.bossStart*100))}%"></i></div>`:''}
@@ -4398,7 +4519,7 @@ function render(){
     const cls2=me0?cls+' duo-me':cls; if(m.el.className!==cls2) m.el.className=cls2;
     if(me0){m.el.style.left=''; m.el.style.top=''} else {m.el.style.left=x+'%'; m.el.style.top=y+'%'}
     const cq=quiet(cards); if(m.cards!==cq){m.cards=cq; m.cardsEl.innerHTML=cards}
-    const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier; if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
+    const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier+':'+(p.nemRank||0); if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
     const rq=rest.replace(/ style="animation-delay:[^"]*"/g,''); if(m.rest!==rq){m.rest=rq; m.restEl.innerHTML=rest}
     if(p.bet>0){
       let bx=x+(50-x)*0.5, by=y+(48-y)*0.5;

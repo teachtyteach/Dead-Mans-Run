@@ -263,7 +263,7 @@ function renderTrophies(){
     .concat(BACK_NAMES.map((nm,i)=>{const n=i+1, ok=backUnlocked(n); return `<button class="tp-back${String(cur)===String(n)?' on':''}" data-back="${n}" ${ok?'':'disabled'}><span class="bk-swatch" data-bk="${n}"></span><em>${ok?nm:'Locked'}</em></button>`})).join('');
   const done=ACH.filter(a=>a[2]()).length;
   const ach=ACH.map(([t,d,f])=>{const ok=f(); return `<div class="tp-ach${ok?' got':''}"><i>${ok?'★':'☆'}</i><div><b>${t}</b><span>${d}</span></div></div>`}).join('');
-  $('trophies').innerHTML=`<div class="tp-h">Wanted posters <small>${Object.keys(beaten).length}/8</small></div><div class="tp-posters">${posters}</div>
+  $('trophies').innerHTML=nemPanel()+`<div class="tp-h">Wanted posters <small>${Object.keys(beaten).length}/8</small></div><div class="tp-posters">${posters}</div>
     <div class="tp-h">Card backs <small>beat a saloon's boss to win its deck</small></div><div class="tp-backs">${backs}</div>
     <div class="tp-h">Achievements <small>${done}/${ACH.length}</small></div><div class="tp-achs">${ach}</div>`;
   $('trophies').querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>{if(b.disabled) return; meta.back=b.dataset.back; saveMeta(); setScene(SND.scene||'sTitle'); sfx('card'); renderTrophies()});
@@ -317,7 +317,7 @@ if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
 function renderToggles(){
   document.querySelectorAll('.audio-toggles').forEach(el=>{
-    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 54 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
+    el.innerHTML=`<button class="btn small" data-audio="sound" aria-pressed="${meta.sound}">Sound ${meta.sound?'on':'off'}</button><button class="btn small" data-audio="music" aria-pressed="${meta.music}">Music ${meta.music?'on':'off'}</button><button class="btn small" data-audio="speed" aria-pressed="${meta.speed==='fast'}">Speed: ${meta.speed==='fast'?'Fast':'Normal'}</button><button class="btn small" data-audio="haptics" aria-pressed="${meta.haptics!==false}">Haptics ${meta.haptics!==false?'on':'off'}</button><button class="btn small" data-audio="duo" aria-pressed="${duoOn()}">iPhone Duo: ${({auto:'Auto',on:'On',off:'Off'})[meta.duo||'auto']}${(meta.duo||'auto')==='auto'?(duoOn()?' (open)':' (not open)'):''}</button><span class="hint" style="width:100%">Version 55 · Screen ${screen.width}×${screen.height} · window ${innerWidth}×${innerHeight}</span>`;
   });
 }
 document.addEventListener('click',e=>{
@@ -368,6 +368,8 @@ function renderTitle(){
   $('dailyBtn').onclick=()=>{ac(); startDaily()};
   const mh=maxHeat();
   $('heatPick').hidden=mh<1;
+  { let h=$('huntLine'); if(!h){h=document.createElement('button'); h.id='huntLine'; h.className='hunt-line'; $('statLine').after(h); h.onclick=()=>{ac(); openMore('trophies')}}
+    const n=meta.nemesis; h.hidden=!n; if(n) h.innerHTML=`<span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><span>Hunted by <b>${nemName(n)}</b><em>${nemTitle(n)}</em></span>`; }
   $('statLine').innerHTML=meta.runs?`Best <b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b> · Runs <b>${meta.runs}</b> · Wins <b>${meta.wins}</b>`:'';
   $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
   $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
@@ -732,7 +734,7 @@ function startTable(){
   posterFor(bd,'intro');
   $('poster').hidden=false;
   later(()=>sfx('boss'),150); later(()=>sfx('door'),700);
-  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} say(bd.lines.intro); later(newHand,350)};
+  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} const go=()=>{say(bd.lines.intro); later(newHand,350)}; if(G.nemIntro){const n=G.nemIntro; G.nemIntro=null; nemAmbush(n,go)} else go()};
 }
 function resumeTable(){
   TOKEN++;
@@ -825,7 +827,10 @@ function handEnd(res){
         later(()=>{fly(ghost,bEl,10,700,chipCls(rv.amt)); sfx('chips',150); setTimeout(()=>ghost.remove(),1200)},500)}
       say(ev.bossLine.text);
     },1300);
-  } else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);
+  } else if(ev.bossLine&&ev.bossLine.nem) later(()=>seatSay(ev.bossLine.i,ev.bossLine.text),ev.kos.length?900:500);
+  else if(ev.bossLine) later(()=>say(ev.bossLine.text),ev.kos.length?900:500);
+  if(ev.nemSlain){const c=where[ev.nemSlain.i]; later(()=>{if(c){stampAt(c[0],c[1]-6,'Nemesis Slain','#f4cb5c',30); seatSay(ev.nemSlain.i,ev.nemSlain.line,c)} sfx('gun'); flash(true); shake(true); haptic('heavy')},1100)}
+  if(ev.nemFled!=null){const c=where[ev.nemFled]; later(()=>{if(c) stampAt(c[0],c[1]-6,'Fled','#c9a24e',24)},1200)}
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
@@ -994,7 +999,10 @@ function tableWon(){
 function loseRun(){
   const sg=$('sGame'); hush(true); heartbeat(false); sfx('toll',60);
   let v=$('lossVeil'); if(!v){v=document.createElement('div'); v.id='lossVeil'; v.className='lv'; document.body.appendChild(v)}
-  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>`;
+  const ne=G.nemEv, nn=ne&&ne.who;
+  const nemLine=!nn?'':ne.born?`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:1})}<span><b>${nn.name}</b> took the last pot. ${nn.fem?'She':'He'}'ll remember you.<em>A nemesis is born: ${nemName(nn)}</em></span></div>`
+    :`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:nn.rank})}<span><b>${nemName(nn)}</b> got you again.<em>Rises to ${nemTitle(nn)} · ${nn.kills} kills</em></span></div>`;
+  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>${nemLine}`;
   v.classList.remove('on','black'); v.hidden=false;
   const fitStamp=()=>{const st=v.querySelector('.lv-stamp'); if(!st) return; st.style.fontSize=''; const mw=Math.min(innerWidth,v.clientWidth||innerWidth)*.84; if(st.offsetWidth>mw) st.style.fontSize=(parseFloat(getComputedStyle(st).fontSize)*mw/st.offsetWidth).toFixed(1)+'px'};
   fitStamp(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitStamp);
@@ -1002,7 +1010,7 @@ function loseRun(){
   sg.classList.add('lost'); R.phase='over'; sset(RUN_KEY,null);
   let gone=false; const go=()=>{if(gone) return; gone=true; leaveLost()};
   setTimeout(()=>{v.onclick=go},1800);
-  later(go,5200);
+  later(go,nn?7200:5200);
 }
 function leaveLost(){
   const v=$('lossVeil'), fin=()=>{runOver(true); $('sGame').classList.remove('lost'); if(v){v.classList.remove('black','on'); setTimeout(()=>{if(!v.classList.contains('on')) v.hidden=true},900)}};
@@ -1096,6 +1104,30 @@ function burst(el,count){
       {duration:800+Math.random()*600,easing:'cubic-bezier(.15,.7,.4,1)',fill:'forwards'});
     a.onfinish=()=>s.remove();
   }
+}
+/* ---- nemesis presentation ---- */
+function seatSay(i,text,c){
+  const fx=$('fx'); if(!fx||!text) return; const pos=c||centerOfSeat(i); if(!pos) return;
+  const d=document.createElement('div'); d.className='seat-say'; d.textContent=`“${text}”`; d.style.left=Math.max(14,Math.min(86,pos[0]))+'%'; d.style.top=pos[1]+'%'; fx.appendChild(d); setTimeout(()=>d.remove(),3600)}
+function nemAmbush(n,then){
+  let v=$('nemCard'); if(!v){v=document.createElement('div'); v.id='nemCard'; v.className='modal nem-modal'; document.body.appendChild(v)}
+  const lines=NEM_LINES.back, said=lines[Math.min(lines.length-1,(n.met||1)-1+Math.floor(Math.random()*2))];
+  v.innerHTML=`<div class="nem-sheet" role="dialog" aria-label="Nemesis"><div class="nem-k">Your nemesis is here</div>
+    <div class="nem-face">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</div>
+    <div class="nem-name">${nemName(n)}</div><div class="nem-rank">${nemTitle(n)}${'<i>★</i>'.repeat(n.rank)}</div>
+    <p class="nem-q">“${said}”</p>
+    <div class="nem-facts"><span>Kills<b>${n.kills}×</b></span><span>Last seen<b>${n.last}</b></span><span>Bounty<b>${25*n.rank}g</b></span></div>
+    <p class="nem-note">${n.rank>=4?'Plays like a veteran. Never tilts. Deep pockets.':n.rank>=3?'Sharp now. Never tilts.':n.rank>=2?'Tougher than last time. Never tilts.':'Take ' + (n.fem?'her':'him') + ' out yourself to collect.'}</p>
+    <button class="btn raise big" id="nemGo">Settle it</button></div>`;
+  v.hidden=false; sfx('boss'); haptic('heavy'); setTimeout(()=>sfx('stamp'),500);
+  $('nemGo').onclick=()=>{ac(); v.hidden=true; sfx('card'); then&&then()};
+}
+function nemPanel(){
+  const n=meta.nemesis, gv=meta.graves||[];
+  const cur=n?`<div class="tp-nem"><span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><div><b>${nemName(n)}</b><em>${nemTitle(n)} · took you down ${n.kills}× · first at ${n.first}</em></div></div>`
+    :`<p class="hint" style="margin:4px 0 0">Nobody's hunting you. Yet. Whoever takes your last chip will remember.</p>`;
+  const graves=gv.length?`<div class="tp-graves">${gv.map(g=>`<div class="tp-grave"><span class="medal">${portraitFor({name:g.name,fem:g.fem,tier:g.tier,nem:true,nemRank:g.rank})}</span><b>${g.name.split(' ')[0]} "${g.epi}"</b><em>Buried in ${g.town}</em></div>`).join('')}</div>`:'';
+  return `<div class="tp-h">Nemesis <small>${gv.length} buried</small></div>${cur}${graves}`;
 }
 function stampAt(xPct,yPct,text,color,size){
   const s=document.createElement('div'); s.className='stampfx'; s.textContent=text;
@@ -1237,13 +1269,13 @@ function render(){
       if(p.peek===k) return cardHTML(c,true,'peek','h'+i,anim);
       return cardHTML(c,false,has('marked')?'marked':'','h'+i,anim);
     }).join('');
-    const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
+    const cls=['seat',y<35?'top':'',p.isHuman?'human':'',p.bossDef?'boss':'',p.nem?'nem':'',p.bossDef&&mood?'mood-'+mood:'',G.turn===i&&G.street!=='done'?'turn':'',p.folded?'folded':'',p.winner?'winner':''].filter(Boolean).join(' ');
     const pill=p.result||(/blind|ante/i.test(p.action||'')?'':p.action)||'';
     const pcls=p.result?'win':(p.folded?'fold':(p.allIn&&/All in/.test(pill)?'allin':''));
     const tilted=p.tilt>0&&!p.isHuman&&!p.bossDef;
-    const tier=tilted?'On tilt':'';
+    const tier=tilted?'On tilt':p.nem?'Nemesis':'';
     const rest=`<div class="who"><div class="nm" title="${p.name}">${p.bossDef?bossName(p.bossDef):((narrow||N>=6)&&!p.isHuman?p.name.split(' ')[0]:p.name)}</div>
-          <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}">${tier}</span>`:''}</div>
+          <div class="line">${roll('s'+i,p.chips,'chips')}${tier?`<span class="tier${tilted?' tilt':''}${p.nem&&!tilted?' nemtag':''}">${tier}</span>`:''}</div>
           ${p.isHuman&&madeName?`<div class="handname">${madeName}</div>`:''}</div>
         ${G.dealer===i&&G.street!=='idle'?'<div class="dealer" title="Dealer">D</div>':''}
         ${p.bossDef?`<div class="bossmeter"><i style="width:${Math.max(0,Math.min(100,p.chips/G.bossStart*100))}%"></i></div>`:''}
@@ -1255,7 +1287,7 @@ function render(){
     const cls2=me0?cls+' duo-me':cls; if(m.el.className!==cls2) m.el.className=cls2;
     if(me0){m.el.style.left=''; m.el.style.top=''} else {m.el.style.left=x+'%'; m.el.style.top=y+'%'}
     const cq=quiet(cards); if(m.cards!==cq){m.cards=cq; m.cardsEl.innerHTML=cards}
-    const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier; if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
+    const mk=p.isHuman?'rider':p.bossDef?'boss:'+p.bossDef.key:'out:'+p.name+':'+p.tier+':'+(p.nemRank||0); if(m.medal!==mk){m.medal=mk; m.medalEl.innerHTML=portraitFor(p)}
     const rq=rest.replace(/ style="animation-delay:[^"]*"/g,''); if(m.rest!==rq){m.rest=rq; m.restEl.innerHTML=rest}
     if(p.bet>0){
       let bx=x+(50-x)*0.5, by=y+(48-y)*0.5;

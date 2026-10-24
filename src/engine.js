@@ -126,6 +126,33 @@ function pots(){
   return out;
 }
 
+/* ================= the nemesis: the outlaw who killed you remembers, rises, and comes back ================= */
+const NEM_RANKS=['','Rival','Gunslinger','Desperado','Legend','Reaper'];
+const NEM_EPI=['Snake-Eyes','Two-Guns','Coldwater','Gravedigger','Blackjack','Dead-Eye','Smiling','Iron-Hand','Whisper','Sidewinder','Hangman','Rattler','Ghost','Six-Bits','Lucky'];
+const NEM_LINES={
+  back:["Thought you'd stay buried.","I kept your seat warm.","Same table. Same ending.","They told me you were dead. I was there.","Pull up a chair. Last one you'll need."],
+  win:["Like old times.","You never learn.","I remember how you play.","Still bleeding the same way."],
+  lose:["Lucky. Won't last.","Enjoy it.","That's one.","I've been shot worse."],
+  kill:["Twice now.","Stay down this time.","Say hello to the undertaker.","I'll be here when you crawl back."],
+  die:["Took you long enough...","Tell them... it was a fair game.","Well. Hell."]};
+function nemName(n){return n?`${n.name.split(' ')[0]} "${n.epi}" ${n.name.split(' ').slice(1).join(' ')}`:''}
+function nemTitle(n){return NEM_RANKS[Math.min(5,n.rank)]}
+function nemPlayer(n){
+  const tier=n.rank>=4?'v':n.rank>=2&&n.tier==='d'?'g':n.tier, T=TIERS[tier];
+  return {name:n.name,fem:!!n.fem,tier,style:n.rank>=3?'sharp':n.style,chips:Math.round(T.chips*(1+.2*(n.rank-1))/10)*10,isHuman:false,tilt:0,nem:true,nemRank:n.rank};
+}
+// you went down: the outlaw who took the last pot becomes (or grows as) your nemesis
+function nemesisOnLoss(res){
+  if(typeof DAILY!=='undefined'&&DAILY) return null;
+  const top=(res.winners||[]).filter(w=>!G.players[w.i].isHuman).sort((a,b)=>b.amt-a.amt)[0]; if(!top) return null;
+  const k=G.players[top.i]; if(k.bossDef) return null;
+  const n=meta.nemesis;
+  if(n&&n.name===k.name){n.rank=Math.min(5,n.rank+1); n.kills++; n.last=TOWNS[R.level-1]; n.lastRun=meta.runs; return {who:n,promoted:true}}
+  if(n) return null;
+  meta.nemesis={name:k.name,fem:!!k.fem,tier:k.tier,style:k.style,rank:1,kills:1,met:0,epi:NEM_EPI[Math.floor(Math.random()*NEM_EPI.length)],first:TOWNS[R.level-1],last:TOWNS[R.level-1],lastRun:meta.runs};
+  return {who:meta.nemesis,born:true};
+}
+
 /* ================= table setup ================= */
 function setupTable(){
   const L=R.level, bd=BOSSES[L-1];
@@ -138,11 +165,15 @@ function setupTable(){
   let start=START+(has('deep')?(lvl('deep')>=2?600:300):0)+((R.temp&&R.temp.chips)||0)+(hasDeed('stake')?200:0);
   if(G.curse==='short') start=Math.round(start*0.67/10)*10;
   G.start=start; G.tempWind=!!(R.temp&&R.temp.wind); R.temp=null;
-  const used=new Set(), pool=shuffle(NAMES.slice());
+  const NEM=meta.nemesis, used=new Set(NEM?[NEM.name]:[]), pool=shuffle(NAMES.slice());
   const minors=shuffle(lineup).map(t=>{
     const [name,fem]=pool.find(([nm])=>!used.has(nm)); used.add(name);
     const T=TIERS[t]; return {name,fem:!!fem,tier:t,style:T.styles[Math.floor(Math.random()*T.styles.length)],chips:T.chips,isHuman:false,tilt:0};
   });
+  // the nemesis rides in: from the second saloon on, likelier the higher they've risen, once a run
+  G.nemIntro=null;
+  if(NEM&&R&&!R.nemMet&&L>=2&&!(typeof DAILY!=='undefined'&&DAILY)&&!R.tutorial&&Math.random()<.3+.1*NEM.rank){
+    R.nemMet=true; NEM.met=(NEM.met||0)+1; minors[0]=nemPlayer(NEM); G.nemIntro=NEM; log(`${nemName(NEM)} is at the table. ${NEM.fem?'She':'He'} remembers you.`)}
   const bChips=Math.round(((bd.key==='banker'&&!has('silver'))?3000:1500+100*(L-1))*(heat>=1?1.25:1)/10)*10;
   const bp={name:bd.name,bossDef:bd,boss:bd.key,style:bd.style,chips:bChips,isHuman:false,fem:!!bd.fem,tilt:0};
   minors.splice(Math.floor(minors.length/2),0,bp);
@@ -151,14 +182,14 @@ function setupTable(){
   G.bossStart=bChips;
   G.dealer=Math.floor(Math.random()*G.players.length);
   G.tableHands=0; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
-  G.outcome=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
+  G.outcome=null; G.nemEv=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
   G.challenge=CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)]; G.challengeDone=false;
   G.bounty=Math.round(bountyFor(L)*goldMul());
   log(`You ride into ${TOWNS[L-1]}. ${bd.name} is waiting.`);
   if(G.curse) log(`Cursed: ${CURSES[G.curse].name}.`);
 }
 function serializeTable(){
-  return {players:G.players.map(p=>({name:p.name,fem:p.fem,tier:p.tier,style:p.style,chips:p.chips,out:p.out,tilt:p.tilt||0,boss:p.boss||null,isHuman:!!p.isHuman})),
+  return {players:G.players.map(p=>({name:p.name,fem:p.fem,tier:p.tier,nem:!!p.nem,nemRank:p.nemRank||0,style:p.style,chips:p.chips,out:p.out,tilt:p.tilt||0,boss:p.boss||null,isHuman:!!p.isHuman})),
     dealer:G.dealer,bb:G.bb,riseEvery:G.riseEvery,tableHands:G.tableHands,start:G.start,bossStart:G.bossStart,curse:G.curse,lineup:G.lineup,
     challenge:G.challenge&&G.challenge.key,challengeDone:G.challengeDone,windUsed:G.windUsed,vesperUsed:G.vesperUsed,horseUsed:G.horseUsed,aceUsed:G.aceUsed,
     streak:G.streak,koGold:G.koGold,bounty:G.bounty,tempWind:G.tempWind,log:G.log.slice(0,12)};
@@ -324,6 +355,12 @@ function finishHand(res){
       else {
         const g=Math.round(TIERS[p.tier].gold*goldMul());
         if(me.winner){R.gold+=g; G.koGold+=g; log(`${p.name} is tapped out. +${g} gold.`)} else log(`${p.name} is tapped out.`);
+        if(p.nem&&meta.nemesis&&meta.nemesis.name===p.name){
+          if(me.winner){const n=meta.nemesis, ng=Math.round(25*n.rank*goldMul()); R.gold+=ng; G.koGold+=ng;
+            (meta.graves=meta.graves||[]).unshift({name:n.name,epi:n.epi,rank:n.rank,kills:n.kills,town:TOWNS[R.level-1],fem:n.fem,tier:n.tier}); meta.graves=meta.graves.slice(0,12); meta.nemesis=null;
+            log(`Your nemesis ${nemName(n)} is dead. +${ng} gold.`); ev.nemSlain={i,name:n.name,gold:ng,line:pickLine(NEM_LINES.die)}}
+          else {log(`${p.name} crawls out the back door. This isn't over.`); ev.nemFled=i}
+        }
       }
     }
   });
@@ -347,11 +384,16 @@ function finishHand(res){
   G.players.forEach(p=>{
     if(p.isHuman||p.bossDef||p.out) return;
     if(p.tilt>0) p.tilt--;
-    if(p.inHand&&!p.winner&&p.total>=Math.max(G.bb*4,p.startChips*0.35)){p.tilt=3; log(`${p.name} is on tilt.`)}
+    if(p.inHand&&!p.winner&&!(p.nem&&p.nemRank>=2)&&p.total>=Math.max(G.bb*4,p.startChips*0.35)){p.tilt=3; log(`${p.name} is on tilt.`)}
   });
   if(bp&&!bp.out&&bp.inHand&&!ev.bossLine){
     if(bp.winner&&res.pot>=G.bb*4&&Math.random()<0.6) ev.bossLine={i:G.players.indexOf(bp),text:pickLine(bp.bossDef.lines.win)};
     else if(!bp.winner&&bp.total>=G.bb*4&&Math.random()<0.6) ev.bossLine={i:G.players.indexOf(bp),text:pickLine(bp.bossDef.lines.lose)};
+  }
+  const np=G.players.find(p=>p.nem&&!p.out&&p.inHand);
+  if(np&&!ev.bossLine&&me.inHand&&Math.random()<.55){
+    if(np.winner&&!me.winner&&res.pot>=G.bb*3) ev.bossLine={i:G.players.indexOf(np),text:pickLine(NEM_LINES.win),nem:true};
+    else if(me.winner&&!np.winner&&np.total>=G.bb*3) ev.bossLine={i:G.players.indexOf(np),text:pickLine(NEM_LINES.lose),nem:true};
   }
   if(me.inHand){
     const st=meta.stats; st.hands++;
@@ -368,7 +410,7 @@ function finishHand(res){
   if(me.chips<=0){
     const winds=(has('wind')?(lvl('wind')>=2?2:1):0)+(G.tempWind?1:0);
     if(G.windUsed<winds){G.windUsed++; me.chips=Math.round(G.start/4/10)*10; log('Second Wind. You claw back to your feet.'); ev.wind=true}
-    else G.outcome='lose';
+    else {G.outcome='lose'; const nk=nemesisOnLoss(res); G.nemEv=nk; if(nk) ev.nemesis=nk}
   }
   if(G.outcome!=='lose'&&bp&&bp.out) G.outcome='win';
   G.lastHandLog=G.handLog.slice();
