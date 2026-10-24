@@ -1609,3 +1609,4 @@ html[data-saloon="8"] #vista{--sky1:#070206;--sky2:#24070f;--sky3:#4e101a;--orb:
 .vs-mid{stroke:color-mix(in srgb,var(--sky3) 25%,transparent)}
 .vs-near .town{transform:translate(800px,792px) scale(.72) translate(-800px,-792px)}
 .vs-floor{background:linear-gradient(transparent 62%,rgba(0,0,0,.35) 80%,rgba(0,0,0,.7))!important}
+html.duo-v #sGame .hud{position:relative}

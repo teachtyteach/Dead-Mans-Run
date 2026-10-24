@@ -11,7 +11,7 @@ function ac(){
     try{if(navigator.audioSession) navigator.audioSession.type='ambient'}catch(e){}  // game audio: no Now Playing widget, mixes with your music, follows the silent switch
     try{SND.ctx=new C()}catch(e){return null}
     const c=SND.ctx;
-    c.onstatechange=()=>{const h=document.getElementById('tapSound'); if(h) h.hidden=c.state==='running'};
+    c.onstatechange=()=>{if(c!==SND.ctx) return; if(c.state==='interrupted') SND.dead=true; const h=document.getElementById('tapSound'); if(h) h.hidden=c.state==='running'};
     SND.master=c.createGain(); SND.master.gain.value=0.9;
     const comp=c.createDynamicsCompressor(); comp.threshold.value=-10; comp.ratio.value=3; comp.attack.value=.01; comp.release.value=.25;
     SND.master.connect(comp).connect(c.destination);
@@ -179,9 +179,29 @@ function stopMusic(){
   setTimeout(()=>L.forEach(l=>{clearInterval(l.timer); l.srcs.forEach(s=>{try{s.stop()}catch(e){}})}),900);
 }
 // browsers only allow sound after a tap; any first interaction unlocks it. Files start loading right away.
-['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{const c=ac(); if(c){if(c.state!=='running') c.resume(); if(meta.music) startMusic()}},{passive:true}));
+['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(SND.dead&&SND.ctx){reviveAudio(); return} const c=ac(); if(c){if(c.state!=='running') c.resume(); if(meta.music) startMusic()}},{passive:true}));
 setTimeout(()=>{try{ac()}catch(e){}},0);
-document.addEventListener('visibilitychange',()=>{if(!SND.ctx) return; if(document.hidden) SND.ctx.suspend(); else SND.ctx.resume()});
+// iOS can leave Web Audio dead after the phone sleeps or a call interrupts it: a "running" context that makes no sound.
+// So after any real absence we rebuild the audio graph from scratch (decoded sounds are kept) and pick the music back up.
+function reviveAudio(){
+  const old=SND.ctx; if(!old) return; const want=SND.want;
+  (SND.loops||[]).forEach(l=>{clearInterval(l.timer); (l.srcs||[]).forEach(x=>{try{x.stop()}catch(e){}})}); SND.loops=[];
+  clearTimeout(SND.evT); (SND.evTs||[]).forEach(clearTimeout); SND.evTs=[];
+  try{old.onstatechange=null; old.close()}catch(e){}
+  SND.ctx=null; SND.dead=false; const c=ac(); if(!c) return;
+  const go=()=>{if(want&&meta.music) startMusic()};
+  if(c.state==='running') go(); else c.resume().then(go).catch(()=>{});
+}
+let AWAY=0;
+function awayBack(){
+  if(!SND.ctx) return;
+  if(document.hidden){AWAY=Date.now(); try{SND.ctx.suspend()}catch(e){} return}
+  if(SND.dead||(AWAY&&Date.now()-AWAY>1500)) reviveAudio(); else SND.ctx.resume().catch(()=>{});
+  AWAY=0;
+}
+document.addEventListener('visibilitychange',awayBack);
+addEventListener('pageshow',e=>{if(e.persisted&&SND.ctx) reviveAudio()});
+addEventListener('focus',()=>{if(SND.ctx&&SND.ctx.state!=='running'&&!document.hidden) SND.ctx.resume().catch(()=>{SND.dead=true})});
 
 // the intro starts the menu song itself, from its first beat, and returns the AudioContext time of that beat
 const MENU_TRUE_LEN=143.832;
