@@ -36,6 +36,12 @@ struct GameView: UIViewRepresentable {
         web.backgroundColor = UIColor(red: 0.086, green: 0.051, blue: 0.027, alpha: 1)
         web.scrollView.backgroundColor = web.backgroundColor
         web.scrollView.bounces = false
+        web.scrollView.isScrollEnabled = false
+        web.scrollView.minimumZoomScale = 1
+        web.scrollView.maximumZoomScale = 1
+        web.scrollView.pinchGestureRecognizer?.isEnabled = false
+        web.scrollView.showsVerticalScrollIndicator = false
+        web.scrollView.showsHorizontalScrollIndicator = false
         web.scrollView.contentInsetAdjustmentBehavior = .never
         web.allowsLinkPreview = false
         if #available(iOS 16.4, *) { web.isInspectable = true }

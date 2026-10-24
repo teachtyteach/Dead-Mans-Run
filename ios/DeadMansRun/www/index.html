@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0c0805">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}@media (display-mode:standalone),(display-mode:fullscreen){:root{padding-top:calc(env(safe-area-inset-top,0px) + 30px)}}</style>
 <script>(function(){if(!(navigator.standalone||matchMedia('(display-mode: standalone)').matches))return;var d=document.documentElement;function f(){var p=innerHeight>=innerWidth,sh=p?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width),sw=p?Math.min(screen.height,screen.width):Math.max(screen.height,screen.width),h=Math.max(sh,innerHeight),ch=d.clientHeight;if(Math.abs(sw-innerWidth)>24||h-innerHeight>140)h=innerHeight;window.__dims=[sh,innerHeight,ch,(visualViewport||{}).height|0];if(h>ch+2){d.style.setProperty('--appH',h+'px');d.classList.add('tall')}else{d.classList.remove('tall')}scrollTo(0,0)}f();addEventListener('resize',function(){f();setTimeout(f,300);setTimeout(f,900)});addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>
@@ -1390,6 +1390,18 @@ html.duo-wide #sGame .console .raisesheet{left:auto;right:0;width:55%}
 html.duo-wide #sTitle .dbot{flex-direction:column}
 html.duo-wide #sShop .deal-grid{grid-template-columns:repeat(4,minmax(0,170px));justify-content:center}
 html.duo-wide .bo-portrait{width:min(30vw,34svh)}
+/* app feel: nothing scrolls, zooms, bounces, selects or pops a callout */
+html,body{overscroll-behavior:none;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{height:100%;overflow:hidden}
+body{height:100%;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+img,svg{-webkit-user-drag:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
+*{-webkit-tap-highlight-color:transparent}
+.sheet,.codex,#ledger,#lastHand{overscroll-behavior:contain;scrollbar-width:none}
+.sheet::-webkit-scrollbar,.codex::-webkit-scrollbar{display:none}
+/* the title always fits the screen now that nothing scrolls */
+#sTitle{min-height:0!important;height:100%;justify-content:center;overflow:hidden}
+@media (max-height:700px){#sTitle .fan{--cw:clamp(44px,8vh,70px)} #sTitle h1.brass{font-size:clamp(34px,7vh,60px)} #sTitle{gap:10px}}
 
 </style>
 </head>
@@ -2873,7 +2885,7 @@ function show(id){
   if(id!=='sGame') heartbeat(false);
   const was=SND.scene; SND.scene=id; musicLevel();
   if((id==='sGame')!==(was==='sGame')&&SND.ctx&&SND.want&&meta.music) startMusic();
-  document.documentElement.classList.toggle('locked',id!=='sTitle');
+  document.documentElement.classList.add('locked');
   SCREENS.forEach(s=>{const el=$(s), on=s===id;
     if(on&&el.hidden){el.hidden=false; el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter')}
     else if(!on) el.hidden=true});
@@ -2995,6 +3007,15 @@ function runRolls(){
   });
 }
 function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-family:${bd.font},var(--f-display);font-size:${bd.fs||1}em">${bd.name}</${tag}>`}
+/* no pinch zoom, no double-tap zoom, no rubber-banding: it should feel like an app, not a web page */
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
+  const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
+  if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
+let LASTTAP=0; document.addEventListener('touchend',e=>{const n=Date.now(); if(n-LASTTAP<320&&!(e.target.closest&&e.target.closest('input,textarea'))) e.preventDefault(); LASTTAP=n},{passive:false});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+
 /* ================= trail map ================= */
 const MAPPTS=[[70,205],[170,125],[275,190],[375,100],[478,172],[572,88],[668,160],[742,78]];
 function trailMap(level,victory){

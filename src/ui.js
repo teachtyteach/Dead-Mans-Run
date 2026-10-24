@@ -10,7 +10,7 @@ function show(id){
   if(id!=='sGame') heartbeat(false);
   const was=SND.scene; SND.scene=id; musicLevel();
   if((id==='sGame')!==(was==='sGame')&&SND.ctx&&SND.want&&meta.music) startMusic();
-  document.documentElement.classList.toggle('locked',id!=='sTitle');
+  document.documentElement.classList.add('locked');
   SCREENS.forEach(s=>{const el=$(s), on=s===id;
     if(on&&el.hidden){el.hidden=false; el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter')}
     else if(!on) el.hidden=true});
@@ -132,6 +132,15 @@ function runRolls(){
   });
 }
 function bossName(bd,tag='span'){return `<${tag} class="bname" style="font-family:${bd.font},var(--f-display);font-size:${bd.fs||1}em">${bd.name}</${tag}>`}
+/* no pinch zoom, no double-tap zoom, no rubber-banding: it should feel like an app, not a web page */
+['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+document.addEventListener('touchmove',e=>{if(e.touches.length>1){e.preventDefault(); return}
+  const sc=e.target.closest&&e.target.closest('.sheet,.np-body,#ledger,#lastHand,.rklist,.deal-grid,.codex,.more-body,[data-scroll]');
+  if(!sc||sc.scrollHeight<=sc.clientHeight+1) e.preventDefault()},{passive:false});
+let LASTTAP=0; document.addEventListener('touchend',e=>{const n=Date.now(); if(n-LASTTAP<320&&!(e.target.closest&&e.target.closest('input,textarea'))) e.preventDefault(); LASTTAP=n},{passive:false});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('dblclick',e=>e.preventDefault(),{passive:false});
+
 /* ================= trail map ================= */
 const MAPPTS=[[70,205],[170,125],[275,190],[375,100],[478,172],[572,88],[668,160],[742,78]];
 function trailMap(level,victory){

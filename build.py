@@ -8,7 +8,7 @@ head=s('head.html'); style='<style>\n'+s('style.css')+'\n</style>\n'
 scripts='\n<script>'+s('sounds.js')+'</script>\n<script>\n(function(){\n'+js+'\n})();\n</script>\n'
 fragment=head+style+s('body.html')+scripts
 page=('<!doctype html>\n<html lang="en">\n<head>\n'
-      '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n'
+      '<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover">\n'
       '<meta name="theme-color" content="#0c0805">\n'
       # home-screen app runs edge to edge: keep content clear of the notch, Dynamic Island and home bar
       '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(env(safe-area-inset-bottom,0px)*0.45);background-color:#160d07}'
