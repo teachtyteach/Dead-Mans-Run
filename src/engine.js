@@ -33,7 +33,7 @@ function twistOn(key){const b=boss(); return !!(b&&b.boss===key&&!has('silver'))
 function heatGoldMul(){return 1+0.1*(R?R.heat||0:0)}
 function goldMul(){return (has('golden')?(lvl('golden')>=2?2:1.5):1)*heatGoldMul()}
 function bountyFor(L){return 40+15*L}
-function maxHeat(){return Math.min(3,meta.wins)}
+function maxHeat(){const w=meta.wantedWon!=null?meta.wantedWon:(meta.wins?Math.min(3,meta.wins)-1:-1); return Math.max(0,Math.min(8,w+1))}
 function hasDeed(k){return !!(R&&R.deeds&&R.deeds.includes(k))}
 function charmSlots(){return 6+(hasDeed('satchel')?1:0)+(has('saddle')?1:0)}
 function trickSlots(){return 2+(hasDeed('belt')?1:0)}
@@ -135,6 +135,8 @@ const NEM_LINES={
   lose:["Lucky. Won't last.","Enjoy it.","That's one.","I've been shot worse."],
   kill:["Twice now.","Stay down this time.","Say hello to the undertaker.","I'll be here when you crawl back."],
   die:["Took you long enough...","Tell them... it was a fair game.","Well. Hell."]};
+function bossMem(k){meta.bossMem=meta.bossMem||{}; return meta.bossMem[k]=meta.bossMem[k]||{wins:0,losses:0,hand:'',allin:false}}
+function memLine(bd){const m=(meta.bossMem||{})[bd.key], t=BOSS_MEM[bd.key]; if(!m||!t) return bd.lines.intro; return m.wins?t.beat:m.losses?t.won:bd.lines.intro}
 function nemName(n){return n?`${n.name.split(' ')[0]} "${n.epi}" ${n.name.split(' ').slice(1).join(' ')}`:''}
 function nemTitle(n){return NEM_RANKS[Math.min(5,n.rank)]}
 function nemPlayer(n){
@@ -155,15 +157,18 @@ function nemesisOnLoss(res){
 
 /* ================= table setup ================= */
 function setupTable(){
+  G.duel=null;
   const L=R.level, bd=BOSSES[L-1];
   G.curse=R.curse; R.curse=null;
   const heat=R.heat||0;
   const lineup=LINEUPS[L-1].slice(); if(G.curse==='crowd'&&lineup.length<6) lineup.push('g');
+  if((R.heat||0)>=5&&lineup.length<6) lineup.push('v');
   G.lineup=lineup;
   G.bb=Math.round(BBS[L-1]*(G.curse==='heavy'?2:1)*(heat>=3?1.5:1)/10)*10;
-  G.riseEvery=(bd.key==='under'&&!has('silver'))?5:10; if(has('steady')) G.riseEvery*=2;
-  let start=START+(has('deep')?(lvl('deep')>=2?600:300):0)+((R.temp&&R.temp.chips)||0)+(hasDeed('stake')?200:0);
+  G.riseEvery=(bd.key==='under'&&!has('silver'))?5:(L<=3?12:10); if((R.heat||0)>=8) G.riseEvery=Math.min(G.riseEvery,7); if(has('steady')) G.riseEvery*=2;
+  let start=START+(EARLY_EDGE[L-1]||0)+(has('deep')?(lvl('deep')>=2?600:300):0)+((R.temp&&R.temp.chips)||0)+(hasDeed('stake')?200:0);
   if(G.curse==='short') start=Math.round(start*0.67/10)*10;
+  if((R.heat||0)>=7) start=Math.round(start*0.8/10)*10;
   G.start=start; G.tempWind=!!(R.temp&&R.temp.wind); R.temp=null;
   const NEM=meta.nemesis, used=new Set(NEM?[NEM.name]:[]), pool=shuffle(NAMES.slice());
   const minors=shuffle(lineup).map(t=>{
@@ -174,7 +179,7 @@ function setupTable(){
   G.nemIntro=null;
   if(NEM&&R&&!R.nemMet&&L>=2&&!(typeof DAILY!=='undefined'&&DAILY)&&!R.tutorial&&Math.random()<.3+.1*NEM.rank){
     R.nemMet=true; NEM.met=(NEM.met||0)+1; minors[0]=nemPlayer(NEM); G.nemIntro=NEM; log(`${nemName(NEM)} is at the table. ${NEM.fem?'She':'He'} remembers you.`)}
-  const bChips=Math.round(((bd.key==='banker'&&!has('silver'))?3000:1500+100*(L-1))*(heat>=1?1.25:1)/10)*10;
+  const bChips=Math.round(((bd.key==='banker'&&!has('silver'))?2400:BOSS_CHIPS[L-1])*(heat>=1?1.25:1)/10)*10;
   const bp={name:bd.name,bossDef:bd,boss:bd.key,style:bd.style,chips:bChips,isHuman:false,fem:!!bd.fem,tilt:0};
   minors.splice(Math.floor(minors.length/2),0,bp);
   G.players=[{name:'You',isHuman:true,chips:start,tilt:0}].concat(minors);
@@ -187,6 +192,19 @@ function setupTable(){
   G.bounty=Math.round(bountyFor(L)*goldMul());
   log(`You ride into ${TOWNS[L-1]}. ${bd.name} is waiting.`);
   if(G.curse) log(`Cursed: ${CURSES[G.curse].name}.`);
+}
+// a heads-up duel on the trail: you and one outlaw, short stacks, blinds that climb fast. Never ends the run.
+function setupDuel(spec){
+  G.duel=spec; G.curse=null; G.lineup=[]; G.bb=spec.bb||20; G.riseEvery=3; G.start=spec.mine||400; G.tempWind=false; G.nemIntro=null;
+  const foe={name:spec.name,fem:!!spec.fem,tier:spec.tier,style:spec.style||'tight',chips:spec.chips||400,isHuman:false,tilt:0};
+  if(spec.nem){foe.nem=true; foe.nemRank=spec.nem.rank}
+  G.players=[{name:'You',isHuman:true,chips:G.start,tilt:0},foe];
+  G.players.forEach(p=>{p.out=false; p.hand=[]; p.bet=0; p.total=0});
+  G.bossStart=foe.chips; G.dealer=Math.floor(Math.random()*2);
+  G.tableHands=0; G.drawUsed=false; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
+  G.outcome=null; G.nemEv=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
+  G.challenge=null; G.challengeDone=false; G.bounty=0;
+  log(`${spec.name} sits across from you. Heads up. Winner takes the stakes.`);
 }
 function serializeTable(){
   return {players:G.players.map(p=>({name:p.name,fem:p.fem,tier:p.tier,nem:!!p.nem,nemRank:p.nemRank||0,style:p.style,chips:p.chips,out:p.out,tilt:p.tilt||0,boss:p.boss||null,isHuman:!!p.isHuman})),
@@ -219,7 +237,7 @@ function startHand(){
   const count=G.players.filter(p=>p.inHand).length;
   const bp=boss();
   if(bp&&twistOn('ma')&&!bp.out){
-    const ante=Math.max(5,Math.round(G.bb/5/5)*5);
+    const ante=Math.max(5,Math.round(G.bb/10/5)*5);
     G.players.forEach(p=>{if(p.inHand&&!p.bossDef){let a=ante; if(p.isHuman&&has('comped')) a=lvl('comped')>=2?0:Math.ceil(a/2); a=Math.min(a,p.chips); p.chips-=a; p.total+=a; if(p.chips===0) p.allIn=true}});
   }
   const sbI=count===2?G.dealer:nextIn(G.dealer), bbI=nextIn(sbI);
@@ -228,7 +246,7 @@ function startHand(){
   G.currentBet=G.bb; G.minRaise=G.bb; G.aggressor=-1; G.meRaised=false;
   let order=0;
   for(let r=0;r<2;r++){let i=G.dealer; for(let k=0;k<count;k++){i=nextIn(i); const c=draw(); c.order=order++; G.players[i].hand.push(c)}}
-  G.players.forEach(p=>{if(p.inHand&&p.boss==='bicah'&&!has('silver')){const c=draw(); c.order=order++; p.hand.push(c)}});
+  G.players.forEach(p=>{if(p.inHand&&p.boss==='bicah'&&!has('silver')&&G.tableHands%2===0){const c=draw(); c.order=order++; p.hand.push(c)}});
   G.dealCount=order;
   const me=human();
   if(has('rabbit')&&me.inHand&&me.hand[0].r!==me.hand[1].r&&Math.random()<0.35){
@@ -352,7 +370,8 @@ function finishHand(res){
     if(!p.isHuman&&!p.out&&p.chips<=0){
       p.out=true; if(me.winner) myKo++;
       ev.kos.push(i);
-      if(p.bossDef){log(`${p.name} is taken down. The bounty is yours.`); ev.bossLine={i,text:p.bossDef.lines.bust}}
+      if(p.bossDef){log(`${p.name} is taken down. The bounty is yours.`); ev.bossLine={i,text:p.bossDef.lines.bust}
+        if(!R.daily&&me.winner){const m=bossMem(p.boss); m.wins++; m.hand=me.show&&me.score?nameOf(me.score):''; m.allin=!!me.allIn}}
       else {
         const g=Math.round(TIERS[p.tier].gold*goldMul());
         if(me.winner){R.gold+=g; G.koGold+=g; log(`${p.name} is tapped out. +${g} gold.`)} else log(`${p.name} is tapped out.`);
@@ -410,11 +429,14 @@ function finishHand(res){
     }
   }
   if(me.chips<=0){
-    const winds=(has('wind')?(lvl('wind')>=2?2:1):0)+(G.tempWind?1:0);
-    if(G.windUsed<winds){G.windUsed++; me.chips=Math.round(G.start/4/10)*10; log('Second Wind. You claw back to your feet.'); ev.wind=true}
-    else {G.outcome='lose'; const nk=nemesisOnLoss(res); G.nemEv=nk; if(nk) ev.nemesis=nk}
+    // every rider gets back up once per run (not on the hardest Wanted level); charms and tonics add more
+    const own=G.duel?0:(has('wind')?(lvl('wind')>=2?2:1):0)+(G.tempWind?1:0), grit=(!G.duel&&!R.windSpent&&!R.daily&&(R.heat||0)<8)?1:0, winds=own+grit;
+    if(G.windUsed<winds){G.windUsed++; if(G.windUsed>own) R.windSpent=true; me.chips=Math.round(G.start/3/10)*10; log(G.windUsed>own?'Grit. You claw back to your feet. (Once a run.)':'Second Wind. You claw back to your feet.'); ev.wind=true}
+    else {G.outcome='lose'; const nk=G.duel?null:nemesisOnLoss(res); G.nemEv=nk; if(nk) ev.nemesis=nk;
+      if(bp&&!R.daily&&!G.duel){const m=bossMem(bp.boss); m.losses++}}
   }
   if(G.outcome!=='lose'&&bp&&bp.out) G.outcome='win';
+  if(G.duel&&G.outcome!=='lose'&&G.players.every(p=>p.isHuman||p.out)) G.outcome='win';
   G.lastHandLog=G.handLog.slice();
   saveMeta();
   return ev;
@@ -459,7 +481,7 @@ function settleDraw(i,won){const p=G.players[i]; G.drawUsed=true; G.talks++;
 /* ================= AI ================= */
 // returns {type,to,bluff,tell,line}
 function aiDecide(i){
-  const p=G.players[i], s=STYLES[p.style], T=p.tier?TIERS[p.tier]:{noise:0.01,sims:240,adj:0};
+  const p=G.players[i], s=STYLES[p.style], T=p.tier?TIERS[p.tier]:{noise:BOSS_NOISE[(R.level||1)-1]||0.01,sims:R.level<=2?140:240,adj:0};
   const opps=live().length-1, me=human();
   const tw=k=>p.boss===k&&!has('silver');
   const pin=(tw('snake')&&me.inHand&&!me.folded)?me.hand[0]:null;
@@ -475,7 +497,8 @@ function aiDecide(i){
   const pre=G.street==='preflop'&&opps>=3&&p.tier!=='d'?0.03:0;
   const adj=s.adj+T.adj+(tw('pete')?-0.04:0)+(tilt?-0.1:0)+(heat>=2?0.02:0)+pre;
   const bluff=s.bluff+(tw('pete')?0.16:0)+(tilt?0.12:0);
-  const aggr=s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0)+(p.steel&&me.inHand?0.18:0)-(p.calm?0.4:0);
+  const memo=p.bossDef?(meta.bossMem||{})[p.boss]:null, cocky=!!(memo&&memo.losses&&!memo.wins);
+  const aggr=(cocky?0.08:0)+s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0)+(p.steel&&me.inHand?0.18:0)-(p.calm?0.4:0);
   const sizeMul=tw('banker')?1.6:1;
   const strongBar=Math.min(0.86,fair*1.6)+adj;
   const canRaise=p.chips>toCall;
@@ -484,7 +507,7 @@ function aiDecide(i){
   const R_=(to,isBluff)=>{
     const d={type:'raise',to,bluff:isBluff};
     if(p.bossDef){
-      if(has('tells')||Math.random()<0.6){
+      if(has('tells')||((R.heat||0)<6&&Math.random()<0.6)){
         const honest=has('tells')||Math.random()<0.75;
         const strong=isBluff?!honest:honest;
         d.tell=strong?p.bossDef.tellS:p.bossDef.tellB;
@@ -510,6 +533,7 @@ function aiDecide(i){
   let callBar=odds+adj*0.6+(bigCall?0.06:0);
   if(has('face')&&G.aggressor===0) callBar+=lvl('face')>=2?0.14:0.07;
   if(G.aggressor===0){if(p.spooked) callBar+=0.16; if(p.sticky) callBar-=0.14}
+  if(p.bossDef&&G.aggressor===0){const m=(meta.bossMem||{})[p.boss]; if(m&&m.wins) callBar-=me.allIn&&m.allin?0.07:0.04}
   if(eq>callBar||tw('iron')) return {type:'call'};
   if(canRaise&&!bigCall&&r<bluff*0.5) return R_(raiseTo(0.7),true);
   return {type:'fold'};

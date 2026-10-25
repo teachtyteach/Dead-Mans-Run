@@ -1759,7 +1759,7 @@ html.duo-wide .table{width:min(100cqw,calc(100cqh * 2.05))!important;aspect-rati
 html.duo-wide #sGame{height:var(--appH,100svh)!important;padding:0!important}
 html.duo-wide #sGame .console{background:none!important;border:0!important;box-shadow:none!important}
 /* sheets and menus open on the counter, never across the fold; the sky shows what's open */
-html.duo-wide .modal:not(#poster):not(#nemCard):not(#story){padding-top:calc((var(--appH,100svh) + var(--hinge,28px)) / 2 + 8px)!important;padding-bottom:8px!important;place-items:center!important;background:linear-gradient(rgba(6,4,2,.35) 0 50%,rgba(6,4,2,.82) 50%)}
+html.duo-wide .modal:not(#poster):not(#nemCard):not(#duelCard):not(#story){padding-top:calc((var(--appH,100svh) + var(--hinge,28px)) / 2 + 8px)!important;padding-bottom:8px!important;place-items:center!important;background:linear-gradient(rgba(6,4,2,.35) 0 50%,rgba(6,4,2,.82) 50%)}
 html.duo-wide .modal:not(#poster) .sheet{max-height:calc((var(--appH,100svh) - var(--hinge,28px)) / 2 - 16px)!important;width:min(860px,96vw)}
 html.duo-wide #poster,html.duo-wide #nemCard,html.duo-wide #story{padding-top:0!important;background:radial-gradient(ellipse at 50% 25%,rgba(12,8,5,.55),rgba(12,8,5,.92))}
 /* the stranger at the door: the face hangs in the sky, the words wait on the counter */
@@ -1949,3 +1949,61 @@ html.tall .draw-ov{bottom:auto;height:var(--appH)}
 .say-menu{position:fixed!important;bottom:auto!important;right:auto!important;z-index:65!important;max-height:calc(100svh - 20px);overflow:auto}
 html.duo-wide .say-menu{width:min(440px,46vw)}
 html.duo-v:not(.duo-wide) #sGame .console .say-btn{left:auto;right:14px;top:42%;bottom:auto}
+
+/* ================= Wanted level picker ================= */
+#heatPick{display:flex!important;align-items:stretch;gap:6px;width:min(560px,100%);flex-wrap:nowrap}
+#heatPick[hidden]{display:none!important}
+.hp-arrow{flex:none;width:44px;border-radius:12px;border:1px solid rgba(216,52,31,.4);background:rgba(40,8,6,.55);color:#ffcf9a;font-size:26px;line-height:1;cursor:pointer}
+.hp-arrow:disabled{opacity:.25}
+.hp-mid{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 10px;border-radius:12px;background:rgba(30,8,5,.6);border:1px solid rgba(216,52,31,.35);text-align:center}
+.hp-k{font-family:var(--f-label);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#ff8a72}
+.hp-mid b{font-family:var(--f-serif);font-size:17px;color:#f3d8b8}
+.hp-mid em{font-style:normal;font-size:12px;color:#d8b8a0;line-height:1.3;max-width:100%}
+.hp-stars{display:flex;gap:3px;font-size:12px;color:rgba(255,255,255,.12)}
+.hp-stars .open{color:rgba(216,52,31,.45)}.hp-stars .on{color:#ff6a4a}
+html.duo-wide #sTitle .heat{display:flex!important}
+html.duo-wide #heatPick .hp-mid em{display:none}
+.tp-stars{font-style:normal;color:#ff6a4a;font-size:11px;letter-spacing:1px}
+html[data-back="10"] .card.back{--b1:#e0b44a;--b2:#5a2a0a;--bl:rgba(255,220,140,.4);--bm:#2a1406}
+html[data-back="11"] .card.back{--b1:#1a1614;--b2:#050404;--bl:rgba(200,30,20,.3);--bm:#c9a24e}
+.bk-swatch[data-bk="10"]{--s1:#e0b44a;--s2:#5a2a0a}.bk-swatch[data-bk="11"]{--s1:#1a1614;--s2:#050404}
+
+/* ================= bosses remember; how far you rode; the ending ================= */
+.prec{font-family:var(--f-label);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7a3b1a;text-align:center;margin-top:2px}
+.prec b{font-family:var(--f-serif);letter-spacing:0;font-size:13px;color:#4a1c08}
+.prec[hidden]{display:none}
+.lv-trail{display:flex;gap:7px;justify-content:center;margin-top:14px;opacity:0;animation:lvNem .8s 1.2s forwards}
+.lv-trail i{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(232,212,162,.45)}
+.lv-trail i.done{background:#c9a24e;border-color:#c9a24e}
+.lv-trail i.here{background:#d8341f;border-color:#ff8a72;box-shadow:0 0 10px rgba(216,52,31,.7)}
+.lv-prog{margin-top:8px;font-family:var(--f-label);letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:#d8c08a;text-align:center;opacity:0;animation:lvNem .8s 1.3s forwards}
+.lv-prog b{color:#f4cb5c}
+.st-down{position:relative;filter:grayscale(.85) contrast(1.1)!important}
+.st-paid,.st-paidrow b{position:absolute;left:50%;top:50%;translate:-50% -50%;rotate:-14deg;padding:2px 8px;border:2.5px solid #d8341f;color:#d8341f;font-family:var(--f-display);text-transform:uppercase;letter-spacing:.08em;font-size:22px;background:rgba(246,233,204,.9);animation:stampDown .5s .9s cubic-bezier(.2,1.6,.4,1) both}
+.st-paidrow .medal{position:relative;overflow:visible!important}
+.st-paidrow b{font-size:10px;padding:1px 4px;border-width:1.5px;animation-delay:calc(.4s + var(--k) * .18s)}
+@keyframes stampDown{from{opacity:0;scale:2.2}}
+
+/* ================= the road ================= */
+.tg-choices.roads,#evChoices.roads{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:min(760px,100%)}
+.road-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 10px 12px;border-radius:14px;border:1px solid rgba(201,162,78,.35);text-align:center;cursor:pointer;color:#f3e6c6;font:inherit;
+  background:var(--grain),linear-gradient(#3a2616,#21150c);box-shadow:0 4px 0 rgba(0,0,0,.5),inset 0 1px 0 rgba(255,228,175,.12)}
+.road-card i{font-style:normal;font-size:28px;line-height:1;color:#e8c46a}
+.road-card b{font-family:var(--f-display);font-size:17px;letter-spacing:.04em}
+.road-card .rk{font-family:var(--f-label);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:rgba(0,0,0,.35)}
+.road-card em{font-style:normal;font-size:12.5px;color:#c8b48c;line-height:1.3}
+.road-safe .rk{color:#bfe0a0}.road-risky{border-color:rgba(216,52,31,.55);background:var(--grain),linear-gradient(#4a1a10,#25100a)}.road-risky .rk{color:#ff8a72}.road-risky i{color:#ff8a72}.road-town .rk{color:#e8c46a}
+@media (max-width:520px){#evChoices.roads{grid-template-columns:1fr}.road-card{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;text-align:left;gap:4px 10px}.road-card em{flex-basis:100%}}
+.ev-stakes{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(107,69,32,.35);font-size:.92em}
+#evChoices #evDuel,#evChoices #evPay{flex:1 1 200px}
+/* the duel card uses the stranger's card styles */
+html.duo-wide #duelCard{display:grid;grid-template-rows:1fr var(--hinge,28px) 1fr;place-items:center;padding:0!important}
+html.duo-wide #duelCard[hidden]{display:none}
+html.duo-wide #duelCard .nem-sheet{width:min(560px,92vw);max-height:100%;padding:14px 22px;gap:6px}
+html.duo-wide #duelCard .nem-top{grid-row:1;align-self:end;margin-bottom:12px}
+html.duo-wide #duelCard .nem-bot{grid-row:3;align-self:start;margin-top:12px;background:none;border:0;box-shadow:none}
+html.duo-wide #duelCard .nem-face{width:clamp(70px,13svh,110px)}
+.duel-sheet .nem-k{color:#e8c46a}
+html.duo-wide #sEvent .dbot .tg-result{background:var(--grain),#ecdfc2;color:#2a1708;padding:12px 18px;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.45);font-family:var(--f-type,monospace);line-height:1.45;border-top:none}
+html.duo-wide #sEvent .dbot .tg-result .ev-stakes{border-top-color:rgba(107,69,32,.35)}
+html.duo-wide #sEvent .dbot .goldline{color:#e8d4a2}

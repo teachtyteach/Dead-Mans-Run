@@ -1781,7 +1781,7 @@ html.duo-wide .table{width:min(100cqw,calc(100cqh * 2.05))!important;aspect-rati
 html.duo-wide #sGame{height:var(--appH,100svh)!important;padding:0!important}
 html.duo-wide #sGame .console{background:none!important;border:0!important;box-shadow:none!important}
 /* sheets and menus open on the counter, never across the fold; the sky shows what's open */
-html.duo-wide .modal:not(#poster):not(#nemCard):not(#story){padding-top:calc((var(--appH,100svh) + var(--hinge,28px)) / 2 + 8px)!important;padding-bottom:8px!important;place-items:center!important;background:linear-gradient(rgba(6,4,2,.35) 0 50%,rgba(6,4,2,.82) 50%)}
+html.duo-wide .modal:not(#poster):not(#nemCard):not(#duelCard):not(#story){padding-top:calc((var(--appH,100svh) + var(--hinge,28px)) / 2 + 8px)!important;padding-bottom:8px!important;place-items:center!important;background:linear-gradient(rgba(6,4,2,.35) 0 50%,rgba(6,4,2,.82) 50%)}
 html.duo-wide .modal:not(#poster) .sheet{max-height:calc((var(--appH,100svh) - var(--hinge,28px)) / 2 - 16px)!important;width:min(860px,96vw)}
 html.duo-wide #poster,html.duo-wide #nemCard,html.duo-wide #story{padding-top:0!important;background:radial-gradient(ellipse at 50% 25%,rgba(12,8,5,.55),rgba(12,8,5,.92))}
 /* the stranger at the door: the face hangs in the sky, the words wait on the counter */
@@ -1971,6 +1971,64 @@ html.tall .draw-ov{bottom:auto;height:var(--appH)}
 .say-menu{position:fixed!important;bottom:auto!important;right:auto!important;z-index:65!important;max-height:calc(100svh - 20px);overflow:auto}
 html.duo-wide .say-menu{width:min(440px,46vw)}
 html.duo-v:not(.duo-wide) #sGame .console .say-btn{left:auto;right:14px;top:42%;bottom:auto}
+
+/* ================= Wanted level picker ================= */
+#heatPick{display:flex!important;align-items:stretch;gap:6px;width:min(560px,100%);flex-wrap:nowrap}
+#heatPick[hidden]{display:none!important}
+.hp-arrow{flex:none;width:44px;border-radius:12px;border:1px solid rgba(216,52,31,.4);background:rgba(40,8,6,.55);color:#ffcf9a;font-size:26px;line-height:1;cursor:pointer}
+.hp-arrow:disabled{opacity:.25}
+.hp-mid{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 10px;border-radius:12px;background:rgba(30,8,5,.6);border:1px solid rgba(216,52,31,.35);text-align:center}
+.hp-k{font-family:var(--f-label);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#ff8a72}
+.hp-mid b{font-family:var(--f-serif);font-size:17px;color:#f3d8b8}
+.hp-mid em{font-style:normal;font-size:12px;color:#d8b8a0;line-height:1.3;max-width:100%}
+.hp-stars{display:flex;gap:3px;font-size:12px;color:rgba(255,255,255,.12)}
+.hp-stars .open{color:rgba(216,52,31,.45)}.hp-stars .on{color:#ff6a4a}
+html.duo-wide #sTitle .heat{display:flex!important}
+html.duo-wide #heatPick .hp-mid em{display:none}
+.tp-stars{font-style:normal;color:#ff6a4a;font-size:11px;letter-spacing:1px}
+html[data-back="10"] .card.back{--b1:#e0b44a;--b2:#5a2a0a;--bl:rgba(255,220,140,.4);--bm:#2a1406}
+html[data-back="11"] .card.back{--b1:#1a1614;--b2:#050404;--bl:rgba(200,30,20,.3);--bm:#c9a24e}
+.bk-swatch[data-bk="10"]{--s1:#e0b44a;--s2:#5a2a0a}.bk-swatch[data-bk="11"]{--s1:#1a1614;--s2:#050404}
+
+/* ================= bosses remember; how far you rode; the ending ================= */
+.prec{font-family:var(--f-label);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7a3b1a;text-align:center;margin-top:2px}
+.prec b{font-family:var(--f-serif);letter-spacing:0;font-size:13px;color:#4a1c08}
+.prec[hidden]{display:none}
+.lv-trail{display:flex;gap:7px;justify-content:center;margin-top:14px;opacity:0;animation:lvNem .8s 1.2s forwards}
+.lv-trail i{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(232,212,162,.45)}
+.lv-trail i.done{background:#c9a24e;border-color:#c9a24e}
+.lv-trail i.here{background:#d8341f;border-color:#ff8a72;box-shadow:0 0 10px rgba(216,52,31,.7)}
+.lv-prog{margin-top:8px;font-family:var(--f-label);letter-spacing:.2em;text-transform:uppercase;font-size:12px;color:#d8c08a;text-align:center;opacity:0;animation:lvNem .8s 1.3s forwards}
+.lv-prog b{color:#f4cb5c}
+.st-down{position:relative;filter:grayscale(.85) contrast(1.1)!important}
+.st-paid,.st-paidrow b{position:absolute;left:50%;top:50%;translate:-50% -50%;rotate:-14deg;padding:2px 8px;border:2.5px solid #d8341f;color:#d8341f;font-family:var(--f-display);text-transform:uppercase;letter-spacing:.08em;font-size:22px;background:rgba(246,233,204,.9);animation:stampDown .5s .9s cubic-bezier(.2,1.6,.4,1) both}
+.st-paidrow .medal{position:relative;overflow:visible!important}
+.st-paidrow b{font-size:10px;padding:1px 4px;border-width:1.5px;animation-delay:calc(.4s + var(--k) * .18s)}
+@keyframes stampDown{from{opacity:0;scale:2.2}}
+
+/* ================= the road ================= */
+.tg-choices.roads,#evChoices.roads{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:min(760px,100%)}
+.road-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px 10px 12px;border-radius:14px;border:1px solid rgba(201,162,78,.35);text-align:center;cursor:pointer;color:#f3e6c6;font:inherit;
+  background:var(--grain),linear-gradient(#3a2616,#21150c);box-shadow:0 4px 0 rgba(0,0,0,.5),inset 0 1px 0 rgba(255,228,175,.12)}
+.road-card i{font-style:normal;font-size:28px;line-height:1;color:#e8c46a}
+.road-card b{font-family:var(--f-display);font-size:17px;letter-spacing:.04em}
+.road-card .rk{font-family:var(--f-label);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:rgba(0,0,0,.35)}
+.road-card em{font-style:normal;font-size:12.5px;color:#c8b48c;line-height:1.3}
+.road-safe .rk{color:#bfe0a0}.road-risky{border-color:rgba(216,52,31,.55);background:var(--grain),linear-gradient(#4a1a10,#25100a)}.road-risky .rk{color:#ff8a72}.road-risky i{color:#ff8a72}.road-town .rk{color:#e8c46a}
+@media (max-width:520px){#evChoices.roads{grid-template-columns:1fr}.road-card{flex-direction:row;flex-wrap:wrap;justify-content:flex-start;text-align:left;gap:4px 10px}.road-card em{flex-basis:100%}}
+.ev-stakes{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(107,69,32,.35);font-size:.92em}
+#evChoices #evDuel,#evChoices #evPay{flex:1 1 200px}
+/* the duel card uses the stranger's card styles */
+html.duo-wide #duelCard{display:grid;grid-template-rows:1fr var(--hinge,28px) 1fr;place-items:center;padding:0!important}
+html.duo-wide #duelCard[hidden]{display:none}
+html.duo-wide #duelCard .nem-sheet{width:min(560px,92vw);max-height:100%;padding:14px 22px;gap:6px}
+html.duo-wide #duelCard .nem-top{grid-row:1;align-self:end;margin-bottom:12px}
+html.duo-wide #duelCard .nem-bot{grid-row:3;align-self:start;margin-top:12px;background:none;border:0;box-shadow:none}
+html.duo-wide #duelCard .nem-face{width:clamp(70px,13svh,110px)}
+.duel-sheet .nem-k{color:#e8c46a}
+html.duo-wide #sEvent .dbot .tg-result{background:var(--grain),#ecdfc2;color:#2a1708;padding:12px 18px;border-radius:6px;box-shadow:0 8px 20px rgba(0,0,0,.45);font-family:var(--f-type,monospace);line-height:1.45;border-top:none}
+html.duo-wide #sEvent .dbot .tg-result .ev-stakes{border-top-color:rgba(107,69,32,.35)}
+html.duo-wide #sEvent .dbot .goldline{color:#e8d4a2}
 
 </style>
 </head>
@@ -2239,14 +2297,19 @@ const LINEUPS=[
   ['d','d'],
   ['d','d','g'],
   ['d','d','g','g'],
-  ['d','d','g','g','g'],
-  ['d','d','g','g','g','g'],
-  ['d','g','g','g','g','v'],
-  ['g','g','g','g','v','v'],
-  ['g','g','v','v','v','v']
+  ['d','g','g','g'],
+  ['d','g','g','g'],
+  ['d','g','g','v'],
+  ['g','g','g','v','v'],
+  ['g','g','v','v','v']
 ];
 const BBS=[20,20,30,30,40,50,60,80];
 const START=1000;
+// the difficulty curve: a fair first fight, a real one by the end of the trail
+const BOSS_CHIPS=[800,1000,1150,1300,1450,1600,1700,1850];
+// bosses read the table better the further down the trail you ride
+const BOSS_NOISE=[0.18,0.13,0.10,0.07,0.05,0.04,0.03,0.02];
+const EARLY_EDGE=[500,400,300,200,200,200,200,300];
 const BOSSES=[
   {key:'pete',font:"'Ranchers'",fs:1.0,name:'Whiskey Pete',title:'The Drunkard',twist:'Bluffs constantly. Half the time he has nothing.',style:'bluffer',hat:'cowboy',fh:'beard',
     tellB:'Pete taps his chips and grins.',tellS:'Pete goes quiet and sets down his glass.',
@@ -2263,13 +2326,13 @@ const BOSSES=[
   {key:'snake',font:"'Smokum'",fs:1.22,name:'Snake Crane',title:'The Card Sharp',twist:'Peeks at your first hole card every hand.',style:'sharp',hat:'flat',fh:'goatee',
     tellB:'Snake licks his lips.',tellS:'Snake slides his hat brim down.',
     lines:{shoot:"Saw that one comin'. You didn't.",intro:'Nice cards. Real nice. Oh, did I say that out loud?',win:['Saw that coming.','I know what you\'re holding.','Ssssweet.'],lose:['You got lucky, friend.','Didn\'t see THAT one.'],raise:['I know what you\'ve got.','Go on, call.'],bust:'You cheated. I KNOW cheating.'}},
-  {key:'banker',font:"'Cinzel Decorative'",fs:0.86,name:'Banker Ellsworth',title:'The Money',twist:'Sits with triple chips and bets big.',style:'sharp',hat:'bowler',fh:'mutton',unlock:2,
+  {key:'banker',font:"'Cinzel Decorative'",fs:0.86,name:'Banker Ellsworth',title:'The Money',twist:'Sits with a mountain of chips and bets big.',style:'sharp',hat:'bowler',fh:'mutton',unlock:2,
     tellB:'Ellsworth checks his pocket watch.',tellS:'Ellsworth folds his hands on his belly.',
     lines:{shoot:'Consider your account closed.',intro:'I can lose all night. Can you?',win:['Compound interest.','Deposited.','Money finds money.'],lose:['A rounding error.','I have more.'],raise:['Let\'s raise the stakes.','Can you afford this?'],bust:'This bank... is closed.'}},
   {key:'vesper',font:"'Pinyon Script'",fs:1.32,name:'Lady Vesper',title:'The Charmed',twist:'Once per saloon, redeals the river when she is losing.',style:'sharp',fem:true,hat:'none',
     tellB:'Vesper twirls her necklace.',tellS:'Vesper stops smiling.',
     lines:{shoot:'Sorry, sugar. Luck ran out.',intro:'Fortune favors me, darling. Always has.',win:['Charmed, I\'m sure.','Fate is a lady.','Kiss your chips goodbye.'],lose:['How rude.','Luck is just resting.'],raise:['Feeling lucky?','Fate says raise.'],bust:'Well. I suppose even luck runs dry.'}},
-  {key:'bicah',font:"'Pirata One'",fs:1.14,name:'Bicah Mell',title:'The Rat',twist:'Keeps a card up his sleeve. Plays three hole cards.',style:'sharp',hat:'cowboy',fh:'stache',
+  {key:'bicah',font:"'Pirata One'",fs:1.14,name:'Bicah Mell',title:'The Rat',twist:'Keeps a card up his sleeve. Every other hand, he plays three.',style:'sharp',hat:'cowboy',fh:'stache',
     tellB:'Bicah grins way too wide.',tellS:"Bicah stops talking. That's never good.",
     lines:{shoot:"Ain't nobody takes from Bicah Mell. Nobody!",intro:"Well, well. Pull up a chair, cowpoke. I'm the only honest man left out here.",win:['Ha! Survivor, me.','Told ya, cowpoke.','Loyalty pays. Mine, mostly.',"Not my fault you're slow."],lose:['That was a setup!','Somebody ratted me out.','Real cute, cowpoke.'],raise:['Go on, call me a liar.','I never bluff. Never.','You scared, cowpoke?'],bust:"This ain't over. I'll be back. I always come back."}}
 ];
@@ -2326,12 +2389,33 @@ const CHARMS={
   saddle:{name:'Saddlebags',icon:'⌂',desc:'Carry one more charm.',price:70,tier:2}
 };
 const NUMERALS=Array.from({length:40},(_,n)=>{let x=n+1,s='';[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']].forEach(([v,r])=>{while(x>=v){s+=r;x-=v}});return s});
+// Wanted levels: each one adds a rule and stacks with the ones before it. +10% gold per level.
 const HEAT=[
   {name:'Fresh Rider',desc:'The standard run.'},
-  {name:'Hot Trail',desc:'Bosses carry 25% more chips. +10% gold.'},
-  {name:'Blood Moon',desc:'Also, every outlaw plays sharper. +20% gold.'},
-  {name:'Dead Man\'s Hand',desc:'Also, blinds start 50% higher. +30% gold.'}
+  {name:'Wanted',desc:'Bosses carry 25% more chips.'},
+  {name:'Dead or Alive',desc:'Every outlaw plays sharper.'},
+  {name:'Hot Trail',desc:'Blinds start 50% higher.'},
+  {name:'Price on Your Head',desc:'The store charges 25% more. Win it for the Outlaw Gold deck.'},
+  {name:'Bounty Hunters',desc:'A veteran bounty hunter sits at every table.'},
+  {name:'Poker Faces',desc:'Bosses show no tells, unless you carry Tell Reader.'},
+  {name:'Lean Times',desc:'Start every saloon with 20% fewer chips.'},
+  {name:"Dead Man's Run",desc:'Blinds rise every 7 hands. Win it for the Black Hat deck.'}
 ];
+// what each boss says when you meet again: beat = you took them down before, won = they put you in the ground
+const BOSS_MEM={
+  pete:{beat:"You again! You cleaned me out last time. Not tonight, friend.",won:"Back for another round? I'm buying. You're paying."},
+  ma:{beat:"You owe me for last time, sugar. With interest.",won:"Back so soon? Your room's still warm."},
+  iron:{beat:"Last time was luck. Walls don't fall twice.",won:"You again. Same result."},
+  under:{beat:"I had your box measured. You wasted good pine.",won:"Still got your measurements on file."},
+  snake:{beat:"Took me once. I've studied every card you played since.",won:"I remember your tells. Every one."},
+  banker:{beat:"You made a withdrawal last time. The bank remembers.",won:"Your account's still overdrawn, friend."},
+  vesper:{beat:"Fortune smiled on you once, darling. She's fickle.",won:"Back for more heartbreak?"},
+  bicah:{beat:"You. Nobody beats Bicah Mell twice. Nobody!",won:"The cowpoke crawls back. Good. I need the money."}};
+const ENDING=[
+  {k:'Graves End · Last hand',t:"Bicah Mell's chips spill across the felt. The room goes very quiet.",art:'bicahdown'},
+  {k:'Eight saloons',t:'Eight bosses. Eight wanted posters. Every one stamped PAID.',art:'posters'},
+  {k:'At dawn',t:'The stranger cashes out, tips the barkeep, and rides east.',art:'rider'},
+  {k:'',t:'Nobody ever learned their name.<br>But every table in the territory knows the story.',art:'end'}];
 const TIER_NOTE={1:'Beat Iron Jack Rourke to unlock',2:'Beat Banker Ellsworth to unlock'};
 const CURSES={
   blind:{name:'Blindfold',icon:'⊘',desc:'Your cards stay hidden until the flop next saloon.',gold:45},
@@ -2395,7 +2479,7 @@ function twistOn(key){const b=boss(); return !!(b&&b.boss===key&&!has('silver'))
 function heatGoldMul(){return 1+0.1*(R?R.heat||0:0)}
 function goldMul(){return (has('golden')?(lvl('golden')>=2?2:1.5):1)*heatGoldMul()}
 function bountyFor(L){return 40+15*L}
-function maxHeat(){return Math.min(3,meta.wins)}
+function maxHeat(){const w=meta.wantedWon!=null?meta.wantedWon:(meta.wins?Math.min(3,meta.wins)-1:-1); return Math.max(0,Math.min(8,w+1))}
 function hasDeed(k){return !!(R&&R.deeds&&R.deeds.includes(k))}
 function charmSlots(){return 6+(hasDeed('satchel')?1:0)+(has('saddle')?1:0)}
 function trickSlots(){return 2+(hasDeed('belt')?1:0)}
@@ -2497,6 +2581,8 @@ const NEM_LINES={
   lose:["Lucky. Won't last.","Enjoy it.","That's one.","I've been shot worse."],
   kill:["Twice now.","Stay down this time.","Say hello to the undertaker.","I'll be here when you crawl back."],
   die:["Took you long enough...","Tell them... it was a fair game.","Well. Hell."]};
+function bossMem(k){meta.bossMem=meta.bossMem||{}; return meta.bossMem[k]=meta.bossMem[k]||{wins:0,losses:0,hand:'',allin:false}}
+function memLine(bd){const m=(meta.bossMem||{})[bd.key], t=BOSS_MEM[bd.key]; if(!m||!t) return bd.lines.intro; return m.wins?t.beat:m.losses?t.won:bd.lines.intro}
 function nemName(n){return n?`${n.name.split(' ')[0]} "${n.epi}" ${n.name.split(' ').slice(1).join(' ')}`:''}
 function nemTitle(n){return NEM_RANKS[Math.min(5,n.rank)]}
 function nemPlayer(n){
@@ -2517,15 +2603,18 @@ function nemesisOnLoss(res){
 
 /* ================= table setup ================= */
 function setupTable(){
+  G.duel=null;
   const L=R.level, bd=BOSSES[L-1];
   G.curse=R.curse; R.curse=null;
   const heat=R.heat||0;
   const lineup=LINEUPS[L-1].slice(); if(G.curse==='crowd'&&lineup.length<6) lineup.push('g');
+  if((R.heat||0)>=5&&lineup.length<6) lineup.push('v');
   G.lineup=lineup;
   G.bb=Math.round(BBS[L-1]*(G.curse==='heavy'?2:1)*(heat>=3?1.5:1)/10)*10;
-  G.riseEvery=(bd.key==='under'&&!has('silver'))?5:10; if(has('steady')) G.riseEvery*=2;
-  let start=START+(has('deep')?(lvl('deep')>=2?600:300):0)+((R.temp&&R.temp.chips)||0)+(hasDeed('stake')?200:0);
+  G.riseEvery=(bd.key==='under'&&!has('silver'))?5:(L<=3?12:10); if((R.heat||0)>=8) G.riseEvery=Math.min(G.riseEvery,7); if(has('steady')) G.riseEvery*=2;
+  let start=START+(EARLY_EDGE[L-1]||0)+(has('deep')?(lvl('deep')>=2?600:300):0)+((R.temp&&R.temp.chips)||0)+(hasDeed('stake')?200:0);
   if(G.curse==='short') start=Math.round(start*0.67/10)*10;
+  if((R.heat||0)>=7) start=Math.round(start*0.8/10)*10;
   G.start=start; G.tempWind=!!(R.temp&&R.temp.wind); R.temp=null;
   const NEM=meta.nemesis, used=new Set(NEM?[NEM.name]:[]), pool=shuffle(NAMES.slice());
   const minors=shuffle(lineup).map(t=>{
@@ -2536,7 +2625,7 @@ function setupTable(){
   G.nemIntro=null;
   if(NEM&&R&&!R.nemMet&&L>=2&&!(typeof DAILY!=='undefined'&&DAILY)&&!R.tutorial&&Math.random()<.3+.1*NEM.rank){
     R.nemMet=true; NEM.met=(NEM.met||0)+1; minors[0]=nemPlayer(NEM); G.nemIntro=NEM; log(`${nemName(NEM)} is at the table. ${NEM.fem?'She':'He'} remembers you.`)}
-  const bChips=Math.round(((bd.key==='banker'&&!has('silver'))?3000:1500+100*(L-1))*(heat>=1?1.25:1)/10)*10;
+  const bChips=Math.round(((bd.key==='banker'&&!has('silver'))?2400:BOSS_CHIPS[L-1])*(heat>=1?1.25:1)/10)*10;
   const bp={name:bd.name,bossDef:bd,boss:bd.key,style:bd.style,chips:bChips,isHuman:false,fem:!!bd.fem,tilt:0};
   minors.splice(Math.floor(minors.length/2),0,bp);
   G.players=[{name:'You',isHuman:true,chips:start,tilt:0}].concat(minors);
@@ -2549,6 +2638,19 @@ function setupTable(){
   G.bounty=Math.round(bountyFor(L)*goldMul());
   log(`You ride into ${TOWNS[L-1]}. ${bd.name} is waiting.`);
   if(G.curse) log(`Cursed: ${CURSES[G.curse].name}.`);
+}
+// a heads-up duel on the trail: you and one outlaw, short stacks, blinds that climb fast. Never ends the run.
+function setupDuel(spec){
+  G.duel=spec; G.curse=null; G.lineup=[]; G.bb=spec.bb||20; G.riseEvery=3; G.start=spec.mine||400; G.tempWind=false; G.nemIntro=null;
+  const foe={name:spec.name,fem:!!spec.fem,tier:spec.tier,style:spec.style||'tight',chips:spec.chips||400,isHuman:false,tilt:0};
+  if(spec.nem){foe.nem=true; foe.nemRank=spec.nem.rank}
+  G.players=[{name:'You',isHuman:true,chips:G.start,tilt:0},foe];
+  G.players.forEach(p=>{p.out=false; p.hand=[]; p.bet=0; p.total=0});
+  G.bossStart=foe.chips; G.dealer=Math.floor(Math.random()*2);
+  G.tableHands=0; G.drawUsed=false; G.flaskUsed=false; G.dynUsed=false; G.windUsed=0; G.vesperUsed=false; G.horseUsed=false; G.aceUsed=false; G.streak=0; G.koGold=0;
+  G.outcome=null; G.nemEv=null; G.log=[]; G.handLog=[]; G.lastHandLog=[]; G.board=[]; G.street='idle'; G.seen=new Map(); G.winCards=new Set(); G.lastWinners=[];
+  G.challenge=null; G.challengeDone=false; G.bounty=0;
+  log(`${spec.name} sits across from you. Heads up. Winner takes the stakes.`);
 }
 function serializeTable(){
   return {players:G.players.map(p=>({name:p.name,fem:p.fem,tier:p.tier,nem:!!p.nem,nemRank:p.nemRank||0,style:p.style,chips:p.chips,out:p.out,tilt:p.tilt||0,boss:p.boss||null,isHuman:!!p.isHuman})),
@@ -2581,7 +2683,7 @@ function startHand(){
   const count=G.players.filter(p=>p.inHand).length;
   const bp=boss();
   if(bp&&twistOn('ma')&&!bp.out){
-    const ante=Math.max(5,Math.round(G.bb/5/5)*5);
+    const ante=Math.max(5,Math.round(G.bb/10/5)*5);
     G.players.forEach(p=>{if(p.inHand&&!p.bossDef){let a=ante; if(p.isHuman&&has('comped')) a=lvl('comped')>=2?0:Math.ceil(a/2); a=Math.min(a,p.chips); p.chips-=a; p.total+=a; if(p.chips===0) p.allIn=true}});
   }
   const sbI=count===2?G.dealer:nextIn(G.dealer), bbI=nextIn(sbI);
@@ -2590,7 +2692,7 @@ function startHand(){
   G.currentBet=G.bb; G.minRaise=G.bb; G.aggressor=-1; G.meRaised=false;
   let order=0;
   for(let r=0;r<2;r++){let i=G.dealer; for(let k=0;k<count;k++){i=nextIn(i); const c=draw(); c.order=order++; G.players[i].hand.push(c)}}
-  G.players.forEach(p=>{if(p.inHand&&p.boss==='bicah'&&!has('silver')){const c=draw(); c.order=order++; p.hand.push(c)}});
+  G.players.forEach(p=>{if(p.inHand&&p.boss==='bicah'&&!has('silver')&&G.tableHands%2===0){const c=draw(); c.order=order++; p.hand.push(c)}});
   G.dealCount=order;
   const me=human();
   if(has('rabbit')&&me.inHand&&me.hand[0].r!==me.hand[1].r&&Math.random()<0.35){
@@ -2714,7 +2816,8 @@ function finishHand(res){
     if(!p.isHuman&&!p.out&&p.chips<=0){
       p.out=true; if(me.winner) myKo++;
       ev.kos.push(i);
-      if(p.bossDef){log(`${p.name} is taken down. The bounty is yours.`); ev.bossLine={i,text:p.bossDef.lines.bust}}
+      if(p.bossDef){log(`${p.name} is taken down. The bounty is yours.`); ev.bossLine={i,text:p.bossDef.lines.bust}
+        if(!R.daily&&me.winner){const m=bossMem(p.boss); m.wins++; m.hand=me.show&&me.score?nameOf(me.score):''; m.allin=!!me.allIn}}
       else {
         const g=Math.round(TIERS[p.tier].gold*goldMul());
         if(me.winner){R.gold+=g; G.koGold+=g; log(`${p.name} is tapped out. +${g} gold.`)} else log(`${p.name} is tapped out.`);
@@ -2772,11 +2875,14 @@ function finishHand(res){
     }
   }
   if(me.chips<=0){
-    const winds=(has('wind')?(lvl('wind')>=2?2:1):0)+(G.tempWind?1:0);
-    if(G.windUsed<winds){G.windUsed++; me.chips=Math.round(G.start/4/10)*10; log('Second Wind. You claw back to your feet.'); ev.wind=true}
-    else {G.outcome='lose'; const nk=nemesisOnLoss(res); G.nemEv=nk; if(nk) ev.nemesis=nk}
+    // every rider gets back up once per run (not on the hardest Wanted level); charms and tonics add more
+    const own=G.duel?0:(has('wind')?(lvl('wind')>=2?2:1):0)+(G.tempWind?1:0), grit=(!G.duel&&!R.windSpent&&!R.daily&&(R.heat||0)<8)?1:0, winds=own+grit;
+    if(G.windUsed<winds){G.windUsed++; if(G.windUsed>own) R.windSpent=true; me.chips=Math.round(G.start/3/10)*10; log(G.windUsed>own?'Grit. You claw back to your feet. (Once a run.)':'Second Wind. You claw back to your feet.'); ev.wind=true}
+    else {G.outcome='lose'; const nk=G.duel?null:nemesisOnLoss(res); G.nemEv=nk; if(nk) ev.nemesis=nk;
+      if(bp&&!R.daily&&!G.duel){const m=bossMem(bp.boss); m.losses++}}
   }
   if(G.outcome!=='lose'&&bp&&bp.out) G.outcome='win';
+  if(G.duel&&G.outcome!=='lose'&&G.players.every(p=>p.isHuman||p.out)) G.outcome='win';
   G.lastHandLog=G.handLog.slice();
   saveMeta();
   return ev;
@@ -2821,7 +2927,7 @@ function settleDraw(i,won){const p=G.players[i]; G.drawUsed=true; G.talks++;
 /* ================= AI ================= */
 // returns {type,to,bluff,tell,line}
 function aiDecide(i){
-  const p=G.players[i], s=STYLES[p.style], T=p.tier?TIERS[p.tier]:{noise:0.01,sims:240,adj:0};
+  const p=G.players[i], s=STYLES[p.style], T=p.tier?TIERS[p.tier]:{noise:BOSS_NOISE[(R.level||1)-1]||0.01,sims:R.level<=2?140:240,adj:0};
   const opps=live().length-1, me=human();
   const tw=k=>p.boss===k&&!has('silver');
   const pin=(tw('snake')&&me.inHand&&!me.folded)?me.hand[0]:null;
@@ -2837,7 +2943,8 @@ function aiDecide(i){
   const pre=G.street==='preflop'&&opps>=3&&p.tier!=='d'?0.03:0;
   const adj=s.adj+T.adj+(tw('pete')?-0.04:0)+(tilt?-0.1:0)+(heat>=2?0.02:0)+pre;
   const bluff=s.bluff+(tw('pete')?0.16:0)+(tilt?0.12:0);
-  const aggr=s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0)+(p.steel&&me.inHand?0.18:0)-(p.calm?0.4:0);
+  const memo=p.bossDef?(meta.bossMem||{})[p.boss]:null, cocky=!!(memo&&memo.losses&&!memo.wins);
+  const aggr=(cocky?0.08:0)+s.aggr+(tw('banker')?0.25:0)+(p.bossDef?0.05:0)+(tilt?0.3:0)+(p.steel&&me.inHand?0.18:0)-(p.calm?0.4:0);
   const sizeMul=tw('banker')?1.6:1;
   const strongBar=Math.min(0.86,fair*1.6)+adj;
   const canRaise=p.chips>toCall;
@@ -2846,7 +2953,7 @@ function aiDecide(i){
   const R_=(to,isBluff)=>{
     const d={type:'raise',to,bluff:isBluff};
     if(p.bossDef){
-      if(has('tells')||Math.random()<0.6){
+      if(has('tells')||((R.heat||0)<6&&Math.random()<0.6)){
         const honest=has('tells')||Math.random()<0.75;
         const strong=isBluff?!honest:honest;
         d.tell=strong?p.bossDef.tellS:p.bossDef.tellB;
@@ -2872,6 +2979,7 @@ function aiDecide(i){
   let callBar=odds+adj*0.6+(bigCall?0.06:0);
   if(has('face')&&G.aggressor===0) callBar+=lvl('face')>=2?0.14:0.07;
   if(G.aggressor===0){if(p.spooked) callBar+=0.16; if(p.sticky) callBar-=0.14}
+  if(p.bossDef&&G.aggressor===0){const m=(meta.bossMem||{})[p.boss]; if(m&&m.wins) callBar-=me.allIn&&m.allin?0.07:0.04}
   if(eq>callBar||tw('iron')) return {type:'call'};
   if(canRaise&&!bigCall&&r<bluff*0.5) return R_(raiseTo(0.7),true);
   return {type:'fold'};
@@ -3855,8 +3963,8 @@ function dailyDone(won){
 }
 
 /* ================= trophy room: wanted posters, card backs, achievements ================= */
-const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded'];
-function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
+const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded','Outlaw Gold','Black Hat'];
+function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===10) return (meta.wantedWon??-1)>=4; if(n===11) return (meta.wantedWon??-1)>=8; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
 const ACH=[
   ['First blood','Take down your first boss',()=>meta.stats.bosses>=1],
   ['Halfway there','Reach the fifth saloon',()=>meta.best>=5],
@@ -3872,7 +3980,7 @@ const ACH=[
   ['Collector','Unlock five card backs',()=>[1,2,3,4,5,6,7,8,9].filter(backUnlocked).length>=5]];
 function renderTrophies(){
   const beaten=meta.beaten||{}, cur=meta.back||'auto';
-  const posters=BOSSES.map(b=>beaten[b.key]?`<div class="tp-poster got"><span class="medal">${bossPortrait(b)}</span><b>${b.name}</b><em>Taken down ×${beaten[b.key]}</em></div>`
+  const posters=BOSSES.map(b=>beaten[b.key]?`<div class="tp-poster got"><span class="medal">${bossPortrait(b)}</span><b>${b.name}</b><em>Taken down ×${beaten[b.key]}</em>${(meta.beatenAt||{})[b.key]?`<i class="tp-stars">${'★'.repeat((meta.beatenAt||{})[b.key])}</i>`:''}</div>`
     :`<div class="tp-poster"><span class="medal locked">?</span><b>Wanted</b><em>${TOWNS[BOSSES.indexOf(b)]}</em></div>`).join('');
   const backs=[`<button class="tp-back${cur==='auto'?' on':''}" data-back="auto"><span class="bk-auto">Each saloon</span><em>Auto</em></button>`]
     .concat(BACK_NAMES.map((nm,i)=>{const n=i+1, ok=backUnlocked(n); return `<button class="tp-back${String(cur)===String(n)?' on':''}" data-back="${n}" ${ok?'':'disabled'}><span class="bk-swatch" data-bk="${n}"></span><em>${ok?nm:'Locked'}</em></button>`})).join('');
@@ -3970,7 +4078,7 @@ let COACH=null;
 function tip(k){if(TUT) return; if(!meta.tips[k]&&!COACH) COACH=k}
 function renderCoach(){
   const el=$('coach');
-  if(!COACH||meta.tips[COACH]||!$('raiseSheet').hidden){el.hidden=true; return}
+  if(!COACH||meta.tips[COACH]||!$('raiseSheet').hidden||(G&&G.duel&&COACH==='start')){el.hidden=true; return}
   el.hidden=false;
   {const con=document.querySelector('#sGame .console'); if(con&&el.parentNode!==con) con.insertBefore(el,con.firstChild)}
   el.innerHTML=`<div style="flex:1">${TIPS[COACH]}</div><button class="btn small" id="coachOk">Got it</button>`;
@@ -4006,8 +4114,9 @@ function renderTitle(){
   { let h=$('huntLine'); if(!h){h=document.createElement('button'); h.id='huntLine'; h.className='hunt-line'; $('statLine').after(h); h.onclick=()=>{ac(); openMore('trophies')}}
     const n=meta.nemesis; h.hidden=!n; if(n) h.innerHTML=`<span class="medal">${portraitFor({name:n.name,fem:n.fem,tier:n.tier,nem:true,nemRank:n.rank})}</span><span>Hunted by <b>${nemName(n)}</b><em>${nemTitle(n)}</em></span>`; }
   $('statLine').innerHTML=meta.runs?`<span><em>Best</em><b>${meta.wins?'Won':meta.best?'Saloon '+meta.best:'—'}</b></span><span><em>Runs</em><b>${meta.runs}</b></span><span><em>Wins</em><b>${meta.wins}</b></span><span><em>Bosses</em><b>${Object.keys(meta.beaten||{}).length}/8</b></span>`:'';
-  $('heatPick').innerHTML=HEAT.map((h,i)=>`<button data-heat="${i}" aria-pressed="${(meta.heatPick||0)===i}" ${i>mh?'disabled':''}><b>${h.name}</b><span>${i>mh?`Win ${i} run${i>1?'s':''} to unlock`:h.desc}</span></button>`).join('');
-  $('heatPick').querySelectorAll('[data-heat]').forEach(b=>b.onclick=()=>{meta.heatPick=+b.dataset.heat; saveMeta(); renderTitle()});
+  { const cur=Math.min(meta.heatPick||0,mh), h=HEAT[cur];
+    $('heatPick').innerHTML=`<button class="hp-arrow" data-hstep="-1" ${cur<=0?'disabled':''} aria-label="Lower">‹</button><div class="hp-mid"><span class="hp-k">${cur?`Wanted level ${cur}`:'Standard'}${cur?` · +${cur*10}% gold`:''}</span><b>${h.name}</b><em>${cur?HEAT.slice(1,cur+1).map(x=>x.desc).join(' '):h.desc}</em><span class="hp-stars">${Array.from({length:8},(_,i)=>`<i class="${i<cur?'on':i<mh?'open':''}">★</i>`).join('')}</span></div><button class="hp-arrow" data-hstep="1" ${cur>=mh?'disabled':''} aria-label="Higher">›</button>`;
+    $('heatPick').querySelectorAll('[data-hstep]').forEach(b=>b.onclick=()=>{meta.heatPick=Math.max(0,Math.min(mh,cur+ +b.dataset.hstep)); saveMeta(); sfx('chip'); renderTitle()}); }
   const st=meta.stats;
   $('statsGrid').innerHTML=[['Hands played',num(st.hands)],['Hands won',num(st.won)],['Win rate',st.hands?Math.round(st.won/st.hands*100)+'%':'—'],
     ['Biggest pot',money(st.bigPot)],['Best hand',st.bestHand?nameOf(st.bestHand):'—'],['Bosses taken down',num(st.bosses)],['Challenges',num(st.challenges)],['Runs won',num(meta.wins)]]
@@ -4041,18 +4150,22 @@ const STORY=[
   {k:'At the end of the trail',t:'Bicah Mell. He owns them all, and he never loses.',art:'bicah'},
   {k:'Then a stranger rides in',t:'No name. A mask, a horse, and a thousand dollars in chips.',art:'rider'},
   {k:'',t:'Take every boss down. Collect every bounty.<br>Ride the Dead Man\'s Run.',art:'title'}];
-function playStory(then){
+function playStory(then,slides){
+  const STORY_=slides||STORY, ending=!!slides;
   let v=$('story'); if(!v){v=document.createElement('div'); v.id='story'; document.body.appendChild(v)}
   let i=-1, t=null, gone=false;
   const art=a=>a==='bosses'?`<div class="st-row">${BOSSES.slice(0,7).map(b=>`<span class="medal">${bossPortrait(b)}</span>`).join('')}</div>`
     :a==='bicah'?`<span class="medal st-big">${bossPortrait(BOSSES[7])}</span>`:a==='rider'?`<span class="medal st-big">${portrait('You the rider',HUMAN_LOOK)}</span>`
-    :a==='town'?`<div class="st-town">${TOWNS.map((n,k)=>`<i style="--k:${k}">${n}</i>`).join('')}</div>`:`<div class="st-logo">Dead Man's Run</div>`;
-  const end=()=>{if(gone) return; gone=true; clearTimeout(t); sfxCut(0); meta.seenStory=true; saveMeta(); v.classList.add('out'); setTimeout(()=>{v.hidden=true; v.classList.remove('out')},700); then&&then()};
-  const next=()=>{clearTimeout(t); i++; if(i>=STORY.length){end(); return} const sc=STORY[i];
+    :a==='town'?`<div class="st-town">${TOWNS.map((n,k)=>`<i style="--k:${k}">${n}</i>`).join('')}</div>`
+    :a==='bicahdown'?`<span class="medal st-big st-down">${bossPortrait(BOSSES[7])}<b class="st-paid">Paid</b></span>`
+    :a==='posters'?`<div class="st-row st-paidrow">${BOSSES.map((b,k)=>`<span class="medal" style="--k:${k}">${bossPortrait(b)}<b>Paid</b></span>`).join('')}</div>`
+    :a==='end'?`<div class="st-logo">The End</div>${(R&&R.heat)?`<div class="st-k">Wanted level ${R.heat} · ${HEAT[R.heat].name}</div>`:''}`:`<div class="st-logo">Dead Man's Run</div>`;
+  const end=()=>{if(gone) return; gone=true; clearTimeout(t); sfxCut(0); if(!ending) meta.seenStory=true; saveMeta(); v.classList.add('out'); setTimeout(()=>{v.hidden=true; v.classList.remove('out')},700); then&&then()};
+  const next=()=>{clearTimeout(t); i++; if(i>=STORY_.length){end(); return} const sc=STORY_[i];
     v.innerHTML=`<div class="st-grain"></div><div class="st-card" style="animation-delay:.05s"><div class="st-frame">${art(sc.art)}${sc.k?`<div class="st-k">${sc.k}</div>`:''}<p class="st-t">${sc.t}</p></div></div>
-      <button class="st-skip">Skip</button><div class="st-dots">${STORY.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
+      <button class="st-skip">Skip</button><div class="st-dots">${STORY_.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>`;
     v.querySelector('.st-skip').onclick=e=>{e.stopPropagation(); end()};
-    sfx(i===STORY.length-1?'stamp':'whoosh'); t=setTimeout(next,i===STORY.length-1?3600:4300)};
+    sfx(i===STORY_.length-1?'stamp':ending&&i===0?'bigwin':'whoosh'); t=setTimeout(next,i===STORY_.length-1?4200:4300)};
   v.hidden=false; v.onclick=()=>next(); next();
 }
 function startRun(){
@@ -4066,13 +4179,13 @@ function continueRun(saved){
   R=saved; R.deeds=R.deeds||[]; R.tricks=R.tricks||[]; R.lv=R.lv||{};
   if(R.phase==='shop'){openShop('shop',''); return}
   if(R.phase==='table'&&R.table){resumeTable(); return}
-  openChapter();
+  EV=null; openChapter();
 }
 
 /* ================= general store ================= */
 const SHOP={offers:[],curse:null,curseTaken:false,mode:'shop',summary:'',tab:'charms',tricks:[],deed:null};
 function unlockedPool(){return Object.keys(CHARMS).filter(k=>CHARMS[k].tier<=meta.unlock&&(!R.charms.includes(k)||(CHARMS[k].up&&lvl(k)<2)))}
-function cost(p){return Math.max(1,Math.round(p*(hasDeed('credit')?.8:1)))}
+function cost(p){return Math.max(1,Math.round(p*(hasDeed('credit')?.8:1)*(R&&(R.heat||0)>=4?1.25:1)))}
 function upPrice(k){return cost(Math.round(CHARMS[k].price*1.25/5)*5)}
 function sellPrice(k){return Math.round(CHARMS[k].price*(lvl(k)>=2?.75:.5))}
 function rerollCost(){return hasDeed('dealer')?5:15}
@@ -4183,16 +4296,31 @@ function typeInto(el,text,cb){
   let k=0; el.textContent='';
   TYPE_T=setInterval(()=>{k++; el.innerHTML=text.slice(0,k).replace(/STOP/g,'<span class="stop">STOP</span>'); if(k%3===0) sfx('tick',0,.7+Math.random()*.2); if(k>=text.length){clearInterval(TYPE_T); if(cb) cb()}},22);
 }
+/* ================= the road between saloons: pick a fork, meet what's on it ================= */
+const ROADS={
+  safe:{name:'Quiet trail',risk:'Safe',hint:'Small rewards. Nobody shooting.',icon:'☼',pool:['rest','strongbox','campfire']},
+  risky:{name:'Bandit country',risk:'Risky',hint:'Rich pickings. Things go wrong, you settle it at cards.',icon:'☠',pool:['bandits','stagecoach','hunter','riverboat','shark']},
+  town:{name:'Crossroads town',risk:'Trade',hint:'Peddlers, doctors and fortune tellers.',icon:'⌂',pool:['peddler','doctor','tent']}};
 function openEvent(){
   if(R.level<=1){openChapter(); return}
-  let key=EVENTS[Math.floor(Math.random()*EVENTS.length)];
-  const pool=Object.keys(CHARMS).filter(k=>CHARMS[k].tier<=meta.unlock&&!R.charms.includes(k));
-  if(key==='peddler'&&!pool.length) key='strongbox';
-  EV={key,done:false,result:'',offer:pool[Math.floor(Math.random()*pool.length)]};
   const h=1+Math.floor(Math.random()*11), m=Math.floor(Math.random()*60);
   $('tgStamp').textContent=`RECD ${h}:${String(m).padStart(2,'0')} ${Math.random()<.5?'AM':'PM'}`;
+  EV={key:'fork',done:false,result:''};
   show('sEvent'); renderEvent(true);
 }
+function takeRoad(r){
+  let pool=ROADS[r].pool.slice();
+  const charmPool=Object.keys(CHARMS).filter(k=>CHARMS[k].tier<=meta.unlock&&!R.charms.includes(k));
+  if(!charmPool.length) pool=pool.filter(k=>k!=='peddler');
+  let key=pool[Math.floor(Math.random()*pool.length)];
+  if(r==='risky'&&meta.nemesis&&!R.nemMet&&Math.random()<.3) key='grudge';
+  EV={key,road:r,done:false,result:'',offer:charmPool[Math.floor(Math.random()*charmPool.length)]};
+  sfx('whoosh'); renderEvent(true);
+}
+// it went wrong: pay up, or sit down and settle it heads-up
+function evFail(html,cost,foe,reward){cost=Math.min(cost,R.gold); EV.fail={html,cost,foe,reward}; sfx('lose'); renderEvent(false)}
+function duelFoe(kind){const L=R.level, tier=L<=3?'d':L<=6?'g':'v', pool=NAMES.filter(([n])=>!meta.nemesis||n!==meta.nemesis.name), [name,fem]=pool[Math.floor(Math.random()*pool.length)];
+  return {name,fem:!!fem,tier,style:TIERS[tier].styles[Math.floor(Math.random()*TIERS[tier].styles.length)],kind}}
 function evDone(html){EV.done=true; EV.result=html; saveRun('shop'); renderEvent(false)}
 function renderEvent(fresh){
   const g=R.gold;
@@ -4202,7 +4330,27 @@ function renderEvent(fresh){
     if(res==='win'){R.gold+=amt; sfx('win')} else if(res==='lose'){R.gold-=amt; sfx('lose')}
     evDone(`<div class="event-cards"><div>${cardHTML(a,true)}You</div><div>vs</div><div>${cardHTML(b,true)}Shark</div></div>`+(res==='win'?`You win ${amt} gold.`:res==='lose'?`You lose ${amt} gold.`:'A tie. Nobody pays.'));
   }
+  const duelBtn=(label,foe,win,lose)=>({label,fn:()=>startDuel(Object.assign(foe,{win,lose}))});
   const E={
+    fork:{title:'A fork in the trail',text:`TRAIL TO ${TOWNS[R.level-1].toUpperCase()} SPLITS THREE WAYS STOP PICK YOUR ROAD STOP`,road:true,choices:Object.entries(ROADS).map(([k,r])=>({label:r.name,road:k,fn:()=>takeRoad(k)}))},
+    campfire:{title:'Campfire on the prairie',text:'COWHANDS SHARE THEIR FIRE STOP BEANS ARE HOT STOP STORIES ARE TALLER STOP',choices:[
+      {label:'Swap stories',fn:()=>{R.gold+=12; sfx('chip'); evDone('One of them pays you 12 gold for the tale about Bicah Mell.')}},
+      {label:'Get some sleep',fn:()=>{R.temp=Object.assign(R.temp||{},{chips:200}); evDone('You sleep like a stone. Start next saloon with 200 extra chips.')}}]},
+    stagecoach:{title:'Stagecoach in trouble',text:'STAGECOACH STUCK IN A WASH STOP DRIVER BEGS AN ESCORT STOP STRONGBOX ON THE ROOF STOP',choices:[
+      {label:'Escort it',fn:()=>{if(Math.random()<.65){R.gold+=40; sfx('bigwin'); evDone('You see it safe to the station. The line pays you 40 gold.')} else evFail('Riders hit the coach at the bend. One of them has you cold.',30,duelFoe('bandit'),55)}},
+      {label:'Rob it',fn:()=>{if(Math.random()<.45){R.gold+=75; sfx('bigwin'); evDone('The strongbox pops. +75 gold. Ride fast.')} else evFail('A deputy was riding inside. He wants you to answer for it.',45,duelFoe('deputy'),60)}},
+      {label:'Ride past',fn:()=>evDone('Not your coach. Not your problem.')}]},
+    hunter:{title:'A bounty hunter',text:'MAN AT THE WATERING HOLE KNOWS YOUR FACE STOP SAYS THERE IS PAPER ON YOU STOP',choices:[
+      {label:`Pay him off · ${Math.min(30,g)}g`,fn:()=>{const t=Math.min(30,R.gold); R.gold-=t; evDone(`He pockets ${t} gold and forgets your face.`)}},
+      duelBtn('Settle it at cards',duelFoe('hunter'),60,40),
+      {label:'Run for it',fn:()=>{if(Math.random()<.5){sfx('whoosh'); evDone('You lose him in the canyons.')} else evFail('He runs you down. "Cards or cash, stranger."',35,duelFoe('hunter'),50)}}]},
+    riverboat:{title:'Riverboat game',text:'RIVERBOAT TIED UP FOR THE NIGHT STOP THE DEALER IS DEALING FROM THE BOTTOM STOP',choices:[
+      duelBtn('Call him out',duelFoe('cheat'),55,30),
+      {label:'Watch and learn · 15g',dis:g<15,fn:()=>{R.gold-=15; const k=Object.keys(TRICKS).filter(t=>!R.tricks.includes(t)); if(k.length&&R.tricks.length<trickSlots()){const t=k[Math.floor(Math.random()*k.length)]; R.tricks.push(t); sfx('stamp'); evDone(`You pick up his move. Trick learned: ${TRICKS[t].name}.`)} else evDone('You watch. You learn. Nothing you can carry.')}},
+      {label:'Walk away',fn:()=>evDone('You leave the cheat to his marks.')}]},
+    grudge:{title:'An old face at the crossing',text:`${meta.nemesis?nemName(meta.nemesis).toUpperCase():'SOMEONE'} WAITS AT THE CROSSING STOP SAYS YOU KNOW WHY STOP`,choices:meta.nemesis?[
+      duelBtn('Settle it',Object.assign({kind:'grudge',nem:meta.nemesis},{name:meta.nemesis.name,fem:meta.nemesis.fem,tier:meta.nemesis.rank>=4?'v':meta.nemesis.tier==='d'&&meta.nemesis.rank>=2?'g':meta.nemesis.tier,style:meta.nemesis.rank>=3?'sharp':meta.nemesis.style}),25*meta.nemesis.rank,40),
+      {label:'Take the long way',fn:()=>{R.nemMet=true; R.temp=Object.assign(R.temp||{},{chips:-150}); evDone('You ride around. It costs you a day. Start next saloon with 150 fewer chips.')}}]:[{label:'Ride on',fn:()=>evDone('Nobody there after all.')}]},
     shark:{title:'Card shark on the trail',text:'STRANGER FANS A DECK ON A STUMP STOP SAYS HIGH CARD WINS STOP DOUBLE OR NOTHING STOP',choices:[
       {label:'Bet 20 gold',dis:g<20,fn:()=>sharkBet(20)},{label:'Bet 50 gold',dis:g<50,fn:()=>sharkBet(50)},{label:'Ride past',fn:()=>evDone('You tip your hat and keep riding.')}]},
     doctor:{title:'Traveling doctor',text:'DOCTOR WITH A WAGON OF TONICS WAVES YOU DOWN STOP ONE SIP AND YOU GET BACK UP FROM ANYTHING STOP ONCE STOP',choices:[
@@ -4210,7 +4358,7 @@ function renderEvent(fresh){
       {label:'Ride past',fn:()=>evDone('"Your funeral," he mutters.')}]},
     bandits:{title:'Bandits on the pass',text:'THREE RIDERS BLOCK THE PASS STOP TOLL ROAD STRANGER STOP PAY UP OR DRAW STOP',choices:[
       {label:`Pay ${Math.min(20,g)} gold`,fn:()=>{const t=Math.min(20,R.gold); R.gold-=t; evDone(`You hand over ${t} gold. They let you pass.`)}},
-      {label:'Draw on them',fn:()=>{if(Math.random()<0.55){R.gold+=30; sfx('bigwin'); evDone('You\'re quicker. They scatter and drop their loot. +30 gold.')}else{const t=Math.min(35,R.gold); R.gold-=t; sfx('lose'); evDone(`Too slow. They take ${t} gold and your pride.`)}}}]},
+      {label:'Draw on them',fn:()=>{if(Math.random()<0.55){R.gold+=30; sfx('bigwin'); evDone('You\'re quicker. They scatter and drop their loot. +30 gold.')}else evFail('Too slow. Three barrels say you\'re paying, unless the leader wants your cards.',35,duelFoe('bandit'),45)}}]},
     strongbox:{title:'Burned-out wagon',text:'WAGON BURNED OFF THE TRAIL STOP SOMETHING HEAVY STILL IN THE BACK STOP',choices:[
       {label:'Pry it open',fn:()=>{const t=15+Math.floor(Math.random()*26); R.gold+=t; sfx('chip'); evDone(`Coins spill out. +${t} gold.`)}}]},
     peddler:{title:'Peddler on the road',text:EV.offer?`PEDDLER OPENS HIS COAT STOP ${CHARMS[EV.offer].name.toUpperCase()} STOP HALF PRICE TODAY ONLY STOP`:'',choices:EV.offer?[
@@ -4230,16 +4378,52 @@ function renderEvent(fresh){
   $('evTitle').textContent=e.title;
   $('evGold').textContent=num(R.gold);
   const choices=()=>{
-    $('evChoices').innerHTML=e.choices.map((c,i)=>`<button class="btn ${i===0?'gold':'dark'}" data-ev="${i}" ${c.dis?'disabled':''}>${c.label}</button>`).join('');
+    $('evChoices').classList.toggle('roads',!!e.road);
+    $('evChoices').innerHTML=e.road?e.choices.map((c,i)=>{const r=ROADS[c.road]; return `<button class="road-card road-${c.road}" data-ev="${i}"><i>${r.icon}</i><b>${r.name}</b><span class="rk">${r.risk}</span><em>${r.hint}</em></button>`}).join('')
+      :e.choices.map((c,i)=>`<button class="btn ${i===0?'gold':'dark'}" data-ev="${i}" ${c.dis?'disabled':''}>${c.label}</button>`).join('');
     $('evChoices').querySelectorAll('[data-ev]').forEach(b=>b.onclick=()=>{ac(); e.choices[+b.dataset.ev].fn()});
   };
+  if(EV.fail&&!EV.done){const f=EV.fail;
+    $('evResult').hidden=false; $('evResult').innerHTML=f.html+`<div class="ev-stakes">Pay <b>${f.cost}g</b> and ride on, or sit down heads-up. Win and you keep your gold plus <b>${f.reward}g</b>. Lose and it costs <b>${Math.min(R.gold,Math.round(f.cost*1.5))}g</b>.</div>`;
+    $('evRide').hidden=true; $('evChoices').classList.remove('roads');
+    $('evChoices').innerHTML=`<button class="btn raise" id="evDuel">Settle it at cards</button><button class="btn dark" id="evPay">Pay ${f.cost} gold</button>`;
+    $('evDuel').onclick=()=>{ac(); startDuel(Object.assign(f.foe,{win:f.reward,lose:Math.round(f.cost*1.5)}))};
+    $('evPay').onclick=()=>{ac(); R.gold-=f.cost; sfx('chip'); EV.fail=null; evDone(`You pay ${f.cost} gold and ride on, lighter.`)};
+    return}
   if(EV.done){
     $('evChoices').innerHTML=''; $('evResult').hidden=false; $('evResult').innerHTML=EV.result;
     $('evRide').hidden=false; $('evRide').textContent=`Ride to ${TOWNS[R.level-1]}`; $('evRide').onclick=()=>{ac(); openChapter()};
   } else {
     $('evResult').hidden=true; $('evRide').hidden=true; $('evChoices').innerHTML='';
-    if(fresh) typeInto($('evText'),e.text,choices); else choices();
+    const me_=EV; if(fresh) typeInto($('evText'),e.text,()=>{if(EV===me_&&!EV.done&&!EV.fail) choices()}); else choices();
   }
+}
+
+/* ================= the duel: heads-up on the trail ================= */
+const DUEL_WHO={bandit:'The bandit leader',deputy:'The deputy',hunter:'The bounty hunter',cheat:'The riverboat cheat',grudge:''};
+function startDuel(spec){
+  TOKEN++; R.phase='road'; sset(RUN_KEY,Object.assign({},R,{table:undefined}));
+  const mine=400+(R.level-1)*40;
+  setupDuel(Object.assign({bb:20+10*Math.floor((R.level-1)/3),mine,chips:mine},spec));
+  show('sGame'); render(); sfx('door');
+  const who=spec.nem?nemName(spec.nem):(DUEL_WHO[spec.kind]||'The stranger')+` · ${spec.name}`;
+  let v=$('duelCard'); if(!v){v=document.createElement('div'); v.id='duelCard'; v.className='modal nem-modal'; document.body.appendChild(v)}
+  const split=document.documentElement.classList.contains('duo-wide');
+  v.innerHTML=`<div class="nem-sheet nem-top duel-sheet" role="dialog" aria-label="Duel"><div class="nem-k">Heads up · on the trail</div>
+    <div class="nem-face">${portraitFor(G.players[1])}</div><div class="nem-name">${who}</div>
+    <p class="nem-q">“${spec.nem?'Just you and me now.':pickLine(["Cards, then. Winner rides on.","Sit. Deal. Don't stall.","Let's see what you're made of."])}”</p>${split?'</div><div class="nem-sheet nem-bot">':''}
+    <div class="nem-facts"><span>Your stack<b>$${num(mine)}</b></span><span>Win<b>+${spec.win}g</b></span><span>Lose<b>−${Math.min(R.gold,spec.lose)}g</b></span></div>
+    <p class="nem-note">Blinds climb every 3 hands. Losing costs gold, never the run.</p><button class="btn raise big" id="duelGo">Deal</button></div>`;
+  v.hidden=false; haptic('heavy'); sfx('boss');
+  $('duelGo').onclick=()=>{ac(); v.hidden=true; sfx('card'); later(newHand,300)};
+}
+function duelOver(won){
+  const d=G.duel; if(!d) return; TOKEN++;
+  let html;
+  if(won){R.gold+=d.win; html=`You take ${d.nem?nemName(d.nem):d.name} for everything. +${d.win} gold.`; sfx('bigwin')}
+  else {const t=Math.min(R.gold,d.lose); R.gold-=t; html=`${d.nem?nemName(d.nem):d.name} cleans you out at the table. −${t} gold. You ride on, lighter.`; if(d.nem&&meta.nemesis){meta.nemesis.rank=Math.min(5,meta.nemesis.rank+1); html+=` ${d.nem.fem?'She':'He'} rises to ${nemTitle(meta.nemesis)}.`}}
+  if(d.nem) R.nemMet=true;
+  G.duel=null; saveMeta(); EV.fail=null; show('sEvent'); evDone(html);
 }
 
 /* ================= chapter card ================= */
@@ -4353,7 +4537,9 @@ function posterFor(bd,mode){
   $('posterTitle').textContent=bd.title;
   $('stamp').hidden=true;
   if(mode==='intro'){
-    $('posterQuote').textContent=`"${bd.lines.intro}"`;
+    $('posterQuote').textContent=`"${memLine(bd)}"`;
+    { const m=(meta.bossMem||{})[bd.key]; let rec=$('posterRec'); if(!rec){rec=document.createElement('div'); rec.id='posterRec'; rec.className='prec'; $('posterQuote').after(rec)}
+      rec.hidden=!(m&&(m.wins||m.losses)); if(m&&(m.wins||m.losses)) rec.innerHTML=`Your record · <b>${m.wins}</b> won · <b>${m.losses}</b> lost${m.hand?` · last took ${bd.fem?'her':'him'} with ${m.hand}`:''}`; }
     $('posterTwist').textContent=bd.twist;
     const counts={d:0,g:0,v:0}; G.lineup.forEach(t=>counts[t]++);
     $('posterLine').textContent='Rides with '+Object.entries(counts).filter(([,v])=>v).map(([t,v])=>`${v} ${TIERS[t].label.toLowerCase()}${v>1?'s':''}`).join(', ')+'.';
@@ -4369,7 +4555,7 @@ function startTable(){
   posterFor(bd,'intro');
   $('poster').hidden=false;
   later(()=>sfx('boss'),150); later(()=>sfx('door'),700);
-  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} const go=()=>{say(bd.lines.intro); later(newHand,350)}; if(G.nemIntro){const n=G.nemIntro; G.nemIntro=null; nemAmbush(n,go)} else go()};
+  $('posterBtn').onclick=()=>{ac(); $('poster').hidden=true; sfx('card'); if(!R.daily){R.table=serializeTable(); saveRun('table'); R.table=serializeTable(); sset(RUN_KEY,R)} const go=()=>{say(memLine(bd)); later(newHand,350)}; if(G.nemIntro){const n=G.nemIntro; G.nemIntro=null; nemAmbush(n,go)} else go()};
 }
 function resumeTable(){
   TOKEN++;
@@ -4470,8 +4656,9 @@ function handEnd(res){
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
   const meWon=res.winners.some(w=>w.i===0);
-  if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
-  else if(G.outcome==='lose'&&!TUT){loseRun(); return}
+  if(G.duel&&G.outcome){const w=G.outcome==='win'; if(w){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46)} else {sfx('lose',300); flash(true); shake(true)} if(where[0]||where[1]) later(()=>{const c=w?where[1]:where[0]; if(c){stampAt(c[0],c[1]-6,w?'Settled':'Cleaned Out',w?'#f4cb5c':'#d8341f',34); sfx('stamp')}},500)}
+  else   if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
+  else if(G.outcome==='lose'&&!TUT&&!G.duel){loseRun(); return}
   else if(G.outcome==='lose'){sfx('lose',300); flash(true); shake(true); if(where[0]) later(()=>{stampAt(where[0][0],where[0][1]-6,'Dead Man','#d8341f',40); sfx('stamp')},400)}
   else if(meWon){sfx('win',250); if(res.pot>=G.bb*8){flash(); shake(false); burst(seatEl(0,'.plate'),30)}}
   procChain(ev.bonus||[],where[0]||[50,85],1500);
@@ -4618,6 +4805,7 @@ function tableWon(){
   TOKEN++;
   const L=R.level, bd=BOSSES[L-1], me=human();
   meta.beaten=meta.beaten||{}; meta.beaten[bd.key]=(meta.beaten[bd.key]||0)+1;
+  if(!R.daily){meta.beatenAt=meta.beatenAt||{}; meta.beatenAt[bd.key]=Math.max(meta.beatenAt[bd.key]||0,R.heat||0)}
   if(R.daily){dailyDone(true); return}
   R.gold+=G.bounty; meta.stats.bosses++;
   let extra='';
@@ -4626,7 +4814,7 @@ function tableWon(){
   let unlockMsg='';
   if(bd.unlock&&bd.unlock>meta.unlock){meta.unlock=bd.unlock; unlockMsg=' New charms unlocked for every future run.'}
   meta.best=Math.max(meta.best,Math.min(8,L+1));
-  if(L===8){meta.wins++; saveMeta(); sset(RUN_KEY,null); endRun(true); return}
+  if(L===8){meta.seenEnding=true; meta.wantedWon=Math.max(meta.wantedWon!=null?meta.wantedWon:-1,R.heat||0); meta.wins++; saveMeta(); sset(RUN_KEY,null); playStory(()=>endRun(true),ENDING); return}
   saveMeta();
   R.level++;
   openShop('shop',`You took down <b>${bd.name}</b>. Bounty <b>${G.bounty}g</b>${G.koGold?`, knockouts <b>${G.koGold}g</b>`:''}.${extra}${unlockMsg}`);
@@ -4638,7 +4826,9 @@ function loseRun(){
   const ne=G.nemEv, nn=ne&&ne.who;
   const nemLine=!nn?'':ne.born?`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:1})}<span><b>${nn.name}</b> took the last pot. ${nn.fem?'She':'He'}'ll remember you.<em>Word is they call ${nn.fem?'her':'him'} ${nn.epi} now</em></span></div>`
     :`<div class="lv-nem">${portraitFor({name:nn.name,fem:nn.fem,tier:nn.tier,nem:true,nemRank:nn.rank})}<span><b>${nemName(nn)}</b> got you again.<em>Rises to ${nemTitle(nn)} · ${nn.kills} kills</em></span></div>`;
-  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>${nemLine}`;
+  const far=R.level, best=meta.best||0, fresh=!R.daily&&far>best;
+  const trail=`<div class="lv-trail">${TOWNS.map((t,k)=>`<i class="${k<far-1?'done':k===far-1?'here':''}" title="${t}"></i>`).join('')}</div><div class="lv-prog">Saloon ${far} of 8${fresh?' · <b>furthest yet</b>':''}</div>`;
+  v.innerHTML=`<div class="lv-stamp">Dead Man</div><div class="lv-sub">The ride ends in ${TOWNS[R.level-1]}</div>${trail}${nemLine}`;
   v.classList.remove('on','black'); v.hidden=false;
   const fitStamp=()=>{const st=v.querySelector('.lv-stamp'); if(!st) return; st.style.fontSize=''; const mw=Math.min(innerWidth,v.clientWidth||innerWidth)*.84; if(st.offsetWidth>mw) st.style.fontSize=(parseFloat(getComputedStyle(st).fontSize)*mw/st.offsetWidth).toFixed(1)+'px'};
   fitStamp(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitStamp);
@@ -4873,6 +5063,7 @@ function render(){
   const toRise=G.riseEvery-(G.tableHands%G.riseEvery);
   $('lvl').textContent=`Saloon ${L} of 8`;
   $('town').textContent=R.tutorial?'Practice Table':TOWNS[L-1]; if(R.tutorial) $('lvl').textContent='No boss · just practice';
+  if(G.duel){$('lvl').textContent='Heads up · on the trail'; $('town').textContent=G.duel.nem?'A settled grudge':'Duel'}
   $('gold').innerHTML=roll('gold',R.gold,'s',num);
   if(bp){
     $('bountyPortrait').innerHTML=portraitFor(bp);
@@ -5029,6 +5220,7 @@ function renderControls(){
   if(G.street==='idle'){st.textContent='Pulling up a chair…'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='showdown'){st.innerHTML='<span class="dots">Showdown</span>'; ac2.innerHTML=`<div class="actrow ghosted" style="--cols:3"><button class="btn fold" disabled>Fold</button><button class="btn raise" disabled>Raise</button><button class="btn call" disabled>Call</button></div>`; return}
   if(G.street==='done'){
+    if(G.duel&&G.outcome){const w=G.outcome==='win'; st.innerHTML=w?`<b>You win the duel.</b>`:`<b>Cleaned out.</b> It costs you gold, not your life.`; ac2.innerHTML=one(w?'gold':'dark','Back on the trail','nextBtn'); $('nextBtn').onclick=()=>duelOver(w); return}
     if(G.outcome==='win'){st.innerHTML=`<b>${boss().name} is taken down.</b>`; ac2.innerHTML=one('gold','Collect the bounty','nextBtn'); $('nextBtn').onclick=()=>{$('poster').hidden=true; $('table').classList.remove('bust'); tableWon()}; return}
     if(G.outcome==='lose'){st.innerHTML='<b>Dead man.</b> The run ends here.'; ac2.innerHTML=one('dark','Main menu','nextBtn'); $('nextBtn').onclick=leaveLost; return}
     const auto=me.folded&&!me.winner;

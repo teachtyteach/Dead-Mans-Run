@@ -19,14 +19,19 @@ const LINEUPS=[
   ['d','d'],
   ['d','d','g'],
   ['d','d','g','g'],
-  ['d','d','g','g','g'],
-  ['d','d','g','g','g','g'],
-  ['d','g','g','g','g','v'],
-  ['g','g','g','g','v','v'],
-  ['g','g','v','v','v','v']
+  ['d','g','g','g'],
+  ['d','g','g','g'],
+  ['d','g','g','v'],
+  ['g','g','g','v','v'],
+  ['g','g','v','v','v']
 ];
 const BBS=[20,20,30,30,40,50,60,80];
 const START=1000;
+// the difficulty curve: a fair first fight, a real one by the end of the trail
+const BOSS_CHIPS=[800,1000,1150,1300,1450,1600,1700,1850];
+// bosses read the table better the further down the trail you ride
+const BOSS_NOISE=[0.18,0.13,0.10,0.07,0.05,0.04,0.03,0.02];
+const EARLY_EDGE=[500,400,300,200,200,200,200,300];
 const BOSSES=[
   {key:'pete',font:"'Ranchers'",fs:1.0,name:'Whiskey Pete',title:'The Drunkard',twist:'Bluffs constantly. Half the time he has nothing.',style:'bluffer',hat:'cowboy',fh:'beard',
     tellB:'Pete taps his chips and grins.',tellS:'Pete goes quiet and sets down his glass.',
@@ -43,13 +48,13 @@ const BOSSES=[
   {key:'snake',font:"'Smokum'",fs:1.22,name:'Snake Crane',title:'The Card Sharp',twist:'Peeks at your first hole card every hand.',style:'sharp',hat:'flat',fh:'goatee',
     tellB:'Snake licks his lips.',tellS:'Snake slides his hat brim down.',
     lines:{shoot:"Saw that one comin'. You didn't.",intro:'Nice cards. Real nice. Oh, did I say that out loud?',win:['Saw that coming.','I know what you\'re holding.','Ssssweet.'],lose:['You got lucky, friend.','Didn\'t see THAT one.'],raise:['I know what you\'ve got.','Go on, call.'],bust:'You cheated. I KNOW cheating.'}},
-  {key:'banker',font:"'Cinzel Decorative'",fs:0.86,name:'Banker Ellsworth',title:'The Money',twist:'Sits with triple chips and bets big.',style:'sharp',hat:'bowler',fh:'mutton',unlock:2,
+  {key:'banker',font:"'Cinzel Decorative'",fs:0.86,name:'Banker Ellsworth',title:'The Money',twist:'Sits with a mountain of chips and bets big.',style:'sharp',hat:'bowler',fh:'mutton',unlock:2,
     tellB:'Ellsworth checks his pocket watch.',tellS:'Ellsworth folds his hands on his belly.',
     lines:{shoot:'Consider your account closed.',intro:'I can lose all night. Can you?',win:['Compound interest.','Deposited.','Money finds money.'],lose:['A rounding error.','I have more.'],raise:['Let\'s raise the stakes.','Can you afford this?'],bust:'This bank... is closed.'}},
   {key:'vesper',font:"'Pinyon Script'",fs:1.32,name:'Lady Vesper',title:'The Charmed',twist:'Once per saloon, redeals the river when she is losing.',style:'sharp',fem:true,hat:'none',
     tellB:'Vesper twirls her necklace.',tellS:'Vesper stops smiling.',
     lines:{shoot:'Sorry, sugar. Luck ran out.',intro:'Fortune favors me, darling. Always has.',win:['Charmed, I\'m sure.','Fate is a lady.','Kiss your chips goodbye.'],lose:['How rude.','Luck is just resting.'],raise:['Feeling lucky?','Fate says raise.'],bust:'Well. I suppose even luck runs dry.'}},
-  {key:'bicah',font:"'Pirata One'",fs:1.14,name:'Bicah Mell',title:'The Rat',twist:'Keeps a card up his sleeve. Plays three hole cards.',style:'sharp',hat:'cowboy',fh:'stache',
+  {key:'bicah',font:"'Pirata One'",fs:1.14,name:'Bicah Mell',title:'The Rat',twist:'Keeps a card up his sleeve. Every other hand, he plays three.',style:'sharp',hat:'cowboy',fh:'stache',
     tellB:'Bicah grins way too wide.',tellS:"Bicah stops talking. That's never good.",
     lines:{shoot:"Ain't nobody takes from Bicah Mell. Nobody!",intro:"Well, well. Pull up a chair, cowpoke. I'm the only honest man left out here.",win:['Ha! Survivor, me.','Told ya, cowpoke.','Loyalty pays. Mine, mostly.',"Not my fault you're slow."],lose:['That was a setup!','Somebody ratted me out.','Real cute, cowpoke.'],raise:['Go on, call me a liar.','I never bluff. Never.','You scared, cowpoke?'],bust:"This ain't over. I'll be back. I always come back."}}
 ];
@@ -106,12 +111,33 @@ const CHARMS={
   saddle:{name:'Saddlebags',icon:'⌂',desc:'Carry one more charm.',price:70,tier:2}
 };
 const NUMERALS=Array.from({length:40},(_,n)=>{let x=n+1,s='';[[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']].forEach(([v,r])=>{while(x>=v){s+=r;x-=v}});return s});
+// Wanted levels: each one adds a rule and stacks with the ones before it. +10% gold per level.
 const HEAT=[
   {name:'Fresh Rider',desc:'The standard run.'},
-  {name:'Hot Trail',desc:'Bosses carry 25% more chips. +10% gold.'},
-  {name:'Blood Moon',desc:'Also, every outlaw plays sharper. +20% gold.'},
-  {name:'Dead Man\'s Hand',desc:'Also, blinds start 50% higher. +30% gold.'}
+  {name:'Wanted',desc:'Bosses carry 25% more chips.'},
+  {name:'Dead or Alive',desc:'Every outlaw plays sharper.'},
+  {name:'Hot Trail',desc:'Blinds start 50% higher.'},
+  {name:'Price on Your Head',desc:'The store charges 25% more. Win it for the Outlaw Gold deck.'},
+  {name:'Bounty Hunters',desc:'A veteran bounty hunter sits at every table.'},
+  {name:'Poker Faces',desc:'Bosses show no tells, unless you carry Tell Reader.'},
+  {name:'Lean Times',desc:'Start every saloon with 20% fewer chips.'},
+  {name:"Dead Man's Run",desc:'Blinds rise every 7 hands. Win it for the Black Hat deck.'}
 ];
+// what each boss says when you meet again: beat = you took them down before, won = they put you in the ground
+const BOSS_MEM={
+  pete:{beat:"You again! You cleaned me out last time. Not tonight, friend.",won:"Back for another round? I'm buying. You're paying."},
+  ma:{beat:"You owe me for last time, sugar. With interest.",won:"Back so soon? Your room's still warm."},
+  iron:{beat:"Last time was luck. Walls don't fall twice.",won:"You again. Same result."},
+  under:{beat:"I had your box measured. You wasted good pine.",won:"Still got your measurements on file."},
+  snake:{beat:"Took me once. I've studied every card you played since.",won:"I remember your tells. Every one."},
+  banker:{beat:"You made a withdrawal last time. The bank remembers.",won:"Your account's still overdrawn, friend."},
+  vesper:{beat:"Fortune smiled on you once, darling. She's fickle.",won:"Back for more heartbreak?"},
+  bicah:{beat:"You. Nobody beats Bicah Mell twice. Nobody!",won:"The cowpoke crawls back. Good. I need the money."}};
+const ENDING=[
+  {k:'Graves End · Last hand',t:"Bicah Mell's chips spill across the felt. The room goes very quiet.",art:'bicahdown'},
+  {k:'Eight saloons',t:'Eight bosses. Eight wanted posters. Every one stamped PAID.',art:'posters'},
+  {k:'At dawn',t:'The stranger cashes out, tips the barkeep, and rides east.',art:'rider'},
+  {k:'',t:'Nobody ever learned their name.<br>But every table in the territory knows the story.',art:'end'}];
 const TIER_NOTE={1:'Beat Iron Jack Rourke to unlock',2:'Beat Banker Ellsworth to unlock'};
 const CURSES={
   blind:{name:'Blindfold',icon:'⊘',desc:'Your cards stay hidden until the flop next saloon.',gold:45},
