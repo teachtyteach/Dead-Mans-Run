@@ -1,10 +1,16 @@
 # Builds the game from src/ into two outputs:
 #   index.html          a full standalone page (GitHub Pages, any static host)
 #   dist/artifact.html  the fragment version published as a Claude artifact (the host adds <html>/<head>)
-import os
+import os, re, base64
 s=lambda f:open('src/'+f,encoding='utf-8').read()
 js='\n'.join(s(f) for f in ['data.js','engine.js','portrait.js','vault.js','audio.js','ui.js'])
-head=s('head.html'); style='<style>\n'+s('style.css')+'\n</style>\n'
+head=s('head.html')
+# fonts ship with the game: the page links the bundled stylesheet; the artifact carries them inline
+_fcss=open('fonts/fonts.css',encoding='utf-8').read()
+_finline=re.sub(r"url\(([\w-]+\.woff2)\)",lambda m:"url(data:font/woff2;base64,"+base64.b64encode(open('fonts/'+m.group(1),'rb').read()).decode()+")",_fcss)
+head_page=head.replace('<!--FONTS-->','<link rel="preload" href="fonts/rye.woff2" as="font" type="font/woff2" crossorigin>\n<link rel="stylesheet" href="fonts/fonts.css">')
+head=head.replace('<!--FONTS-->','<style>'+_finline+'</style>')
+style='<style>\n'+s('style.css')+'\n</style>\n'
 scripts='\n<script>'+s('sounds.js')+'</script>\n<script>\n(function(){\n'+js+'\n})();\n</script>\n'
 fragment=head+style+s('body.html')+scripts
 page=('<!doctype html>\n<html lang="en">\n<head>\n'
@@ -21,7 +27,7 @@ page=('<!doctype html>\n<html lang="en">\n<head>\n'
       "f();addEventListener('resize',function(){f();setTimeout(f,300);setTimeout(f,900)});addEventListener('orientationchange',function(){setTimeout(f,350)});addEventListener('scroll',function(){if(scrollY&&d.classList.contains('locked'))scrollTo(0,0)},{passive:true})})();</script>\n"
       '<link rel="manifest" href="manifest.webmanifest">\n'
       '<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">\n'
-      +head+style+'</head>\n<body>\n'+s('body.html')+scripts+
+      +head_page+style+'</head>\n<body>\n'+s('body.html')+scripts+
       "<script>if('serviceWorker' in navigator) addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>\n"
       '</body>\n</html>\n')
 open('index.html','w',encoding='utf-8').write(page)
@@ -38,4 +44,5 @@ if os.path.isdir(os.path.dirname(www)):
     shutil.copy(os.path.join(base,'index.html'),www)
     shutil.copytree(os.path.join(base,'audio'),os.path.join(www,'audio'))
     shutil.copytree(os.path.join(base,'icons'),os.path.join(www,'icons'))
+    shutil.copytree(os.path.join(base,'fonts'),os.path.join(www,'fonts'))
     shutil.copy(os.path.join(base,'manifest.webmanifest'),www)

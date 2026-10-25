@@ -1,10 +1,32 @@
 // Offline support: everything the game needs is cached on first visit, so it runs with no connection afterwards.
-const CACHE='dmr-v69';
+const CACHE='dmr-v70';
 const CORE=[
 "./",
 "index.html",
 "manifest.webmanifest",
 "icons/apple-touch-icon.png",
+"fonts/alfaslab.woff2",
+"fonts/berkshire.woff2",
+"fonts/cinzeldeco.woff2",
+"fonts/cormorantsc-600.woff2",
+"fonts/cormorantsc-700.woff2",
+"fonts/courierprime.woff2",
+"fonts/ebgaramond-italic.woff2",
+"fonts/ebgaramond.woff2",
+"fonts/fonts.css",
+"fonts/grenzegotisch.woff2",
+"fonts/holtwood.woff2",
+"fonts/pinyonscript.woff2",
+"fonts/pirataone.woff2",
+"fonts/playfair-italic.woff2",
+"fonts/playfair.woff2",
+"fonts/ranchers.woff2",
+"fonts/rye.woff2",
+"fonts/smokum.woff2",
+"fonts/specialelite.woff2",
+"fonts/ultra.woff2",
+"fonts/unifraktur.woff2",
+
 "icons/icon-192.png",
 "icons/icon-512.png",
 "audio/bigwin.mp3",
