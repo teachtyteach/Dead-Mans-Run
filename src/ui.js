@@ -370,7 +370,7 @@ function renderToggles(){
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 66 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 67 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -500,6 +500,35 @@ function cost(p){return Math.max(1,Math.round(p*(hasDeed('credit')?.8:1)*(R&&(R.
 function upPrice(k){return cost(Math.round(CHARMS[k].price*1.25/5)*5)}
 function sellPrice(k){return Math.round(CHARMS[k].price*(lvl(k)>=2?.75:.5))}
 function rerollCost(){return hasDeed('dealer')?5:15}
+/* ---- the storekeeper: Old Hutch has an opinion about everything you touch ---- */
+const HUTCH_LOOK={age:3,fh:'mutton',hat:'none',hair:'#d8d2c6',coat:'#5a4630',glasses:'round',mask:false,badge:false,bg:['#5a3a1e','#140a04'],rim:'#e8c46a'};
+const HUTCH={
+  hello:["Welcome in. Wipe your boots.","Back again? Good. Business is slow.","You look like a rider with gold to spend.","Bell's broke. Just holler."],
+  pick:["First one's free. Don't tell nobody.","Pick one. Pick careful.","Every rider gets one on the house."],
+  win:["Heard you cleaned out {boss}. Spend some of it here.","Word travels. {boss} is out of business, eh?","{boss}'s poster's coming down. Nice work."],
+  buy:["Fine choice.","That one's lucky. Mostly.","Pleasure doing business.","Sold. No refunds.","You've got an eye for it."],
+  upg:["Polished it up for you. Works better now.","Good as new. Better, even."],
+  trick:["Use it wisely. One time only.","Keep that up your sleeve."],
+  deed:["Signed and stamped. That's yours for the ride."],
+  reroll:["Let me check the back...","Hold on, I've got more somewhere.","Fresh off the wagon."],
+  curse:["Brave. Or foolish. Same thing out here.","Your funeral, friend. Here's your gold."],
+  uncurse:["Changed your mind? Smart."],
+  sell:["I'll give you a fair price. Fair for me."],
+  poor:["You're a little short, friend.","Come back with more gold."],
+  idle:["Take your time. I ain't going anywhere.","That cat's name is Sheriff. Don't touch him.","{boss}? Mean as a snake. Buy something useful.","Dust storm coming. Feel it in my knees."]};
+let HUTCH_T=null, HUTCH_I=null;
+function hutch(kind){const el=$('keeperSay'); if(!el) return; const bd=BOSSES[Math.max(0,(R?R.level:1)-2)]||BOSSES[0], next=BOSSES[(R?R.level:1)-1]||BOSSES[0];
+  let line=HUTCH[kind][Math.floor(Math.random()*HUTCH[kind].length)].replace('{boss}',kind==='idle'?next.name:bd.name);
+  el.classList.remove('on'); void el.offsetWidth; el.textContent=line; el.classList.add('on'); $('keeper').classList.remove('nod'); void $('keeper').offsetWidth; $('keeper').classList.add('nod');
+  clearTimeout(HUTCH_T); HUTCH_T=setTimeout(()=>el.classList.remove('on'),4200);
+  clearTimeout(HUTCH_I); HUTCH_I=setTimeout(()=>{if(!$('sShop').hidden) hutch('idle')},14000)}
+// a SOLD stamp lands on the card, coins fly from your purse, then the shelf restocks
+function soldThen(btn,label,fn){const t=btn&&btn.closest('.tarot'); if(!t||REDUCED){fn(); return}
+  const st=document.createElement('b'); st.className='sold-stamp'; st.textContent=label; t.appendChild(st); t.classList.add('sold');
+  const g=document.querySelector('#shopBanner .goldline b'); if(g) for(let k=0;k<4;k++){const c=document.createElement('i'); c.className='coin-fly'; document.body.appendChild(c);
+    const a=g.getBoundingClientRect(), z=t.getBoundingClientRect(); c.style.left=a.left+a.width/2+'px'; c.style.top=a.top+'px';
+    c.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${z.left+z.width/2-a.left-a.width/2+(k-1.5)*14}px,${z.top+z.height*.4-a.top}px) scale(.7)`,opacity:.9}],{duration:420+k*60,easing:'cubic-bezier(.3,.6,.4,1)',fill:'forwards'}).onfinish=()=>c.remove()}
+  haptic('success'); setTimeout(fn,520)}
 function openShop(mode,summary){
   TOKEN++; $('poster').hidden=true;
   SHOP.mode=mode; SHOP.tab='charms';
@@ -515,6 +544,8 @@ function openShop(mode,summary){
   SHOP.summary=summary||'';
   if(mode==='shop') saveRun('shop');
   renderShop(); show('sShop');
+  if(!$('keeperFace').innerHTML) $('keeperFace').innerHTML=portrait('Old Hutch',HUTCH_LOOK);
+  setTimeout(()=>hutch(mode==='pick'?'pick':summary?'win':'hello'),700); sfx('door');
 }
 function card(icon,num,name,desc,body,cls,tag){
   return `<div class="tarot ${cls||''}">${tag?`<span class="tag">${tag}</span>`:''}<div class="num">${num}</div><div class="art"><span class="glyph">${icon}︎</span></div><h3>${name}</h3><p>${desc}</p>${body||''}</div>`;
@@ -565,37 +596,38 @@ function renderShop(){
   const dg=document.querySelector('#sShop .deal-grid');
   if(pick||SHOP.tab==='charms'){dg.style.minHeight=''; if(!pick) requestAnimationFrame(()=>{SHOP.gridH=dg.offsetHeight})} else if(SHOP.gridH) dg.style.minHeight=SHOP.gridH+'px';
   if(SHOP.anim&&!REDUCED){const cl=SHOP.anim; [...$('offers').children,...$('curseOffer').children].forEach((t,k)=>{t.classList.add(cl); t.style.setProperty('--sd',(k*130)+'ms'); sfx('card',120+k*130); if(cl==='slap') sfx('stamp',260+k*130)})}
+  [...$('offers').children,...$('curseOffer').children].forEach((t,k)=>t.style.setProperty('--tilt',(((k*37)%7)-3)*.45+'deg'));
   SHOP.anim=null;
   $('offers').querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{
     const k=b.dataset.buy; ac();
-    if(pick){R.charms.push(k); sfx('stamp'); openChapter(); return}
+    if(pick){R.charms.push(k); sfx('stamp'); hutch('buy'); soldThen(b,'Yours',openChapter); return}
     const upg=R.charms.includes(k), price=upg?upPrice(k):cost(CHARMS[k].price);
-    if(R.gold<price||(!upg&&R.charms.length>=charmSlots())) return;
+    if(R.gold<price||(!upg&&R.charms.length>=charmSlots())){hutch('poor'); return}
     R.gold-=price; if(upg) R.lv[k]=2; else R.charms.push(k);
-    sfx('chip'); sfx('stamp',60); saveRun('shop'); renderShop();
+    sfx('chip'); sfx('stamp',60); saveRun('shop'); hutch(upg?'upg':'buy'); soldThen(b,upg?'Upgraded':'Sold',renderShop);
   });
   $('offers').querySelectorAll('[data-trick]').forEach(b=>b.onclick=()=>{
     const k=b.dataset.trick, price=cost(TRICKS[k].price); if(R.gold<price||R.tricks.length>=trickSlots()) return;
-    R.gold-=price; R.tricks.push(k); SHOP.tricks.splice(SHOP.tricks.indexOf(k),1); sfx('chip'); saveRun('shop'); renderShop();
+    R.gold-=price; R.tricks.push(k); SHOP.tricks.splice(SHOP.tricks.indexOf(k),1); sfx('chip'); saveRun('shop'); hutch('trick'); soldThen(b,'Sold',renderShop);
   });
   $('offers').querySelectorAll('[data-deed]').forEach(b=>b.onclick=()=>{
     const k=b.dataset.deed, price=cost(DEEDS[k].price); if(R.gold<price) return;
-    R.gold-=price; R.deeds.push(k); SHOP.deed=null; sfx('stamp'); sfx('bigwin',100); saveRun('shop'); renderShop();
+    R.gold-=price; R.deeds.push(k); SHOP.deed=null; sfx('stamp'); sfx('bigwin',100); saveRun('shop'); hutch('deed'); soldThen(b,'Signed',renderShop);
   });
   $('offers').querySelectorAll('[data-sell]').forEach(b=>b.onclick=()=>{
-    const k=b.dataset.sell; R.gold+=sellPrice(k); R.charms.splice(R.charms.indexOf(k),1); delete R.lv[k]; sfx('chip'); saveRun('shop'); renderShop();
+    const k=b.dataset.sell; R.gold+=sellPrice(k); R.charms.splice(R.charms.indexOf(k),1); delete R.lv[k]; sfx('chip'); saveRun('shop'); hutch('sell'); renderShop();
   });
   if($('curseBtn')) $('curseBtn').onclick=()=>{
     const c=CURSES[SHOP.curse];
-    if(SHOP.curseTaken){SHOP.curseTaken=false; R.gold-=c.gold; R.curse=null}
-    else {SHOP.curseTaken=true; R.gold+=c.gold; R.curse=SHOP.curse; sfx('boss')}
+    if(SHOP.curseTaken){SHOP.curseTaken=false; R.gold-=c.gold; R.curse=null; hutch('uncurse')}
+    else {SHOP.curseTaken=true; R.gold+=c.gold; R.curse=SHOP.curse; sfx('boss'); hutch('curse')}
     saveRun('shop'); renderShop();
   };
   const rc=rerollCost();
   $('shopActions').innerHTML=pick?'':`${tab==='charms'?`<button class="btn small" id="rerollBtn" ${R.gold<rc||!unlockedPool().length?'disabled':''}>Reroll · ${rc}g</button>`:`<button class="btn small" style="visibility:hidden" tabindex="-1" aria-hidden="true">Reroll · ${rc}g</button>`}<button class="btn gold big" id="rideBtn">Ride to ${TOWNS[L-1]}</button>`;
   if(!pick){
-    if($('rerollBtn')) $('rerollBtn').onclick=()=>{if(R.gold<rc) return; R.gold-=rc; SHOP.offers=shuffle(unlockedPool()).slice(0,3); SHOP.anim='reflip'; sfx('whoosh'); saveRun('shop'); renderShop()};
-    $('rideBtn').onclick=()=>{ac(); openEvent()};
+    if($('rerollBtn')) $('rerollBtn').onclick=()=>{if(R.gold<rc) return; R.gold-=rc; SHOP.offers=shuffle(unlockedPool()).slice(0,3); SHOP.anim='reflip'; sfx('whoosh'); saveRun('shop'); hutch('reroll'); renderShop()};
+    $('rideBtn').onclick=()=>{ac(); clearTimeout(HUTCH_I); openEvent()};
   }
 }
 
