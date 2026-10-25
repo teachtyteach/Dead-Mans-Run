@@ -46,7 +46,10 @@ struct GameView: UIViewRepresentable {
         // hand the game whatever iCloud holds before any of its code runs
         ucc.addUserScript(WKUserScript(source: "window.__cloud=\(CloudSaves.shared.snapshotJSON());",
                                        injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        // tell the game how warm the phone is and whether Low Power Mode is on, so it can trim effects before it throttles
+        ucc.addUserScript(WKUserScript(source: PowerWatch.script(), injectionTime: .atDocumentStart, forMainFrameOnly: true))
         let web = WKWebView(frame: .zero, configuration: config)
+        context.coordinator.power = PowerWatch(web)
         web.isOpaque = false
         web.backgroundColor = UIColor(red: 0.086, green: 0.051, blue: 0.027, alpha: 1)
         web.scrollView.backgroundColor = web.backgroundColor
@@ -69,6 +72,7 @@ struct GameView: UIViewRepresentable {
 
 /// Taptic Engine feedback. The game posts "light", "medium", "heavy", "soft", "rigid", "select", "success" or "error".
 final class Haptics: NSObject, WKScriptMessageHandler {
+    var power: PowerWatch?
     private let light = UIImpactFeedbackGenerator(style: .light)
     private let medium = UIImpactFeedbackGenerator(style: .medium)
     private let heavy = UIImpactFeedbackGenerator(style: .heavy)
@@ -88,6 +92,26 @@ final class Haptics: NSObject, WKScriptMessageHandler {
         case "warning": note.notificationOccurred(.warning)
         default: select.selectionChanged()
         }
+    }
+}
+
+/// Phone temperature and Low Power Mode, passed to the game whenever either changes.
+/// thermal: 0 nominal, 1 fair, 2 serious, 3 critical.
+final class PowerWatch {
+    private weak var web: WKWebView?
+    private var tokens: [NSObjectProtocol] = []
+    init(_ web: WKWebView) {
+        self.web = web
+        for name in [ProcessInfo.thermalStateDidChangeNotification, Notification.Name.NSProcessInfoPowerStateDidChange] {
+            tokens.append(NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                self?.web?.evaluateJavaScript(PowerWatch.script() + "window.onPower&&window.onPower();", completionHandler: nil)
+            })
+        }
+    }
+    deinit { tokens.forEach { NotificationCenter.default.removeObserver($0) } }
+    static func script() -> String {
+        let p = ProcessInfo.processInfo
+        return "window.__power={thermal:\(p.thermalState.rawValue),low:\(p.isLowPowerModeEnabled ? "true" : "false")};"
     }
 }
 

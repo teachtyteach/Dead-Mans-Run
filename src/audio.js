@@ -21,8 +21,8 @@ function ac(){
     SND.music=c.createGain(); SND.music.gain.value=0; SND.musVol=c.createGain(); SND.music.connect(SND.musVol).connect(SND.master); applyVol();
     SND.musF=c.createBiquadFilter(); SND.musF.type='lowpass'; SND.musF.frequency.value=9000; SND.musF.Q.value=.5;
     SND.dry=c.createGain(); SND.dry.gain.value=1; SND.wet=c.createGain(); SND.wet.gain.value=.12;
-    const L=Math.floor(c.sampleRate*2.2), ir=c.createBuffer(2,L,c.sampleRate);
-    for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch); for(let i=0;i<L;i++){const t=i/c.sampleRate; d[i]=(Math.random()*2-1)*Math.exp(-3.2*t)*(t<.012?0:1)}}
+    const L=Math.floor(c.sampleRate*1.4), ir=c.createBuffer(2,L,c.sampleRate);
+    for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch); for(let i=0;i<L;i++){const t=i/c.sampleRate; d[i]=(Math.random()*2-1)*Math.exp(-4.2*t)*(t<.012?0:1)}}
     SND.conv=c.createConvolver(); SND.conv.buffer=ir;
     SND.musF.connect(SND.dry).connect(SND.music); SND.musF.connect(SND.conv).connect(SND.wet).connect(SND.music);
     SND.mus=c.createGain(); SND.mus.gain.value=0; SND.mus.connect(SND.musF);
@@ -49,20 +49,32 @@ function fetchSound(k){
   return Promise.all([fetch(new URL('audio/v/'+h+'.mp3',location.href).href).then(r=>r.ok?r.arrayBuffer():null),vaultKey()])
     .then(([buf,key])=>buf&&crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},key,new Uint8Array(buf,12)));
 }
+const PEND={};
 function decodeOne(k){
   if(SND.buf[k]||!(window.__DMR_SND_KEYS||[]).includes(k)) return Promise.resolve();
-  return fetchSound(k).then(ab=>ab&&new Promise(res=>{try{SND.ctx.decodeAudioData(ab,b=>{SND.buf[k]=b; res()},()=>res())}catch(e){res()}})).catch(()=>{});
+  if(PEND[k]) return PEND[k];
+  return PEND[k]=fetchSound(k).then(ab=>ab&&new Promise(res=>{try{SND.ctx.decodeAudioData(ab,b=>{SND.buf[k]=b; res()},()=>res())}catch(e){res()}})).catch(()=>{}).finally(()=>{delete PEND[k]});
 }
+/* Decoded audio is raw samples: a three-minute song takes ~65 MB of memory once unpacked.
+   So only the menu song, the effects and the piano stay resident; each saloon's room tone and boss song
+   are unpacked when you ride in and released when you leave. Less memory, less work at launch, a cooler phone. */
+const SALOON_SONG=k=>/^(amb\d|boss_)/.test(k);
+// the boss song is only needed once you're riding (the menu borrows saloon 5's room tone, not its boss)
+function saloonKeys(n){const t=BOSS_TRACKS[n], riding=!!document.documentElement.dataset.saloon; return ['amb'+(n||5)].concat(t&&riding?[t.key]:[])}
 async function decodeAll(){
   if(SND.decoding) return; SND.decoding=true;
-  const keys=(window.__DMR_SND_KEYS||[]).filter(k=>k!=='piano'&&k!=='menu'&&!/^boss_/.test(k)&&!/^amb/.test(k)&&!/^ev_/.test(k));
+  const keys=(window.__DMR_SND_KEYS||[]).filter(k=>k!=='piano'&&k!=='menu'&&!SALOON_SONG(k)&&!/^ev_/.test(k));
   await decodeOne('menu'); if(SND.want) startMusic();
   await Promise.all(keys.map(decodeOne));
-  await decodeOne(ambKey()); if(SND.want) startMusic();
-  await Promise.all((window.__DMR_SND_KEYS||[]).filter(k=>/^ev_/.test(k)).map(decodeOne));
-  for(let n=1;n<=8;n++) await decodeOne('amb'+n); if(SND.want) startMusic();
+  SND.core=true; await loadSaloon();
   await decodeOne('piano'); if(SND.want) startMusic();
-  for(const t of Object.values(BOSS_TRACKS)){await decodeOne(t.key); if(SND.want) startMusic()}
+}
+async function loadSaloon(){
+  if(!SND.core||!SND.ctx) return; const n=SND.saloon||5, want=saloonKeys(n);
+  for(const k of Object.keys(SND.buf)) if(SALOON_SONG(k)&&!want.includes(k)&&!SND.loops.some(l=>l.key===k)) delete SND.buf[k];
+  for(const k of want){await decodeOne(k);
+    if((SND.saloon||5)!==n){if(!saloonKeys(SND.saloon||5).includes(k)&&!SND.loops.some(l=>l.key===k)) delete SND.buf[k]; return}
+    if(SND.want) startMusic()}
 }
 // haptics: the native app feels every chip, stamp and shot; the web falls back to vibrate where it exists
 const HAPTIC_FOR={chip:'light',chips:'medium',card:'soft',stamp:'heavy',gun:'heavy',boss:'rigid',bigwin:'success',win:'light',paid:'success',lose:'error',toll:'error',heart:'soft',whoosh:'soft'};
@@ -170,7 +182,7 @@ function stopLoop(l,fade){
   const c=SND.ctx; l.srcs.forEach(s=>{try{s.stop(c.currentTime+fade)}catch(e){}});
   if(l.bus){l.bus.gain.setValueAtTime(l.bus.gain.value,c.currentTime); l.bus.gain.linearRampToValueAtTime(0,c.currentTime+fade)}
 }
-function setSaloon(n){if(SND.saloon===n) return; SND.saloon=n; if(SND.ctx&&SND.want&&meta.music) startMusic()}
+function setSaloon(n){if(SND.saloon!==n){SND.saloon=n; if(SND.ctx&&SND.want&&meta.music) startMusic()} loadSaloon()}
 function startMusic(){
   SND.want=true;
   if(!meta.music||!SND.ctx) return;

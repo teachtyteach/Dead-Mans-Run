@@ -2112,3 +2112,61 @@ html.duo-wide #more .set-row,html.duo-wide #menu .set-row{min-height:40px;paddin
 html.duo-wide .set-l em{display:none}
 
 .heat .hp-arrow{min-width:0!important;min-height:0!important;padding:0!important}
+
+/* ================= performance pass =================
+   Rule: anything that moves only moves or fades, so the GPU compositor does it without redrawing.
+   Blur and blend layers are gone from full-screen surfaces, and slow ambient loops tick at hand-drawn frame rates. */
+.screen.enter{animation-name:screenFade}
+@keyframes screenFade{from{opacity:0}}
+/* the saloon tint keeps its soft-light blend: it is one GPU pass, and it keeps the blacks deep */
+.felt::before{filter:none;mix-blend-mode:normal;opacity:.38;will-change:transform}
+@keyframes tenseZoom{to{scale:1.025}}
+.film{inset:-48px!important;animation:grainPx .6s steps(5) infinite}
+@keyframes grainPx{0%{transform:translate(0,0)}20%{transform:translate(-31px,22px)}40%{transform:translate(23px,-34px)}60%{transform:translate(-19px,-11px)}80%{transform:translate(36px,29px)}100%{transform:translate(0,0)}}
+/* foil and send-off sheens: stepped, so a small card redraws a few times a second instead of every frame */
+.tarot.foil::after,.tarot.gold::after{animation-timing-function:steps(36)}
+.bo-sheet::after{mix-blend-mode:normal;opacity:.6}
+.bo.go .bo-sheet::after{animation-timing-function:steps(30)}
+.map .here{animation-timing-function:steps(14)}
+/* living portraits keep blinking, but drift at 12-15 frames a second like hand-drawn animation */
+.pt-live svg .pt-smoke{animation-timing-function:steps(48)}
+.pt-live svg .pt-ember{animation-timing-function:steps(10)}
+.pt-live svg .pt-glow{animation-timing-function:steps(14)}
+.pt-live svg .pt-rays{animation-timing-function:steps(420)}
+.pt-live svg .pt-tail{animation-timing-function:steps(18)}
+
+/* ---- effect tiers: set by phone temperature, Low Power Mode, or sustained dropped frames ----
+   fx 1 = warm or Low Power: trims ambient extras. fx 2 = hot: the room holds still, the game stays smooth. */
+html[data-fx="1"] .film,html[data-fx="2"] .film{display:none}
+html[data-fx="1"] .vs-tw1,html[data-fx="1"] .vs-tw2,html[data-fx="1"] .vs-lights{animation:none!important}
+html[data-fx="1"] .pt-live svg *{animation-play-state:paused!important}
+html[data-fx="1"] .felt::before{animation:none}
+html[data-fx="2"] #vista *,html[data-fx="2"] .vignette,html[data-fx="2"] .felt::before,html[data-fx="2"] .pt-live svg *,
+html[data-fx="2"] .tarot .art::after,html[data-fx="2"] .tarot.foil::after,html[data-fx="2"] .tarot.gold::after,
+html[data-fx="2"] .seat .medal::before,html[data-fx="2"] .lamp,html[data-fx="2"] .beam{animation:none!important}
+html[data-fx="2"] #dust{display:none}
+html[data-fx="2"] .tint{display:none}
+/* the app is in the background or covered: stop everything */
+html.asleep *,html.asleep *::before,html.asleep *::after{animation-play-state:paused!important}
+
+/* ---- frame meter (tap the version label five times) ---- */
+#fpsMeter{position:fixed;z-index:9999;left:max(8px,env(safe-area-inset-left));top:max(8px,env(safe-area-inset-top));pointer-events:none;
+  font:600 11px/1.35 ui-monospace,Menlo,monospace;color:#e9ffd9;background:rgba(0,0,0,.72);border:1px solid rgba(160,255,140,.35);border-radius:8px;padding:6px 8px;white-space:pre}
+#fpsMeter canvas{display:block;margin-top:4px;width:120px;height:28px}
+.store-cat .cat-tail{animation-timing-function:steps(20);will-change:auto}
+html[data-fx="2"] .store-cat .cat-tail{animation:none}
+
+/* ---- layer diet: full-screen overlays that are invisible don't get a GPU layer at all ---- */
+.chapter-bg{visibility:hidden;transition:opacity .7s ease,visibility 0s .7s}
+.chapter-bg.on{visibility:visible;transition-delay:0s}
+.bolt{visibility:hidden}
+.bolt.on{animation:boltV 1.1s ease-out forwards}
+@keyframes boltV{0%{opacity:0;visibility:visible}4%{opacity:.9}9%{opacity:.1}14%{opacity:.7}30%{opacity:0}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
+#sGame::after{visibility:hidden;transition:opacity .8s,visibility 0s .8s}
+#sGame.danger::after{visibility:visible;transition-delay:0s}
+#sGame::before{visibility:hidden;transition:opacity 1s,visibility 0s 1s}
+#sGame.tension::before{visibility:visible;transition-delay:0s}
+/* film grain at 4-5% was a full-screen layer you couldn't see on the phone: kept only for the chapter cards */
+.film{display:none}
+html[data-screen="sChapter"] .film{display:block}
+html[data-fx="1"][data-screen="sChapter"] .film,html[data-fx="2"][data-screen="sChapter"] .film{display:none}

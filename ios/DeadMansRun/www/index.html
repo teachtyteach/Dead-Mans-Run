@@ -2134,6 +2134,64 @@ html.duo-wide .set-l em{display:none}
 
 .heat .hp-arrow{min-width:0!important;min-height:0!important;padding:0!important}
 
+/* ================= performance pass =================
+   Rule: anything that moves only moves or fades, so the GPU compositor does it without redrawing.
+   Blur and blend layers are gone from full-screen surfaces, and slow ambient loops tick at hand-drawn frame rates. */
+.screen.enter{animation-name:screenFade}
+@keyframes screenFade{from{opacity:0}}
+/* the saloon tint keeps its soft-light blend: it is one GPU pass, and it keeps the blacks deep */
+.felt::before{filter:none;mix-blend-mode:normal;opacity:.38;will-change:transform}
+@keyframes tenseZoom{to{scale:1.025}}
+.film{inset:-48px!important;animation:grainPx .6s steps(5) infinite}
+@keyframes grainPx{0%{transform:translate(0,0)}20%{transform:translate(-31px,22px)}40%{transform:translate(23px,-34px)}60%{transform:translate(-19px,-11px)}80%{transform:translate(36px,29px)}100%{transform:translate(0,0)}}
+/* foil and send-off sheens: stepped, so a small card redraws a few times a second instead of every frame */
+.tarot.foil::after,.tarot.gold::after{animation-timing-function:steps(36)}
+.bo-sheet::after{mix-blend-mode:normal;opacity:.6}
+.bo.go .bo-sheet::after{animation-timing-function:steps(30)}
+.map .here{animation-timing-function:steps(14)}
+/* living portraits keep blinking, but drift at 12-15 frames a second like hand-drawn animation */
+.pt-live svg .pt-smoke{animation-timing-function:steps(48)}
+.pt-live svg .pt-ember{animation-timing-function:steps(10)}
+.pt-live svg .pt-glow{animation-timing-function:steps(14)}
+.pt-live svg .pt-rays{animation-timing-function:steps(420)}
+.pt-live svg .pt-tail{animation-timing-function:steps(18)}
+
+/* ---- effect tiers: set by phone temperature, Low Power Mode, or sustained dropped frames ----
+   fx 1 = warm or Low Power: trims ambient extras. fx 2 = hot: the room holds still, the game stays smooth. */
+html[data-fx="1"] .film,html[data-fx="2"] .film{display:none}
+html[data-fx="1"] .vs-tw1,html[data-fx="1"] .vs-tw2,html[data-fx="1"] .vs-lights{animation:none!important}
+html[data-fx="1"] .pt-live svg *{animation-play-state:paused!important}
+html[data-fx="1"] .felt::before{animation:none}
+html[data-fx="2"] #vista *,html[data-fx="2"] .vignette,html[data-fx="2"] .felt::before,html[data-fx="2"] .pt-live svg *,
+html[data-fx="2"] .tarot .art::after,html[data-fx="2"] .tarot.foil::after,html[data-fx="2"] .tarot.gold::after,
+html[data-fx="2"] .seat .medal::before,html[data-fx="2"] .lamp,html[data-fx="2"] .beam{animation:none!important}
+html[data-fx="2"] #dust{display:none}
+html[data-fx="2"] .tint{display:none}
+/* the app is in the background or covered: stop everything */
+html.asleep *,html.asleep *::before,html.asleep *::after{animation-play-state:paused!important}
+
+/* ---- frame meter (tap the version label five times) ---- */
+#fpsMeter{position:fixed;z-index:9999;left:max(8px,env(safe-area-inset-left));top:max(8px,env(safe-area-inset-top));pointer-events:none;
+  font:600 11px/1.35 ui-monospace,Menlo,monospace;color:#e9ffd9;background:rgba(0,0,0,.72);border:1px solid rgba(160,255,140,.35);border-radius:8px;padding:6px 8px;white-space:pre}
+#fpsMeter canvas{display:block;margin-top:4px;width:120px;height:28px}
+.store-cat .cat-tail{animation-timing-function:steps(20);will-change:auto}
+html[data-fx="2"] .store-cat .cat-tail{animation:none}
+
+/* ---- layer diet: full-screen overlays that are invisible don't get a GPU layer at all ---- */
+.chapter-bg{visibility:hidden;transition:opacity .7s ease,visibility 0s .7s}
+.chapter-bg.on{visibility:visible;transition-delay:0s}
+.bolt{visibility:hidden}
+.bolt.on{animation:boltV 1.1s ease-out forwards}
+@keyframes boltV{0%{opacity:0;visibility:visible}4%{opacity:.9}9%{opacity:.1}14%{opacity:.7}30%{opacity:0}99%{visibility:visible}100%{opacity:0;visibility:hidden}}
+#sGame::after{visibility:hidden;transition:opacity .8s,visibility 0s .8s}
+#sGame.danger::after{visibility:visible;transition-delay:0s}
+#sGame::before{visibility:hidden;transition:opacity 1s,visibility 0s 1s}
+#sGame.tension::before{visibility:visible;transition-delay:0s}
+/* film grain at 4-5% was a full-screen layer you couldn't see on the phone: kept only for the chapter cards */
+.film{display:none}
+html[data-screen="sChapter"] .film{display:block}
+html[data-fx="1"][data-screen="sChapter"] .film,html[data-fx="2"][data-screen="sChapter"] .film{display:none}
+
 </style>
 </head>
 <body>
@@ -3588,8 +3646,8 @@ function ac(){
     SND.music=c.createGain(); SND.music.gain.value=0; SND.musVol=c.createGain(); SND.music.connect(SND.musVol).connect(SND.master); applyVol();
     SND.musF=c.createBiquadFilter(); SND.musF.type='lowpass'; SND.musF.frequency.value=9000; SND.musF.Q.value=.5;
     SND.dry=c.createGain(); SND.dry.gain.value=1; SND.wet=c.createGain(); SND.wet.gain.value=.12;
-    const L=Math.floor(c.sampleRate*2.2), ir=c.createBuffer(2,L,c.sampleRate);
-    for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch); for(let i=0;i<L;i++){const t=i/c.sampleRate; d[i]=(Math.random()*2-1)*Math.exp(-3.2*t)*(t<.012?0:1)}}
+    const L=Math.floor(c.sampleRate*1.4), ir=c.createBuffer(2,L,c.sampleRate);
+    for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch); for(let i=0;i<L;i++){const t=i/c.sampleRate; d[i]=(Math.random()*2-1)*Math.exp(-4.2*t)*(t<.012?0:1)}}
     SND.conv=c.createConvolver(); SND.conv.buffer=ir;
     SND.musF.connect(SND.dry).connect(SND.music); SND.musF.connect(SND.conv).connect(SND.wet).connect(SND.music);
     SND.mus=c.createGain(); SND.mus.gain.value=0; SND.mus.connect(SND.musF);
@@ -3616,20 +3674,32 @@ function fetchSound(k){
   return Promise.all([fetch(new URL('audio/v/'+h+'.mp3',location.href).href).then(r=>r.ok?r.arrayBuffer():null),vaultKey()])
     .then(([buf,key])=>buf&&crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},key,new Uint8Array(buf,12)));
 }
+const PEND={};
 function decodeOne(k){
   if(SND.buf[k]||!(window.__DMR_SND_KEYS||[]).includes(k)) return Promise.resolve();
-  return fetchSound(k).then(ab=>ab&&new Promise(res=>{try{SND.ctx.decodeAudioData(ab,b=>{SND.buf[k]=b; res()},()=>res())}catch(e){res()}})).catch(()=>{});
+  if(PEND[k]) return PEND[k];
+  return PEND[k]=fetchSound(k).then(ab=>ab&&new Promise(res=>{try{SND.ctx.decodeAudioData(ab,b=>{SND.buf[k]=b; res()},()=>res())}catch(e){res()}})).catch(()=>{}).finally(()=>{delete PEND[k]});
 }
+/* Decoded audio is raw samples: a three-minute song takes ~65 MB of memory once unpacked.
+   So only the menu song, the effects and the piano stay resident; each saloon's room tone and boss song
+   are unpacked when you ride in and released when you leave. Less memory, less work at launch, a cooler phone. */
+const SALOON_SONG=k=>/^(amb\d|boss_)/.test(k);
+// the boss song is only needed once you're riding (the menu borrows saloon 5's room tone, not its boss)
+function saloonKeys(n){const t=BOSS_TRACKS[n], riding=!!document.documentElement.dataset.saloon; return ['amb'+(n||5)].concat(t&&riding?[t.key]:[])}
 async function decodeAll(){
   if(SND.decoding) return; SND.decoding=true;
-  const keys=(window.__DMR_SND_KEYS||[]).filter(k=>k!=='piano'&&k!=='menu'&&!/^boss_/.test(k)&&!/^amb/.test(k)&&!/^ev_/.test(k));
+  const keys=(window.__DMR_SND_KEYS||[]).filter(k=>k!=='piano'&&k!=='menu'&&!SALOON_SONG(k)&&!/^ev_/.test(k));
   await decodeOne('menu'); if(SND.want) startMusic();
   await Promise.all(keys.map(decodeOne));
-  await decodeOne(ambKey()); if(SND.want) startMusic();
-  await Promise.all((window.__DMR_SND_KEYS||[]).filter(k=>/^ev_/.test(k)).map(decodeOne));
-  for(let n=1;n<=8;n++) await decodeOne('amb'+n); if(SND.want) startMusic();
+  SND.core=true; await loadSaloon();
   await decodeOne('piano'); if(SND.want) startMusic();
-  for(const t of Object.values(BOSS_TRACKS)){await decodeOne(t.key); if(SND.want) startMusic()}
+}
+async function loadSaloon(){
+  if(!SND.core||!SND.ctx) return; const n=SND.saloon||5, want=saloonKeys(n);
+  for(const k of Object.keys(SND.buf)) if(SALOON_SONG(k)&&!want.includes(k)&&!SND.loops.some(l=>l.key===k)) delete SND.buf[k];
+  for(const k of want){await decodeOne(k);
+    if((SND.saloon||5)!==n){if(!saloonKeys(SND.saloon||5).includes(k)&&!SND.loops.some(l=>l.key===k)) delete SND.buf[k]; return}
+    if(SND.want) startMusic()}
 }
 // haptics: the native app feels every chip, stamp and shot; the web falls back to vibrate where it exists
 const HAPTIC_FOR={chip:'light',chips:'medium',card:'soft',stamp:'heavy',gun:'heavy',boss:'rigid',bigwin:'success',win:'light',paid:'success',lose:'error',toll:'error',heart:'soft',whoosh:'soft'};
@@ -3737,7 +3807,7 @@ function stopLoop(l,fade){
   const c=SND.ctx; l.srcs.forEach(s=>{try{s.stop(c.currentTime+fade)}catch(e){}});
   if(l.bus){l.bus.gain.setValueAtTime(l.bus.gain.value,c.currentTime); l.bus.gain.linearRampToValueAtTime(0,c.currentTime+fade)}
 }
-function setSaloon(n){if(SND.saloon===n) return; SND.saloon=n; if(SND.ctx&&SND.want&&meta.music) startMusic()}
+function setSaloon(n){if(SND.saloon!==n){SND.saloon=n; if(SND.ctx&&SND.want&&meta.music) startMusic()} loadSaloon()}
 function startMusic(){
   SND.want=true;
   if(!meta.music||!SND.ctx) return;
@@ -3829,6 +3899,51 @@ function show(id){
 function shake(big){const g=$('sGame'); if(REDUCED||!g) return; g.classList.remove('shake','big'); void g.offsetWidth; g.classList.add('shake'); if(big) g.classList.add('big')}
 function flash(red){if(REDUCED) return; const f=document.createElement('div'); f.className='flash'+(red?' red':''); document.body.appendChild(f); setTimeout(()=>f.remove(),800)}
 
+/* ================= effect tiers: keep the game smooth and the phone cool =================
+   Inputs: the phone's temperature and Low Power Mode (sent by the iPhone app), and a watchdog on real frame times.
+   Tier 0 = everything. Tier 1 = warm or Low Power: ambient extras trimmed. Tier 2 = hot: the room holds still. */
+const FX={tier:0,slow:0,n:0,long:0,good:0,hist:[],med:16.7};
+function fxApply(){
+  const p=window.__power||{}; let t=0;
+  if(p.thermal>=2) t=2; else if(p.thermal===1||p.low) t=1;
+  t=Math.max(t,FX.slow);
+  if(typeof meta!=='undefined'&&meta.fx==='low') t=Math.max(t,1);
+  if(t!==FX.tier){FX.tier=t; document.documentElement.dataset.fx=t||''}
+}
+window.onPower=fxApply; fxApply();
+// five quick taps on the version line in Settings shows the frame meter
+document.addEventListener('click',e=>{if(!e.target.closest('.set-foot')) return; const n=performance.now(); FX.taps=(n-(FX.tapT||0)<600?(FX.taps||0):0)+1; FX.tapT=n; if(FX.taps>=5){FX.taps=0; fxToggleMeter(); haptic('success')}});
+// watchdog: if more than a quarter of frames run long for four seconds straight, step down; after a clean minute, step back up
+function fxSample(dt){
+  if(document.hidden||dt>250) return;
+  FX.hist.push(dt); if(FX.hist.length>240) FX.hist.shift();
+  if(FX.hist.length===240&&FX.n%60===0){const a=FX.hist.slice().sort((x,y)=>x-y); FX.med=a[120]}
+  FX.n++; if(dt>FX.med*1.7) FX.long++;
+  if(FX.n%30===0){
+    const bad=FX.long/30>.25; FX.long=0;
+    FX.badRun=bad?(FX.badRun||0)+1:0; FX.good=bad?0:FX.good+1;
+    if(FX.badRun>=8&&FX.slow<2){FX.slow++; FX.badRun=0; fxApply()}
+    else if(FX.good>=120&&FX.slow>0){FX.slow--; FX.good=0; fxApply()}
+  }
+  if(FX.meter) fxMeter(dt);
+}
+// frame meter: tap the version label five times
+function fxMeter(dt){
+  const m=FX.meter; m.ts.push(dt); if(m.ts.length>120) m.ts.shift();
+  if(++m.k%15) return;
+  const a=m.ts.slice().sort((x,y)=>x-y), avg=m.ts.reduce((x,y)=>x+y,0)/m.ts.length, p=window.__power||{};
+  m.txt.textContent=`${Math.round(1000/avg)} fps  worst ${a[a.length-1].toFixed(1)} ms\nmedian ${a[a.length>>1].toFixed(1)} ms  tier ${FX.tier}\nheat ${['cool','fair','serious','critical'][p.thermal]||'n/a'}${p.low?'  low power':''}`;
+  const g=m.g, W=120,H=28; g.clearRect(0,0,W,H); g.fillStyle='rgba(160,255,140,.25)'; g.fillRect(0,H-H*8.33/33,W,1); g.fillRect(0,H-H*16.7/33,W,1);
+  m.ts.forEach((v,i)=>{g.fillStyle=v>20?'#ff6b5a':v>12?'#ffd36b':'#9cff8c'; const h=Math.min(H,H*v/33); g.fillRect(i,H-h,1,h)})}
+function fxToggleMeter(){
+  if(FX.meter){FX.meter.el.remove(); FX.meter=null; return}
+  const el=document.createElement('div'); el.id='fpsMeter'; const txt=document.createElement('div'); const cv=document.createElement('canvas'); cv.width=120; cv.height=28;
+  el.append(txt,cv); document.body.appendChild(el); FX.meter={el,txt,g:cv.getContext('2d'),ts:[],k:0};
+  if(!$('dust')||REDUCED){const loop=t=>{if(!FX.meter) return; fxSample(t-(FX.mt||t)); FX.mt=t; requestAnimationFrame(loop)}; requestAnimationFrame(loop)}
+}
+// in the background: freeze every animation
+document.addEventListener('visibilitychange',()=>document.documentElement.classList.toggle('asleep',document.hidden));
+
 /* ================= the air in each saloon: dust, embers, drips, sand, rain, sparkle, fireflies, ash ================= */
 const AIR={mode:'dust'};
 const SALOON_AIR=['dust','dust','embers','drips','sand','rain','sparkle','fireflies','ash'];
@@ -3850,11 +3965,19 @@ const SALOON_AIR=['dust','dust','embers','drips','sand','rain','sparkle','firefl
   };
   const COUNT={dust:48,embers:34,drips:14,sand:70,rain:90,sparkle:40,fireflies:22,ash:46};
   function reseed(){mode=AIR.mode; motes=[]; for(let i=0;i<COUNT[mode];i++){const m=spawn[mode](); if(mode!=='embers'&&mode!=='drips') m.y=R0(); motes.push(m)}}
-  let last=performance.now();
+  // a firefly glow is drawn once into a sprite, then stamped: no gradient objects built every frame
+  const GLOW=document.createElement('canvas'); GLOW.width=GLOW.height=32;
+  {const g=GLOW.getContext('2d'), r=g.createRadialGradient(16,16,0,16,16,16); r.addColorStop(0,'rgba(210,255,120,1)'); r.addColorStop(1,'rgba(210,255,120,0)'); g.fillStyle=r; g.fillRect(0,0,32,32)}
+  let last=performance.now(), lastRaw=last, blank=false;
   function frame(now){
-    const dt=Math.min(50,now-last); last=now;
+    requestAnimationFrame(frame);
+    fxSample(now-lastRaw); lastRaw=now;
+    // slow motes don't need every display refresh: 60 a second normally, 30 when warm, none when hot
+    if(FX.tier>=2||document.hidden){if(!blank){ctx.clearRect(0,0,W,H); blank=true} last=now; return}
+    if(now-last<(FX.tier?31:14)) return;
+    const dt=Math.min(50,now-last); last=now; blank=false;
     if(mode!==AIR.mode) reseed();
-    if(!document.hidden){
+    {
       ctx.globalAlpha=1; ctx.clearRect(0,0,W,H);
       for(const m of motes){
         let col='255,226,170', a=m.a;
@@ -3869,13 +3992,12 @@ const SALOON_AIR=['dust','dust','embers','drips','sand','rain','sparkle','firefl
         else if(mode==='sparkle'){m.p+=m.sp*dt; a*=Math.max(0,Math.sin(m.p))**6; col='255,250,230'; if(m.p>6.28*3){Object.assign(m,spawn.sparkle())}
           if(a>.02){ctx.globalAlpha=a; if(lastCol!==col){ctx.fillStyle=`rgb(${col})`; lastCol=col} const s=m.r*2.4; ctx.fillRect(m.x*W-s,m.y*H-.5,s*2,1); ctx.fillRect(m.x*W-.5,m.y*H-s,1,s*2)}}
         else if(mode==='fireflies'){m.p+=dt*.0012; m.x+=m.vx*dt+Math.sin(m.p*.7)*.00003*dt; m.y+=m.vy*dt+Math.cos(m.p*.5)*.00003*dt; if(m.x<0||m.x>1) m.vx*=-1; if(m.y<.2||m.y>1) m.vy*=-1;
-          a*=Math.max(0,Math.sin(m.p))**3; col='210,255,120'; if(a>.02){const g=ctx.createRadialGradient(m.x*W,m.y*H,0,m.x*W,m.y*H,m.r*6); g.addColorStop(0,`rgba(${col},${(a*.5).toFixed(3)})`); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.globalAlpha=1; ctx.fillStyle=g; lastCol=''; ctx.fillRect(m.x*W-m.r*6,m.y*H-m.r*6,m.r*12,m.r*12)}}
+          a*=Math.max(0,Math.sin(m.p))**3; if(a>.02){const d=m.r*6; ctx.globalAlpha=Math.min(1,a*.5); lastCol=''; ctx.drawImage(GLOW,m.x*W-d,m.y*H-d,d*2,d*2)}}
         else if(mode==='ash'){m.y+=m.s*dt; m.p+=dt*.001; m.x+=Math.sin(m.p)*.00008*dt; col='180,175,170'; if(m.y>1.02){m.y=-.02; m.x=R0()}}
         if(a<=.005) continue;
         ctx.globalAlpha=Math.min(1,a); if(lastCol!==col){ctx.fillStyle=`rgb(${col})`; lastCol=col} ctx.beginPath(); ctx.arc(m.x*W,m.y*H,m.r,0,6.283); ctx.fill();
       }
     }
-    requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 })();
@@ -4013,10 +4135,14 @@ const ROLLV={}, ROLLQ=[];
 function roll(key,v,tag,fmt){fmt=fmt||money; const from=ROLLV[key]==null?v:ROLLV[key]; if(from!==v) ROLLQ.push({key,from,to:v,fmt}); ROLLV[key]=v;
   return tag==='chips'?`<span class="chips" data-roll="${key}">${fmt(from)}</span>`:(tag==='b'?`<b data-roll="${key}">${fmt(from)}</b>`:`<span data-roll="${key}">${fmt(from)}</span>`)}
 function runRolls(){
-  ROLLQ.splice(0).forEach(({key,from,to,fmt})=>{
-    if(REDUCED){const el=document.querySelector(`[data-roll="${key}"]`); if(el) el.textContent=fmt(to); return}
+  const Q=ROLLQ.splice(0); if(!Q.length) return;
+  // restart every number's pop together: one style flush for the batch instead of one per number
+  const els=Q.map(({key})=>document.querySelector(`[data-roll="${key}"]`));
+  if(!REDUCED){els.forEach(el=>el&&el.classList.remove('pop','up','down')); if(els.some(Boolean)) void document.body.offsetWidth}
+  Q.forEach(({key,from,to,fmt},j)=>{
+    if(REDUCED){const el=els[j]; if(el) el.textContent=fmt(to); return}
     const t0=performance.now(), dur=Math.min(900,350+Math.abs(to-from)/4);
-    {const el=document.querySelector(`[data-roll="${key}"]`); if(el){el.classList.remove('pop','up','down'); void el.offsetWidth; el.classList.add('pop',to>from?'up':'down'); setTimeout(()=>el.classList.remove('pop','up','down'),dur+500)}}
+    {const el=els[j]; if(el){el.classList.add('pop',to>from?'up':'down'); setTimeout(()=>el.classList.remove('pop','up','down'),dur+500)}}
     const stepF=now=>{const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3); const el=document.querySelector(`[data-roll="${key}"]`); if(!el) return;
       el.textContent=fmt(Math.round(from+(to-from)*e)); if(k<1) requestAnimationFrame(stepF)};
     requestAnimationFrame(stepF);
@@ -4179,19 +4305,21 @@ function renderToggles(){
       ${sw('bigText','Bigger text','Names, chips and buttons a size up',!!meta.bigText)}
       ${sw('four','Four-colour deck','Blue diamonds, green clubs',!!meta.four)}
       ${sw('reduce','Reduce motion','Fewer flourishes and shakes',!!meta.reduce)}
-      ${sw('lefty','Left-handed','Call on the left, Fold on the right',!!meta.lefty)}</div>
+      ${sw('lefty','Left-handed','Call on the left, Fold on the right',!!meta.lefty)}
+      ${seg('fx','Effects',meta.fx==='low'?'Battery saver: lighter ambience, cooler phone':'Full: the game also eases off on its own if the phone gets warm',[['full','Full'],['low','Battery saver']],meta.fx==='low'?'low':'full')}</div>
       <div class="set-group"><div class="set-h">Play</div>
       ${seg('speed','Game speed','How fast the others act',[['normal','Normal'],['fast','Fast']],meta.speed==='fast'?'fast':'normal')}
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 69 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 70 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
   const k=b.dataset.audio, v=b.dataset.val;
   if(k==='speed') meta.speed=v||(meta.speed==='fast'?'normal':'fast');
   else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
+  else if(k==='fx'){meta.fx=v||(meta.fx==='low'?'full':'low'); fxApply()}
   else if(k==='duo'){meta.duo=v||{auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else if(['bigText','four','reduce','lefty'].includes(k)){meta[k]=!meta[k]; applyComfort(); if(G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
@@ -5074,11 +5202,11 @@ function fly(fromEl,toEl,count,dur,cls){
     // chips have weight: they arc, tumble edge-over-edge, land a touch short and settle onto the stack
     const jx=(Math.random()-.5)*18, jy=(Math.random()-.5)*12, dx=x2-x1+jx, dy=y2-y1+jy, lift=Math.min(70,26+Math.hypot(dx,dy)*.12), spin=(Math.random()<.5?-1:1)*(360+Math.random()*360);
     const a=s.animate([
-      {transform:'translate(0,0) rotateX(0deg) rotateZ(0deg) scale(1)',filter:'drop-shadow(0 2px 2px rgba(0,0,0,.5))'},
-      {transform:`translate(${dx*.5}px,${dy*.5-lift}px) rotateX(${spin*.6}deg) rotateZ(${spin*.15}deg) scale(1.16)`,filter:'drop-shadow(0 14px 8px rgba(0,0,0,.35))',offset:.48},
-      {transform:`translate(${dx*.97}px,${dy*.97}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.95)`,filter:'drop-shadow(0 2px 2px rgba(0,0,0,.55))',offset:.86},
+      {transform:'translate(0,0) rotateX(0deg) rotateZ(0deg) scale(1)'},
+      {transform:`translate(${dx*.5}px,${dy*.5-lift}px) rotateX(${spin*.6}deg) rotateZ(${spin*.15}deg) scale(1.16)`,offset:.48},
+      {transform:`translate(${dx*.97}px,${dy*.97}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.95)`,offset:.86},
       {transform:`translate(${dx}px,${dy-3}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.9)`,offset:.93},
-      {transform:`translate(${dx}px,${dy}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.86)`,filter:'drop-shadow(0 1px 1px rgba(0,0,0,.6))'}],
+      {transform:`translate(${dx}px,${dy}px) rotateX(${spin}deg) rotateZ(${spin*.2}deg) scale(.86)`}],
       {duration:dur*1.15,delay:k*55,easing:'cubic-bezier(.33,.0,.35,1)',fill:'both'});
     if(k===count-1) a.onfinish=()=>{s.remove(); const t=toEl.closest&&toEl.closest('.potrow,.plate,.bet'); if(t){t.classList.remove('thud'); void t.offsetWidth; t.classList.add('thud')}}; else
     a.onfinish=()=>s.remove();
@@ -5310,7 +5438,8 @@ function render(){
   SM.forEach((m,i)=>{if(!live.has(i)){m.el.remove(); SM.delete(i)}});
   document.querySelectorAll('#seats .bet,#duoHand .bet').forEach(b=>b.remove());
   if(bets) seatsEl.insertAdjacentHTML('beforeend',bets);
-  if(duoBet) $('duoHand').insertAdjacentHTML('beforeend',duoBet);  seatsEl.querySelectorAll('.seat:not(.duo-me)').forEach(s=>{const w=s.offsetWidth, x=parseFloat(s.style.left)/100*W, m=w/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}});
+  if(duoBet) $('duoHand').insertAdjacentHTML('beforeend',duoBet);  {const ss=[...seatsEl.querySelectorAll('.seat:not(.duo-me)')], ws=ss.map(s=>s.offsetWidth);  // read every width first, then move: one layout, not one per seat
+    ss.forEach((s,j)=>{const x=parseFloat(s.style.left)/100*W, m=ws[j]/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}})}
   const tellerOn=has('teller')&&['preflop','flop','turn'].includes(G.street)&&G.deck.length;
   const bparts=[];
   for(let k=0;k<5;k++){
@@ -5648,7 +5777,7 @@ function tutFinale(){
       [2.9,land]
     ];
     let i=0;
-    const tick=()=>{if(done) return; const t=clock(); while(i<cues.length&&t>=cues[i][0]-0.008){cues[i][1](); i++} if(i<cues.length) requestAnimationFrame(tick)};
+    const tick=()=>{if(done||ov.hidden) return; const t=clock(); while(i<cues.length&&t>=cues[i][0]-0.008){cues[i][1](); i++} if(i<cues.length) requestAnimationFrame(tick)};
     requestAnimationFrame(tick);
   }
   function land(){
