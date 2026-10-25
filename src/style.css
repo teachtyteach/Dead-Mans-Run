@@ -1402,14 +1402,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
   background:radial-gradient(circle at 50% 50%,var(--bm) 0 9%,transparent 10%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(242,216,143,.55) 16% 17%,transparent 18%),
     repeating-linear-gradient(45deg,var(--bl) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1),var(--b2));
   box-shadow:0 1px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.5),inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2),inset 0 0 0 4px rgba(242,216,143,.6)}
-html[data-back="2"] .card.back{--b1:#b0592a;--b2:#5a2410;--bl:rgba(120,210,200,.22);--bm:#5fb3a8}
-html[data-back="3"] .card.back{--b1:#3d5168;--b2:#1a2532;--bl:rgba(200,215,235,.2);--bm:#b8c6d6}
-html[data-back="4"] .card.back{--b1:#c0582a;--b2:#5e1a0c;--bl:rgba(255,200,120,.24);--bm:#f2b45a}
-html[data-back="5"] .card.back{--b1:#2c5a3a;--b2:#0f2a18;--bl:rgba(210,230,170,.2);--bm:#c9a24e}
-html[data-back="6"] .card.back{--b1:#26386a;--b2:#0e1630;--bl:rgba(220,225,240,.24);--bm:#e2e6ee}
-html[data-back="7"] .card.back{--b1:#5a2a5e;--b2:#24102a;--bl:rgba(230,170,220,.2);--bm:#e0a0d8}
-html[data-back="8"] .card.back{--b1:#2a2422;--b2:#0a0808;--bl:rgba(230,220,200,.16);--bm:#e8dcc4}
-html[data-back="9"] .card.back{--b1:#d8b45c;--b2:#7a5a1e;--bl:rgba(255,250,220,.35);--bm:#fff4c8}
+html[data-back="2"] .card.back,html[data-back="2"] .board .card.turn,html[data-back="2"] .seat.human .card{--b1:#b0592a;--b2:#5a2410;--bl:rgba(120,210,200,.22);--bm:#5fb3a8}
+html[data-back="3"] .card.back,html[data-back="3"] .board .card.turn,html[data-back="3"] .seat.human .card{--b1:#3d5168;--b2:#1a2532;--bl:rgba(200,215,235,.2);--bm:#b8c6d6}
+html[data-back="4"] .card.back,html[data-back="4"] .board .card.turn,html[data-back="4"] .seat.human .card{--b1:#c0582a;--b2:#5e1a0c;--bl:rgba(255,200,120,.24);--bm:#f2b45a}
+html[data-back="5"] .card.back,html[data-back="5"] .board .card.turn,html[data-back="5"] .seat.human .card{--b1:#2c5a3a;--b2:#0f2a18;--bl:rgba(210,230,170,.2);--bm:#c9a24e}
+html[data-back="6"] .card.back,html[data-back="6"] .board .card.turn,html[data-back="6"] .seat.human .card{--b1:#26386a;--b2:#0e1630;--bl:rgba(220,225,240,.24);--bm:#e2e6ee}
+html[data-back="7"] .card.back,html[data-back="7"] .board .card.turn,html[data-back="7"] .seat.human .card{--b1:#5a2a5e;--b2:#24102a;--bl:rgba(230,170,220,.2);--bm:#e0a0d8}
+html[data-back="8"] .card.back,html[data-back="8"] .board .card.turn,html[data-back="8"] .seat.human .card{--b1:#2a2422;--b2:#0a0808;--bl:rgba(230,220,200,.16);--bm:#e8dcc4}
+html[data-back="9"] .card.back,html[data-back="9"] .board .card.turn,html[data-back="9"] .seat.human .card{--b1:#d8b45c;--b2:#7a5a1e;--bl:rgba(255,250,220,.35);--bm:#fff4c8}
 
 /* ================= materials: woven felt, padded leather rail, wood, tooled leather panels ================= */
 :root{
@@ -1964,8 +1964,8 @@ html.duo-v:not(.duo-wide) #sGame .console .say-btn{left:auto;right:14px;top:42%;
 html.duo-wide #sTitle .heat:not([hidden]){display:flex!important}
 html.duo-wide #heatPick .hp-mid em{display:none}
 .tp-stars{font-style:normal;color:#ff6a4a;font-size:11px;letter-spacing:1px}
-html[data-back="10"] .card.back{--b1:#e0b44a;--b2:#5a2a0a;--bl:rgba(255,220,140,.4);--bm:#2a1406}
-html[data-back="11"] .card.back{--b1:#1a1614;--b2:#050404;--bl:rgba(200,30,20,.3);--bm:#c9a24e}
+html[data-back="10"] .card.back,html[data-back="10"] .board .card.turn,html[data-back="10"] .seat.human .card{--b1:#e0b44a;--b2:#5a2a0a;--bl:rgba(255,220,140,.4);--bm:#2a1406}
+html[data-back="11"] .card.back,html[data-back="11"] .board .card.turn,html[data-back="11"] .seat.human .card{--b1:#1a1614;--b2:#050404;--bl:rgba(200,30,20,.3);--bm:#c9a24e}
 .bk-swatch[data-bk="10"]{--s1:#e0b44a;--s2:#5a2a0a}.bk-swatch[data-bk="11"]{--s1:#1a1614;--s2:#050404}
 
 /* ================= bosses remember; how far you rode; the ending ================= */
@@ -2170,3 +2170,186 @@ html[data-fx="2"] .store-cat .cat-tail{animation:none}
 .film{display:none}
 html[data-screen="sChapter"] .film{display:block}
 html[data-fx="1"][data-screen="sChapter"] .film,html[data-fx="2"][data-screen="sChapter"] .film{display:none}
+
+/* ================= real card handling: a deck sits in front of the dealer, cards leave it, the board lands face down and turns ================= */
+.shoe{position:absolute;z-index:2;translate:-50% -50%;rotate:-9deg;pointer-events:none;transition:left .6s var(--ease-out),top .6s var(--ease-out)}
+.shoe .card{display:block;scale:.74;transform-origin:50% 50%;
+  box-shadow:0 1px 0 #efe3c4,0 2px 0 #cdbf9f,0 calc(var(--n)*.5px + 2px) 0 #b9aa88,0 calc(var(--n)*.5px + 3px) 0 rgba(0,0,0,.35),0 calc(var(--n)*.5px + 8px) 12px rgba(0,0,0,.5),
+    inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2),inset 0 0 0 4px rgba(242,216,143,.6)!important;
+  translate:0 calc(var(--n) * -.5px);animation:none!important}
+.shoe[hidden]{display:none}
+html[data-screen="sGame"] .table:not(.narrow) .shoe .card{scale:.8}
+/* the turn: a quick rise, the card rolls over, light runs across the fresh face */
+.card.turn{animation:turnOver .46s cubic-bezier(.3,1.25,.5,1) both}
+@keyframes turnOver{0%{rotate:y 180deg;translate:0 -4px;scale:1.06}60%{rotate:y -10deg;translate:0 -2px;scale:1.05}100%{rotate:y 0deg;translate:0 0;scale:1}}
+.card.turn:not(.gold)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.75) 50%,transparent 65%) 0 0/260% 100% no-repeat;animation:glintRun .55s ease-out both;animation-delay:inherit}
+@keyframes glintRun{0%{background-position:120% 0;opacity:1}100%{background-position:-30% 0;opacity:0}}
+@media (prefers-reduced-motion:reduce){.card.turn,.card.turn::after{animation:none}}
+
+/* ================= physical chips: the pot is real stacks by colour, pushed in a little crooked ================= */
+.pstacks{display:inline-flex;align-items:flex-end;gap:1px;margin-right:2px}
+.pstacks .stack{translate:var(--jx,0) 0;rotate:var(--jr,0deg);margin-left:-9px}
+.pstacks .stack:nth-child(even){translate:var(--jx,0) 3px}
+.pstacks .stack:first-child{margin-left:0}
+.pstacks .chip{translate:var(--o,0) 0}
+.potrow.thud .pstacks{animation:potSettle .32s cubic-bezier(.3,1.7,.5,1)}
+@keyframes potSettle{0%{scale:1 1}40%{scale:1.06 .9}100%{scale:1 1}}
+/* the back is painted over the face for the first half of the turn (backs are symmetric, so mirroring doesn't show) */
+.board .card.turn{--b1:#8f2b20;--b2:#561510;--bm:var(--brass)}
+.board .card.turn::before{opacity:1;transition:none;z-index:4;background-position:0 0;background-size:auto;border-radius:inherit;animation:backOff .46s steps(1) both;animation-delay:inherit;
+  background:radial-gradient(circle at 50% 50%,var(--bm,#c9a24e) 0 9%,transparent 10%),repeating-linear-gradient(45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1,#8f2b20),var(--b2,#561510));
+  box-shadow:inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2,#561510),inset 0 0 0 4px rgba(242,216,143,.6)}
+@keyframes backOff{0%{opacity:1}42%{opacity:0}100%{opacity:0}}
+
+/* ================= chapter cards: the narrator ================= */
+.ch-text{max-width:min(560px,86vw);margin:clamp(10px,2.2vh,20px) auto 0;font-family:var(--f-body);font-size:clamp(15px,2.2vw,19px);line-height:1.5;color:#cdb991;text-align:center;text-wrap:pretty}
+.ch-text span{display:inline-block;opacity:0;translate:0 3px;animation:chWord .5s ease forwards}
+@keyframes chWord{to{opacity:1;translate:0 0}}
+.ch-carry{margin-top:clamp(10px,2vh,18px);font-family:var(--f-label);font-weight:700;font-size:clamp(10.5px,1.5vw,12.5px);letter-spacing:.2em;text-transform:uppercase;color:var(--brass);opacity:0;animation:chWord .9s ease forwards;text-wrap:balance;max-width:86vw;margin-inline:auto}
+html.duo-wide .ch-text{max-width:min(620px,80vw)}
+@media (max-height:520px){.ch-text{font-size:14px;margin-top:6px}.ch-carry{margin-top:6px}}
+@media (prefers-reduced-motion:reduce){.ch-text span,.ch-carry{animation-duration:.01s!important;animation-delay:0s!important}}
+/* chapter card on the Duo, open flat: the town's name on the top screen, the story on the bottom one */
+.ch-top,.ch-bot{display:contents}
+html.duo-wide #sChapter{padding:0!important;justify-content:flex-start}
+html.duo-wide #sChapter .chapter{display:grid;grid-template-rows:calc((var(--appH,100svh) - var(--hinge,28px)) / 2) var(--hinge,28px) calc((var(--appH,100svh) - var(--hinge,28px)) / 2);
+  height:var(--appH,100svh);padding:0 clamp(16px,5vw,56px);width:min(760px,calc(100vw - 32px));gap:0}
+html.duo-wide .ch-top{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;grid-row:1;min-height:0}
+html.duo-wide .ch-bot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;grid-row:3;min-height:0}
+html.duo-wide .ch-tap{bottom:14px}
+
+/* ================= the menu sky follows the clock (only on screens outside a saloon) ================= */
+html[data-saloon=""][data-tod="dawn"] #vista{--sky1:#232647;--sky2:#7a5068;--sky3:#f0a273;--orb:#ffe1a8;--orb-glow:rgba(255,205,140,.45);--orb-y:70%;--orb-x:24%;--orb-s:clamp(80px,13vmin,150px);--craters:0;--stars:.12;--cloud:rgba(255,190,170,.32);--far:#4a3044;--mid:#2c1c2a;--near:#100a0c;--haze:rgba(255,170,140,.3);--win:#ffcf80}
+html[data-saloon=""][data-tod="day"] #vista{--sky1:#2f5d8c;--sky2:#6e9cc4;--sky3:#e2c294;--orb:#fff7dc;--orb-glow:rgba(255,246,210,.55);--orb-y:15%;--orb-x:70%;--orb-s:clamp(60px,9vmin,110px);--craters:0;--stars:0;--cloud:rgba(255,250,240,.55);--far:#5f4537;--mid:#3d2a20;--near:#1a100b;--haze:rgba(245,205,160,.22);--win:rgba(30,20,14,.9)}
+html[data-saloon=""][data-tod="dusk"] #vista{--sky1:#1a1c3c;--sky2:#743a4c;--sky3:#ee8442;--orb:#ffb062;--orb-glow:rgba(255,150,70,.5);--orb-y:76%;--orb-x:66%;--orb-s:clamp(100px,16vmin,180px);--craters:0;--stars:.25;--cloud:rgba(255,150,110,.3);--far:#3e2232;--mid:#24131d;--near:#0b0708;--haze:rgba(255,140,90,.32)}
+html[data-saloon=""][data-tod="day"] .vs-lights{display:none}
+html[data-saloon=""][data-tod="day"] #sTitle .tagline{text-shadow:0 2px 0 #3a2410,0 4px 18px rgba(20,10,0,.75)}
+
+/* ================= wildlife ================= */
+.vs-near .vs-tail{transform-box:fill-box;transform-origin:0 0;animation:tailSwish 6s steps(1) infinite}
+@keyframes tailSwish{0%,80%{transform:rotate(0)}83%{transform:rotate(-14deg)}86%{transform:rotate(8deg)}89%{transform:rotate(-6deg)}92%,100%{transform:rotate(0)}}
+.vs-near g+g .vs-tail{animation-delay:-2.7s}
+.vs-coyote{display:none}
+html[data-tod="night"] .vs-coyote,html[data-tod="dusk"] .vs-coyote,html[data-saloon="3"] .vs-coyote,html[data-saloon="6"] .vs-coyote,html[data-saloon="8"] .vs-coyote{display:inline}
+/* hawks wheel high over the mesas in daylight */
+.vs-hawks{inset:0!important;width:auto!important;pointer-events:none;display:none}
+html[data-tod="day"] .vs-hawks,html[data-tod="dawn"] .vs-hawks,html[data-tod="dusk"] .vs-hawks,html[data-saloon="1"] .vs-hawks,html[data-saloon="2"] .vs-hawks,html[data-saloon="4"] .vs-hawks{display:block}
+html[data-saloon=""][data-tod="night"] .vs-hawks{display:none}
+.hk{position:absolute;left:30%;top:20%;width:0;height:0;animation:hawkCircle 34s linear infinite;will-change:transform}
+.hk.two{left:58%;top:14%;animation-duration:46s;animation-direction:reverse}
+.hk i{position:absolute;left:clamp(50px,9vw,120px);top:0;width:clamp(16px,2.2vw,26px);display:block;rotate:90deg}
+.hk.two i{left:clamp(70px,12vw,160px);width:clamp(12px,1.7vw,20px);rotate:-90deg}
+.hk svg{display:block;width:100%;fill:color-mix(in srgb,var(--near) 80%,var(--sky2));animation:hawkFlap 5s steps(1) infinite}
+@keyframes hawkCircle{to{transform:rotate(360deg)}}
+@keyframes hawkFlap{0%,70%{transform:scaleY(1)}73%{transform:scaleY(-.6)}76%{transform:scaleY(1)}79%{transform:scaleY(-.6)}82%,100%{transform:scaleY(1)}}
+
+/* ================= dust storm ================= */
+.vs-storm{inset:0!important;width:auto!important;opacity:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 0%,rgba(150,105,65,.5) 22%,rgba(185,135,85,.72) 42%,rgba(160,112,70,.62) 62%,rgba(140,95,60,.35) 80%,transparent 100%);
+  background-size:100% 100%;translate:110% 0}
+#vista.storm .vs-storm{animation:stormPass 14s cubic-bezier(.45,.05,.55,.95) forwards}
+@keyframes stormPass{0%{translate:110% 0;opacity:0}15%{opacity:1}50%{translate:-5% 0;opacity:1}85%{opacity:.9}100%{translate:-120% 0;opacity:0}}
+#vista.storm .vs-weed{animation-duration:3.2s!important}
+html[data-fx="2"] .hk,html[data-fx="2"] .vs-near .vs-tail{animation:none}
+@media (prefers-reduced-motion:reduce){.hk,.hk svg,.vs-near .vs-tail,#vista.storm .vs-storm{animation:none}}
+html[data-saloon=""][data-tod="day"] #sTitle h1.brass{filter:drop-shadow(0 0 14px rgba(25,12,2,.85)) drop-shadow(0 2px 2px rgba(0,0,0,.6))}
+html[data-saloon=""][data-tod="day"] .vs-orb i::after{opacity:0}
+
+/* ================= chip tricks: your stack by your nameplate ================= */
+.mystack{position:absolute;right:-14px;bottom:-2px;width:20px;height:34px;pointer-events:auto;cursor:pointer;scale:.82;transform-origin:bottom center;z-index:2}
+.mystack .chip{bottom:calc(var(--i)*3px);will-change:auto}
+.mystack.riffle .chip{animation:riffle 1.6s ease-in-out infinite;animation-delay:calc(var(--i) * .12s)}
+@keyframes riffle{0%,55%,100%{translate:0 0}62%{translate:-7px -4px}70%{translate:-3px 6px}78%{translate:0 0}}
+.mystack.flick .chip{animation:flickUp .5s cubic-bezier(.3,1.5,.5,1);animation-delay:calc((4 - var(--i)) * .07s)}
+@keyframes flickUp{0%{translate:0 0}35%{translate:0 -14px;rotate:x 180deg}100%{translate:0 0;rotate:x 360deg}}
+.seat.human .plate{overflow:visible}
+html.lefty .mystack{right:auto;left:-14px}
+html[data-fx="2"] .mystack.riffle .chip{animation:none}
+
+/* ================= the balcony at Graves End ================= */
+.table-wrap{position:relative}
+.balcony{position:absolute;inset:0;pointer-events:none;z-index:0}
+.balcony[hidden]{display:none}
+.bal-side{position:absolute;top:50%;translate:0 -50%;display:flex;flex-direction:column;gap:clamp(6px,1.4vh,12px);align-items:center;
+  padding:10px 8px;border-radius:12px;background:linear-gradient(90deg,rgba(20,10,6,.75),rgba(20,10,6,.35));border:1px solid rgba(201,162,78,.18)}
+.bal-side.l{left:max(6px,1.5%)}
+.bal-side.r{right:max(6px,1.5%);background:linear-gradient(270deg,rgba(20,10,6,.75),rgba(20,10,6,.35))}
+.bal-b{display:flex;flex-direction:column;align-items:center;gap:2px;animation:balIdle 4.5s ease-in-out infinite;animation-delay:calc(var(--d,0) * -1s)}
+.bal-b:nth-child(2){--d:1.3}.bal-b:nth-child(3){--d:2.7}.bal-b:nth-child(4){--d:.6}
+.bal-b .medal{width:clamp(28px,4.4vmin,40px);height:clamp(28px,4.4vmin,40px);filter:saturate(.75) brightness(.85)}
+.bal-b i{font-style:normal;font-family:var(--f-label);font-weight:700;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(232,210,160,.55)}
+@keyframes balIdle{0%,100%{translate:0 0}50%{translate:0 -2px}}
+.balcony.lean .bal-b{animation:balLean .5s ease-out both}
+@keyframes balLean{to{translate:0 -4px;scale:1.08}}
+.balcony.gone .bal-b{animation:balCheer .6s ease-in-out 3 both}
+@keyframes balCheer{50%{translate:0 -7px}}
+/* phones and tall layouts: no room at the sides, so they lean over the rail along the top */
+html:not(.duo-wide) .bal-side{top:max(2px,env(safe-area-inset-top));translate:0 0;flex-direction:row;padding:4px 8px;background:linear-gradient(rgba(20,10,6,.7),rgba(20,10,6,.2))}
+html:not(.duo-wide) .bal-b i{display:none}
+html:not(.duo-wide) .bal-b .medal{width:24px;height:24px}
+html:not(.duo-wide) .bal-side.l{left:2%}
+html:not(.duo-wide) .bal-side.r{right:2%}
+html[data-fx="2"] .bal-b{animation:none}
+
+/* ================= parchment tip cards ================= */
+.tipcard{position:fixed;z-index:9000;max-width:min(280px,80vw);padding:10px 14px 11px;border-radius:6px;pointer-events:none;
+  background:linear-gradient(180deg,#f3e6c6,#e3cfa2);color:#2a1708;box-shadow:0 0 0 1px rgba(90,60,20,.45),0 12px 30px rgba(0,0,0,.6);
+  opacity:0;scale:.9;translate:0 6px;transform-origin:50% 100%;transition:opacity .16s,scale .35s var(--spring,cubic-bezier(.3,1.5,.5,1)),translate .35s var(--spring,cubic-bezier(.3,1.5,.5,1));text-align:left}
+.tipcard.on{opacity:1;scale:1;translate:0 0}
+.tipcard b{display:block;font-family:var(--f-display);font-weight:400;font-size:18px;line-height:1.1;color:#3a1c08}
+.tipcard em{display:block;font-family:var(--f-label);font-style:normal;font-weight:700;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#7a4a1a;margin-top:2px}
+.tipcard p{margin:6px 0 0;font-family:var(--f-body);font-size:14.5px;line-height:1.35;color:#3d2610}
+.tipcard .tc-i{float:right;margin-left:10px;font-size:22px;color:#8a5a1e}
+.tipcard.bad b{color:#6a1408}
+
+/* ================= spring physics: sheets and menus arrive with a little weight ================= */
+:root{--spring:linear(0,.009,.035 2.1%,.141,.281 6.7%,.723 12.9%,.938 16.7%,1.017,1.077 21.4%,1.121,1.149 24.3%,1.159,1.163 27%,1.154,1.129 32.8%,1.051 39.6%,1.017 43.1%,.991,.977 51%,.974 53.8%,.975 57.1%,.997 69.8%,1.003 76.9%,1)}
+@supports not (transition-timing-function:linear(0,1)){:root{--spring:cubic-bezier(.3,1.45,.45,1)}}
+.modal:not([hidden]):not(#poster)>.sheet{animation:sheetSpring .6s var(--spring) both}
+.modal:not([hidden]):not(#poster){animation:fadeBg .22s ease both}
+@keyframes sheetSpring{0%{opacity:0;scale:.92;translate:0 18px}25%{opacity:1}100%{opacity:1;scale:1;translate:0 0}}
+@keyframes fadeBg{from{opacity:0}}
+#raiseSheet:not([hidden]),.raisesheet:not([hidden]){animation:sheetSpring .5s var(--spring) both}
+.saymenu:not([hidden]),#sayMenu:not([hidden]){animation:sheetSpring .45s var(--spring) both;transform-origin:50% 100%}
+.sw i{transition:translate .45s var(--spring),background .2s}
+.btn,.chipbtn{transition:transform .5s var(--spring),filter .2s}
+.btn:not(:disabled):active,.chipbtn:active{transition-duration:.08s}
+@media (prefers-reduced-motion:reduce){.modal>.sheet,.modal,.tipcard{animation:none!important;transition:none!important}}
+
+/* ================= animated card backs: Ghost Deck and Brimstone ================= */
+html[data-back="12"] .card.back,html[data-back="12"] .board .card.turn,html[data-back="12"] .seat.human .card{--b1:#5d6b78;--b2:#1c242c;--bl:rgba(220,235,245,.22);--bm:#dfeaf2}
+html[data-back="13"] .card.back,html[data-back="13"] .board .card.turn,html[data-back="13"] .seat.human .card{--b1:#3a0c06;--b2:#120302;--bl:rgba(255,120,40,.28);--bm:#ff9a3a}
+.bk-swatch[data-bk="12"]{--s1:#5d6b78;--s2:#1c242c}.bk-swatch[data-bk="13"]{--s1:#3a0c06;--s2:#120302}
+html[data-back="12"] .card.back::after,html[data-back="13"] .card.back::after,.bk-swatch[data-bk="12"]::after,.bk-swatch[data-bk="13"]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;will-change:opacity}
+html[data-back="12"] .card.back::after,.bk-swatch[data-bk="12"]::after{background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(230,245,255,.55),transparent 70%);animation:ghostBreath 4.2s ease-in-out infinite alternate}
+html[data-back="12"] .card.back:nth-child(2)::after{animation-delay:-2.1s}
+@keyframes ghostBreath{0%{opacity:.05}100%{opacity:.75}}
+html[data-back="13"] .card.back::after,.bk-swatch[data-bk="13"]::after{box-shadow:inset 0 0 0 1.5px rgba(255,140,40,.85),inset 0 0 7px 1px rgba(255,90,20,.55);animation:brimFlicker 2.6s steps(1) infinite}
+html[data-back="13"] .card.back:nth-child(2)::after{animation-delay:-1.3s}
+@keyframes brimFlicker{0%{opacity:.85}12%{opacity:.45}18%{opacity:1}40%{opacity:.6}46%{opacity:.95}70%{opacity:.5}76%{opacity:1}}
+.bk-swatch{position:relative}
+html[data-fx="2"] .card.back::after{animation:none!important}
+@media (prefers-reduced-motion:reduce){html[data-back="12"] .card.back::after,html[data-back="13"] .card.back::after{animation:none}}
+
+/* ================= fold to peek ================= */
+html.peekmode .seat.human .cards .card:not(.back){transform:perspective(700px) rotateY(0deg);transition:transform .45s var(--spring,cubic-bezier(.3,1.4,.5,1))}
+html.peekmode .seat.human .cards:not(.shown) .card:not(.back){transform:perspective(700px) rotateY(180deg)}
+html.peekmode .seat.human .cards .card:not(.back)::before{z-index:4;transition:opacity 0s .12s;background-size:auto;background-position:0 0;border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%,var(--bm,#c9a24e) 0 9%,transparent 10%),repeating-linear-gradient(45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1,#8f2b20),var(--b2,#561510));
+  box-shadow:inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2,#561510),inset 0 0 0 4px rgba(242,216,143,.6)}
+html.peekmode .seat.human .cards:not(.shown) .card:not(.back)::before{opacity:1}
+html.peekmode .seat.human .cards.peek:not(.shown) .card:not(.back)::before{opacity:0}
+/* holding them: the cards lift toward you and turn up, like checking your hand under the brim of your hat */
+html.peekmode .seat.human .cards.peek:not(.shown) .card:not(.back){transform:perspective(700px) translateY(-10px) rotateX(16deg) rotateY(0deg);transition-duration:.32s}
+html.peekmode .seat.human .cards.peek .card:nth-child(2){transition-delay:.04s}
+html.peekmode .seat.human .cards:not(.shown){cursor:grab}
+html.peekmode .seat.human .cards:not(.shown)::after{content:"Hold to peek";position:absolute;left:50%;top:-18px;translate:-50% 0;white-space:nowrap;font-family:var(--f-label);font-weight:700;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(232,210,160,.45);pointer-events:none}
+html.peekmode .seat.human .cards.peek::after{opacity:0}
+html.peekmode .seat.human .cards{position:relative}
+/* daylight behind the title on phones: a soft shade so the words stay crisp */
+html[data-saloon=""][data-tod="day"]:not(.duo-wide)[data-screen="sTitle"] .vs-dim{opacity:.42;background:radial-gradient(ellipse 90% 70% at 50% 55%,#000 30%,rgba(0,0,0,.55))}
+html[data-saloon=""][data-tod="dawn"]:not(.duo-wide)[data-screen="sTitle"] .vs-dim,html[data-saloon=""][data-tod="dusk"]:not(.duo-wide)[data-screen="sTitle"] .vs-dim{opacity:.22}
+.title-links{width:min(420px,calc(100vw - 28px))!important;margin-inline:auto}
+@media (min-width:700px){.title-links{width:auto!important}}
+@media (max-width:420px){.title-links button{letter-spacing:.06em;gap:5px;font-size:12px}.title-links button svg{width:13px;height:13px}}

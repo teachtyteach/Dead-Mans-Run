@@ -178,6 +178,10 @@ function buildVista(){
   const poles=[120,300,1130,1360,1520].map(x=>`<path d="M${x} ${ground+6} V${ground-74} M${x-14} ${ground-66} h28" stroke-width="3" fill="none"/>`).join('');
   const wire=`<path class="wire" d="M120 ${ground-66} Q210 ${ground-40} 300 ${ground-66} M1130 ${ground-66} Q1245 ${ground-40} 1360 ${ground-66} Q1440 ${ground-44} 1520 ${ground-66}" fill="none" stroke-width="1.2"/>`;
   const cactus=(x,s)=>`<path transform="translate(${x} ${ground+4}) scale(${s})" d="M-5 0 V-62 a5 5 0 0 1 10 0 V0z M-5 -30 h-10 a4 4 0 0 1 -4 -4 v-14 a4 4 0 0 1 8 0 v10 h6z M5 -22 h10 v-18 a4 4 0 0 1 8 0 v20 a6 6 0 0 1 -6 6 h-12z"/>`;
+  // two horses tied at a rail outside town; a coyote on the rise after dark
+  const horse=(x,s,flip)=>`<g transform="translate(${x} ${ground+2}) scale(${flip?-s:s} ${s})"><path d="M-14 -18 Q-14 -27 0 -27 Q14 -27 15 -19 Q15 -12 8 -11 L-10 -11 Q-15 -12 -14 -18Z M-12 -22 L-19 -36 Q-20 -39 -24 -38 L-30 -33 Q-31 -31 -28 -30 L-22 -32 L-15 -19Z M-20 -38 l1 -4 l2 3z"/><path d="M-11 -12 V0 M-7 -12 V-1 M8 -12 V0 M12 -12 V-1" stroke-width="2.6" fill="none"/><path class="vs-tail" d="M15 -22 Q23 -18 20 -5 Q17 -11 13 -17Z"/></g>`;
+  const horses=`<path d="M318 ${ground-20} h86 M322 ${ground-20} v22 M400 ${ground-20} v22" stroke-width="2.6" fill="none"/>`+horse(346,1,false)+horse(382,.94,true);
+  const coyote=`<g class="vs-coyote" transform="translate(1318 ${ground+1}) scale(1.05)"><path d="M0 0 Q-3 -9 1 -15 L5 -25 L8 -30 L7 -35 L10 -31 L12 -33 L12 -28 L17 -33 L17 -29 L12 -23 Q9 -13 12 -5 Q14 0 8 0Z M1 -1 Q-10 2 -15 -3 Q-8 -3 1 -5Z"/></g>`;
   const svg=(cls,inner,extra='')=>`<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" ${extra}>${inner}</svg>`;
   const TF='translate(800 792) scale(.72) translate(-800 -792)';
   v.innerHTML=`<div class="vs-sky"></div>`+
@@ -188,11 +192,12 @@ function buildVista(){
     svg('vs-mid',`<path d="${ridge(720,120,.45)}"/>`)+
     `<div class="vs-haze"></div>`+
     `<div class="vs-nearw">`+
-      svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}<g transform="${TF}">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
+      svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}${horses}${coyote}<g transform="${TF}">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
       svg('vs-lights',`<g transform="${TF}">${flick}</g>`)+
       `<div class="vs-mill">${blades}</div>`+
       `<div class="vs-weed"><i><svg viewBox="-30 -30 60 60"><g fill="none" stroke-width="2.4">${Array.from({length:11},(_,i)=>`<ellipse rx="${rr(14,26).toFixed(0)}" ry="${rr(8,22).toFixed(0)}" transform="rotate(${i*33})"/>`).join('')}</g></svg></i></div>`+
-    `</div><div class="vs-dim"></div><div class="vs-floor"></div>`;
+    `</div><div class="vs-hawks"><b class="hk"><i><svg viewBox="-13 -6 26 9"><path d="M-12 0 Q-6 -5 0 0 Q6 -5 12 0 Q6 -2 0 2 Q-6 -2 -12 0Z"/></svg></i></b><b class="hk two"><i><svg viewBox="-13 -6 26 9"><path d="M-12 0 Q-6 -5 0 0 Q6 -5 12 0 Q6 -2 0 2 Q-6 -2 -12 0Z"/></svg></i></b></div>`+
+    `<div class="vs-storm"></div><div class="vs-dim"></div><div class="vs-floor"></div>`;
   // place the windmill blades and the tumbleweed on the same ground the town stands on (the art is "slice"-scaled)
   const nearw=v.querySelector('.vs-nearw'), millEl=v.querySelector('.vs-mill'), weed=v.querySelector('.vs-weed');
   const place=()=>{const w=nearw.clientWidth||innerWidth+140, h=nearw.clientHeight||innerHeight, s=Math.max(w/W,h/H), ox=(w-W*s)/2, oy=h-H*s;
@@ -209,6 +214,16 @@ function buildVista(){
     addEventListener('pointermove',e=>{if(e.pointerType!=='mouse') return; tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; if(!run){run=true; requestAnimationFrame(step)}},{passive:true})}
 }
 buildVista();
+/* the menu sky follows your clock: dawn, afternoon, dusk or night */
+function setTod(){const h=new Date().getHours(); document.documentElement.dataset.tod=h>=5&&h<8?'dawn':h>=8&&h<17?'day':h>=17&&h<20?'dusk':'night'}
+setTod(); setInterval(setTod,5*60*1000);
+/* now and then a dust storm rolls across the menu: the sky goes brown, the tumbleweed runs, the wind picks up */
+let STORM_T=0, STORM_LAST=0;
+function maybeStorm(){clearTimeout(STORM_T); if(REDUCED||FX.tier>=2) return;
+  STORM_T=setTimeout(()=>{const v=$('vista'); if(!v||document.documentElement.dataset.screen!=='sTitle'||document.hidden) return;
+    if(Date.now()-STORM_LAST<180000||Math.random()>.35) return; STORM_LAST=Date.now();
+    v.classList.remove('storm'); void v.offsetWidth; v.classList.add('storm'); const was=AIR.mode; AIR.mode='sand';
+    if(typeof wind==='function') wind(13); setTimeout(()=>{v.classList.remove('storm'); if(AIR.mode==='sand') AIR.mode=was},14000)},6000+Math.random()*6000)}
 
 /* ================= rendering helpers ================= */
 let SOUNDQ=[];
@@ -230,8 +245,11 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
     const key=loc+':'+c.id, prev=G.seen.get(key);
     if(prev===undefined){
       G.seen.set(key,up);
-      if(!REDUCED){const a=anim||{}; cls=' deal'; style=` style="--fx:${a.fx||0}px;--fy:${a.fy==null?-40:a.fy}px;animation-delay:${a.delay||0}ms"`; SOUNDQ.push(a.delay||0)}
-    } else if(prev!==up){G.seen.set(key,up); if(!REDUCED){cls=' flip'; SOUNDQ.push(0)}}
+      if(!REDUCED){const a=anim||{}; cls=' deal'; style=` style="--fx:${a.fx||0}px;--fy:${a.fy==null?-40:a.fy}px;animation-delay:${a.delay||0}ms"`; SOUNDQ.push(a.delay||0)
+        if(a.down&&up&&!G.slowmo){G.seen.set(key,'down'); FLIPQ.push((a.delay||0)+560); up=false}}
+    } else if(prev==='down'&&up){const a=anim||{}; G.seen.set(key,up); if(!REDUCED){cls=' flip turn'; style=` style="animation-delay:${a.flipDelay||0}ms"`; SOUNDQ.push(a.flipDelay||0)}}
+    else if(prev==='down'){up=false}
+    else if(prev!==up){G.seen.set(key,up); if(!REDUCED){cls=' flip'; SOUNDQ.push(0)}}
   }
   if(!up) return `<div class="card back${cls} ${extra}"${style}>${/marked/.test(extra)?`<span class="mk${c.s===1||c.s===2?' red':''}">${SUITS[c.s]}</span>`:''}</div>`;
   const red=c.s===1||c.s===2, rk=RN[c.r]||String(c.r), su=SUITS[c.s], face=c.r>=11&&c.r<=13;
@@ -241,6 +259,11 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
     `<div class="ix">${ix}</div>`+(face?`<div class="face court">${courtArt(c.r,c.s)}<i>${su}</i></div>`:c.r===14?`<div class="pip ace">${su}</div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
 }
 function chipCls(a){return a>=500?'k':a>=150?'g':a>=50?'b':'r'}
+function potStacks(a){
+  if(a<=0) return ''; const bb=G.bb||20; let u=Math.round(a/bb); const den=[['k',25],['g',5],['b',1]], cols=[];
+  for(const [c,v] of den){let n=Math.floor(u/v); u-=n*v; while(n>0&&cols.length<4){const h=Math.min(8,n); cols.push([c,h]); n-=h}}
+  if(!cols.length) cols.push(['r',1]);
+  return '<span class="pstacks">'+cols.map(([c,h],j)=>{let t=`<span class="stack" style="--n:${h-1};--jx:${((j*37)%7)-3}px;--jr:${((j*53)%9)-4}deg">`; for(let k=0;k<h;k++) t+=`<span class="chip ${c}" style="--i:${k};--o:${(((j+1)*(k+3)*29)%5)-2}px"></span>`; return t+'</span>'}).join('')+'</span>'}
 function chipStack(a){const k=Math.max(1,Math.min(6,Math.ceil(Math.log10(a+1)*1.5))); let h=`<span class="stack" style="--n:${k-1}">`; for(let j=0;j<k;j++) h+=`<span class="chip ${chipCls(a)}" style="--i:${j}"></span>`; return h+'</span>'}
 function drawFan(el){
   const cards=[{r:14,s:0,id:1},{r:14,s:3,id:2},{r:8,s:0,id:3},{r:8,s:3,id:4}];
@@ -331,8 +354,8 @@ function dailyDone(won){
 }
 
 /* ================= trophy room: wanted posters, card backs, achievements ================= */
-const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded','Outlaw Gold','Black Hat'];
-function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===10) return (meta.wantedWon??-1)>=4; if(n===11) return (meta.wantedWon??-1)>=8; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
+const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded','Outlaw Gold','Black Hat','Ghost Deck','Brimstone'];
+function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===10) return (meta.wantedWon??-1)>=4; if(n===11) return (meta.wantedWon??-1)>=8; if(n===12) return (meta.wins||0)>=3; if(n===13) return (meta.wantedWon??-1)>=6; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
 const ACH=[
   ['First blood','Take down your first boss',()=>meta.stats.bosses>=1],
   ['Halfway there','Reach the fifth saloon',()=>meta.best>=5],
@@ -413,7 +436,7 @@ const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{const
 addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
 if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
-function applyComfort(){const d=document.documentElement; d.classList.toggle('bigtext',!!meta.bigText); d.classList.toggle('four',!!meta.four); d.classList.toggle('reduce',!!meta.reduce); d.classList.toggle('lefty',!!meta.lefty);
+function applyComfort(){if(typeof peekMode==='function') setTimeout(peekMode,0);const d=document.documentElement; d.classList.toggle('bigtext',!!meta.bigText); d.classList.toggle('four',!!meta.four); d.classList.toggle('reduce',!!meta.reduce); d.classList.toggle('lefty',!!meta.lefty);
   REDUCED=SYS_REDUCED||!!meta.reduce; if(typeof applyVol==='function') applyVol()}
 function renderToggles(){
   const sw=(k,label,sub,on)=>`<button class="set-row" data-audio="${k}" role="switch" aria-checked="${on}"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><i class="sw${on?' on':''}"><i></i></i></button>`;
@@ -434,10 +457,11 @@ function renderToggles(){
       ${seg('fx','Effects',meta.fx==='low'?'Battery saver: lighter ambience, cooler phone':'Full: the game also eases off on its own if the phone gets warm',[['full','Full'],['low','Battery saver']],meta.fx==='low'?'low':'full')}</div>
       <div class="set-group"><div class="set-h">Play</div>
       ${seg('speed','Game speed','How fast the others act',[['normal','Normal'],['fast','Fast']],meta.speed==='fast'?'fast':'normal')}
-      ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
+      ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}
+      ${seg('peek','Peek at your hand','Duo open flat in landscape: your cards lie face down. Hold them to look.',[['off','Off'],['on','Hold to peek']],meta.peek?'on':'off')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 70 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 71 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -445,6 +469,7 @@ document.addEventListener('click',e=>{
   if(k==='speed') meta.speed=v||(meta.speed==='fast'?'normal':'fast');
   else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
   else if(k==='fx'){meta.fx=v||(meta.fx==='low'?'full':'low'); fxApply()}
+  else if(k==='peek'){meta.peek=(v||(meta.peek?'off':'on'))==='on'; peekMode()}
   else if(k==='duo'){meta.duo=v||{auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else if(['bigText','four','reduce','lefty'].includes(k)){meta[k]=!meta[k]; applyComfort(); if(G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
@@ -473,6 +498,7 @@ let RUMOR_T=null, RUMOR_I=Math.floor(Math.random()*10);
 function rumorTick(){const el=$('rumor'); if(!el) return; clearTimeout(RUMOR_T); if($('sTitle').hidden) return;
   el.classList.add('out'); setTimeout(()=>{RUMOR_I=(RUMOR_I+1)%RUMORS.length; el.textContent=RUMORS[RUMOR_I]; el.classList.remove('out')},600); RUMOR_T=setTimeout(rumorTick,7000)}
 function renderTitle(){
+  setTod(); maybeStorm();
   setTimeout(rumorTick,400);
   DAILY=null; TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
   drawFan($('fan')); renderToggles();
@@ -849,6 +875,10 @@ function openChapter(){
   later(()=>writeHand($('chInk').firstElementChild),700);
   const words=CHAPTER_SUB[L-1].split(' ');
   $('chSub').innerHTML=words.map((w,k)=>`<span style="animation-delay:${4.1+k*.12}s">${w}</span>`).join(' ');
+  // then the narrator: a few lines about the town, and where you stand riding in
+  const t0=4.1+words.length*.12+.5;
+  $('chText').innerHTML=CHAPTER_TEXT[L-1].split(' ').map((w,k)=>`<span style="animation-delay:${(t0+k*.045).toFixed(2)}s">${w}</span>`).join(' ');
+  $('chCarry').textContent=chapterCarry(L); $('chCarry').style.animationDelay=(t0+CHAPTER_TEXT[L-1].split(' ').length*.045+.6).toFixed(2)+'s';
   const scr=$('sChapter'); scr.classList.remove('leaving');
   show('sChapter');
   sfx('whoosh');
@@ -856,7 +886,14 @@ function openChapter(){
   const go=()=>{if(done) return; done=true; scr.classList.add('leaving'); setTimeout(()=>{if(R) startTable()},REDUCED?0:650)};
   scr.onclick=go;
   scr.onkeydown=e=>{if(e.key==='Enter'||e.key===' ') go()};
-  later(go,8200);
+  later(go,REDUCED?7000:Math.round((t0+CHAPTER_TEXT[L-1].split(' ').length*.045+4.2)*1000));
+}
+function chapterCarry(L){
+  if(L===1) return `${R.charms.length?R.charms.length===1?'One charm':'Two charms':'Nothing'} in your saddlebag. A long way to go.`;
+  const prev=BOSSES[L-2], parts=[`${prev.name} is behind you`];
+  parts.push(`${num(R.gold)} gold in your pocket`);
+  const h=R.heat||0; if(h>=5) parts.push('and your face on every post office wall'); else if(h>=2) parts.push('and a price on your head');
+  return parts.length>2?`${parts[0]}. ${parts[1]}, ${parts.slice(2).join(', ')}.`:`${parts[0]}. ${parts[1]}.`;
 }
 
 /* ================= handwriting: a hand-drawn single-stroke cursive ================= */
@@ -986,6 +1023,7 @@ function newHand(){
   G.dealUntil=performance.now()+G.dealCount*70+500;
   if(G.risen) shake(false);
   tip('start');
+  tableChatter();
   step();
   sfx('chip');
 }
@@ -1020,7 +1058,7 @@ function step(){
   }
   if(!p.isHuman){
     const t=G.turn, base=((human().folded||human().allIn||!human().inHand?320:820)+(p.bossDef?520:0))*speedMul();
-    later(()=>{if(G.turn!==t) return; const d=aiDecide(t); if(d.tell||d.line) say(d.line||'',d.tell||''); doAct(t,d.type,d.to)}, Math.max(base,G.dealUntil-performance.now()+120));
+    later(()=>{if(G.turn!==t) return; const d=aiDecide(t); bossBark(t,d); if(d.tell||d.line) say(d.line||'',d.tell||''); doAct(t,d.type,d.to)}, Math.max(base,G.dealUntil-performance.now()+120));
   }
 }
 function doAct(i,type,to){
@@ -1029,7 +1067,7 @@ function doAct(i,type,to){
   const put=applyAction(i,type,to);
   step();
   if(put>0){
-    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip'); if(p.allIn||put>=G.bb*10) rumble(put/G.bb);
+    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),Math.min(7,2+Math.floor(Math.log2(Math.max(1,put/G.bb)))),280,chipCls(put),3); sfx(p.allIn||put>=G.bb*10?'chips':'chip'); if(p.allIn||put>=G.bb*10) rumble(put/G.bb);
     if(p.allIn){const c=centerOfSeat(i); if(c) stampAt(c[0],c[1],'All in','#d8341f',p.isHuman?34:26); sfx('stamp',80); shake(false)}
   }
 }
@@ -1037,7 +1075,7 @@ function collectThen(fn){
   const bets=[...document.querySelectorAll('#seats .bet,#duoHand .bet')];
   if(!bets.length||REDUCED){fn(); return}
   const pot=$('potrow');
-  bets.forEach(b=>{fly(b,pot,2,340,'g'); b.style.visibility='hidden'});
+  bets.forEach((b,j)=>{fly(b,pot,3,340,['r','b','g'][j%3],j<3?2:0); b.style.visibility='hidden'});
   sfx('chip'); later(fn,360);
 }
 function handEnd(res){
@@ -1047,8 +1085,14 @@ function handEnd(res){
   const ev=finishHand(res);
   render();
   const me=human(), potEl=$('potrow');
-  res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(10,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt)));
+  res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(12,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt),5));
   if(res.winners.length) sfx('chips',60);
+  // the regulars react: a winner crows, a busted man says his piece on the way out
+  {const n=performance.now(); if(n-(G.lastChat||0)>5000){
+    const bust=ev.kos.find(i=>!G.players[i].bossDef&&!G.players[i].isHuman);
+    const rw=res.winners.find(w=>{const q=G.players[w.i]; return q&&!q.isHuman&&!q.bossDef&&!q.out});
+    if(bust!=null&&where[bust]&&Math.random()<.7){G.lastChat=n; later(()=>seatSay(bust,pickLine(REG_LINES.bust),where[bust]),1300)}
+    else if(rw&&!ev.bossLine&&res.pot>=G.bb*6&&Math.random()<.35){G.lastChat=n; later(()=>seatSay(rw.i,pickLine(REG_LINES[res.pot>=G.bb*20?'bigwin':'win'])),800)}}}
   {const big=res.pot/G.bb; if(big>=12) rumble(big,120)}
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
@@ -1319,8 +1363,10 @@ function procChain(list,at,start){
 function seatEl(i,sel){return document.querySelector(`.seat[data-i="${i}"] ${sel||''}`)}
 function relCenter(el){const t=$('table').getBoundingClientRect(), r=el.getBoundingClientRect(); return [r.left+r.width/2-t.left, r.top+r.height/2-t.top]}
 function centerOfSeat(i){if(i===0&&isDuoV()) return [50,90]; const el=seatEl(i,'.plate'); if(!el) return null; const t=$('table').getBoundingClientRect(); const [x,y]=relCenter(el); return [x/t.width*100,y/t.height*100]}
-function fly(fromEl,toEl,count,dur,cls){
+function fly(fromEl,toEl,count,dur,cls,clink){
   if(REDUCED||!fromEl||!toEl) return;
+  // each chip that lands makes its own small click, a little higher or lower than the last
+  if(clink) for(let k=0;k<Math.min(count,clink);k++) sfx('clink',Math.round(dur*1.15*.9+k*55+Math.random()*12),.92+Math.random()*.2);
   const [x1,y1]=relCenter(fromEl), [x2,y2]=relCenter(toEl);
   for(let k=0;k<count;k++){
     const s=document.createElement('span'); s.className='chip fly '+(cls||'g'); s.style.left=(x1-10)+'px'; s.style.top=(y1-10)+'px'; $('fx').appendChild(s);
@@ -1446,6 +1492,15 @@ function quote(text,tell){
   }
   QUOTE_FADE=setTimeout(()=>{el.classList.remove('on'); rb.classList.remove('speaking')},(4200+(text||'').length*30)*Math.max(.6,speedMul()));
 }
+// bosses talk through the hand: all-ins nearly always, folds and calls now and then
+function bossBark(t,d){const p=G.players[t]; if(!p||!p.bossDef||d.line) return; const L=p.bossDef.lines;
+  const k=d.type==='raise'&&d.to>=p.bet+p.chips?'allin':d.type==='fold'?'fold':d.type==='call'?'call':null;
+  if(k&&L[k]&&Math.random()<({allin:.7,fold:.3,call:.12})[k]) d.line=pickLine(L[k])}
+// between hands the room chatters: the boss needles you, or a regular mutters something
+function tableChatter(){if(!G||G.duel||R.tutorial||(G.tableHands||0)<1) return; const n=performance.now(); if(n-(G.lastChat||0)<9000) return;
+  const bp=boss();
+  if(bp&&!bp.out&&Math.random()<.28){const L=bp.bossDef.lines, k=bp.chips>G.bossStart*1.3?'cocky':bp.chips<G.bossStart*.35?'hurt':'idle'; if(L[k]){G.lastChat=n; later(()=>say(pickLine(L[k])),900); return}}
+  if(Math.random()<.14){const regs=G.players.map((p,i)=>[p,i]).filter(([p])=>!p.out&&!p.isHuman&&!p.bossDef); if(regs.length){const [,i]=regs[Math.floor(Math.random()*regs.length)]; G.lastChat=n; later(()=>seatSay(i,pickLine(REG_LINES.idle)),1100)}}}
 function say(text,tell){
   const bi=G&&G.players?G.players.findIndex(p=>p.bossDef&&!p.out):-1;
   if(bi>=0&&!$('sGame').hidden&&(text||tell)){seatSay(bi,text,null,tell,true); quote('',''); return}
@@ -1481,6 +1536,25 @@ function pillLife(i,text,keep){
   if(!prev||prev.text!==text){PILLS.set(i,{text,at:now}); return ''}
   return ` style="animation-delay:-${Math.round(now-prev.at)}ms"`;
 }
+const SHOE={x:50,y:48};
+/* the final table: every boss you put down this run is up in the balcony, watching you finish it */
+function balcony(){const on=R&&R.level===8&&!R.tutorial&&!G.duel&&!R.daily; let b=$('balcony');
+  if(!on){if(b) b.hidden=true; return}
+  if(!b){b=document.createElement('div'); b.id='balcony'; b.className='balcony'; b.setAttribute('aria-hidden','true');
+    const head=bd=>`<span class="bal-b"><span class="medal">${bossPortrait(bd)}</span><i>${bd.name.split(' ').slice(-1)[0]}</i></span>`;
+    b.innerHTML=`<div class="bal-side l">${BOSSES.slice(0,4).map(head).join('')}</div><div class="bal-side r">${BOSSES.slice(4,7).map(head).join('')}</div>`;
+    $('tableWrap').prepend(b)}
+  b.hidden=false;
+  const bp=boss(); b.classList.toggle('lean',!!(bp&&bp.allIn)); b.classList.toggle('gone',!!(bp&&bp.out))}
+/* your own chips sit by your nameplate; while you think, your fingers riffle them. Tap them to do it yourself. */
+function myStack(me){const pl=document.querySelector('.seat.human .plate'); if(!pl) return;
+  let st=pl.querySelector('.mystack'); if(!st){st=document.createElement('span'); st.className='mystack'; st.setAttribute('aria-hidden','true');
+    st.innerHTML=['k','g','b','r','g'].map((c,i)=>`<span class="chip ${c}" style="--i:${i}"></span>`).join(''); pl.appendChild(st)}
+  st.hidden=me.out||me.chips<=0;
+  clearTimeout(myStack.t); st.classList.remove('riffle');
+  if(G.turn===0&&!REDUCED&&live().length>1) myStack.t=setTimeout(()=>{if(G.turn===0) st.classList.add('riffle')},3200)}
+document.addEventListener('pointerdown',e=>{const st=e.target.closest&&e.target.closest('.mystack'); if(!st||REDUCED) return;
+  st.classList.remove('riffle','flick'); void st.offsetWidth; st.classList.add('flick'); [0,90,170,240].forEach(d=>sfx('clink',d,1+Math.random()*.15)); haptic('light')});
 function render(){
   if(!R||!G.players.length) return;
   const L=R.level, bd=BOSSES[L-1], bp=boss(), me=human();
@@ -1518,12 +1592,16 @@ function render(){
   const madeName=G.board.length>=3&&!me.folded&&me.inHand&&!blindfold?nameOf(evalHand(me.hand.concat(G.board))):'';
   // seats are kept between renders and only the parts that changed are rebuilt, so portraits, glows,
   // deals and number rolls never restart mid-animation
-  const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
+  {const d=pos[G.dealer]||[50,48]; SHOE.x=d[0]+(50-d[0])*.42; SHOE.y=d[1]+(48-d[1])*.42}
+  const shoe=$('shoe')||(()=>{const e=document.createElement('div'); e.id='shoe'; e.className='shoe'; e.innerHTML='<i class="card back"></i>'; tb.appendChild(e); return e})();
+  shoe.style.left=SHOE.x+'%'; shoe.style.top=SHOE.y+'%'; shoe.style.setProperty('--n',Math.max(1,Math.min(9,Math.round(G.deck.length/5))));
+  shoe.hidden=G.street==='idle'||!!G.duel&&false;
+  const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip|turn)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
   let bets='', duoBet='';
   G.players.forEach((p,i)=>{
     if(p.out) return;
     live.add(i);
-    const me0=duoV&&i===0, [x,y]=pos[i], fx=me0?0:(50-x)/100*W, fy=me0?-H*.75:(48-y)/100*H;
+    const me0=duoV&&i===0, [x,y]=pos[i], fx=me0?(SHOE.x-50)/100*W*.6:(SHOE.x-x)/100*W, fy=me0?-H*.75:(SHOE.y-y)/100*H;
     const cards=(p.hand||[]).map((c,k)=>{
       const anim={fx,fy,delay:(c.order||0)*70};
       if(p.isHuman) return cardHTML(c,!blindfold,(snakeOn&&k===0&&!blindfold)?'watched':'','h'+i,anim);
@@ -1566,10 +1644,10 @@ function render(){
   if(duoBet) $('duoHand').insertAdjacentHTML('beforeend',duoBet);  {const ss=[...seatsEl.querySelectorAll('.seat:not(.duo-me)')], ws=ss.map(s=>s.offsetWidth);  // read every width first, then move: one layout, not one per seat
     ss.forEach((s,j)=>{const x=parseFloat(s.style.left)/100*W, m=ws[j]/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}})}
   const tellerOn=has('teller')&&['preflop','flop','turn'].includes(G.street)&&G.deck.length;
-  const bparts=[];
+  const bparts=[], bw=($('board')._w=$('board')._w||$('board').clientWidth/5||60);
   for(let k=0;k<5;k++){
     let b='';
-    if(G.board[k]) b+=cardHTML(G.board[k],true,'','b',{fx:0,fy:-50,delay:k<3?k*90:0});
+    if(G.board[k]){const sx=(SHOE.x-50)/100*W-(k-2)*bw, sy=(SHOE.y-48)/100*H; b+=cardHTML(G.board[k],true,'','b',{fx:Math.round(sx),fy:Math.round(sy),delay:k<3?k*90:0,down:true,flipDelay:k<3?k*120:0})}
     else if(G.street!=='done'&&G.street!=='showdown'&&k>=G.board.length&&k<G.board.length+Math.max(tellerOn?1:0,G.mirror||0)&&G.deck.length>k-G.board.length) b+=cardHTML(G.deck[G.deck.length-1-(k-G.board.length)],true,'ghost');
     else b+='<div class="slot"></div>';
     bparts.push(b);
@@ -1578,14 +1656,19 @@ function render(){
   if(boardEl.children.length!==5||!boardEl._q){boardEl.innerHTML=bparts.join(''); boardEl._q=bq}
   else bq.forEach((q,k)=>{if(boardEl._q[k]!==q){boardEl._q[k]=q; boardEl.children[k].outerHTML=bparts[k]}});
   const pot=G.street==='done'?(G.lastPot||0):potTotal();
-  const potH=(pot>0?chipStack(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
+  const potH=(pot>0?potStacks(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
   const sp=G.street!=='done'&&G.street!=='idle'&&G.players.some(p=>p.allIn&&p.inHand)?pots():[];
   $('sidepots').innerHTML=sp.length>1?sp.map((x,k)=>`${k?'Side':'Main'} <b>${money(x.amt)}</b>`).join(' · '):'';
+  myStack(me);
+  {const hc=document.querySelector('.seat.human .cards'); if(hc) hc.classList.toggle('shown',G.street==='done'||G.street==='showdown'||G.street==='idle'||me.folded||!!G.reveal)}
+  balcony();
   renderControls(); updateSay();
   runRolls();
   renderCoach();
   if(SOUNDQ.length){const q=SOUNDQ.slice(0,18); SOUNDQ=[]; q.forEach(d=>sfx('card',d))}
+  if(FLIPQ.length){const t=Math.max(...FLIPQ); FLIPQ=[]; clearTimeout(render.ft); render.ft=setTimeout(()=>{if(R&&G.players.length) render()},t)}
 }
+let FLIPQ=[];
 $('seats').addEventListener('click',e=>{
   const c=e.target.closest('.seat.human .card:not(.back)'); if(!c||c.classList.contains('deal')) return;
   c.classList.remove('wobble'); void c.offsetWidth; c.classList.add('wobble'); sfx('card'); setTimeout(()=>c.classList.remove('wobble'),520);
@@ -1934,3 +2017,42 @@ function tutFinale(){
   // if this browser already lets the page play sound, don't make anyone tap
   setTimeout(()=>{const c=ac(); if(!c) return; c.resume().then(()=>{if(!started&&c.state==='running') begin()}).catch(()=>{})},60);
 })();
+
+/* ================= long-press anything for a parchment card that explains it ================= */
+(function tips(){
+  let T=0, el=null, sx=0, sy=0, card=null, shown=false;
+  const info=t=>{
+    const g=t.closest('.gl[data-k],.cpill,.trickbtn,#bossbar,.seat.boss,.bal-b,.tarot,[title]'); if(!g) return null;
+    if(g.matches('.gl[data-k]')){const c=CHARMS[g.dataset.k]; return c&&{h:c.name+(lvl(g.dataset.k)>=2?' II':''),b:c.desc,i:c.icon}}
+    if(g.matches('.gl.trick')){const k=Object.keys(TRICKS).find(k=>TRICKS[k].name===g.title); return k&&{h:TRICKS[k].name,b:TRICKS[k].desc,i:TRICKS[k].icon}}
+    if(g.matches('.gl.cursed')){const k=Object.keys(CURSES).find(k=>CURSES[k].name===g.title); return k&&{h:CURSES[k].name,b:CURSES[k].desc,i:CURSES[k].icon,bad:1}}
+    if(g.matches('#bossbar,.seat.boss')&&R&&BOSSES[R.level-1]){const bd=BOSSES[R.level-1]; return {h:bd.name,s:bd.title,b:bd.twist}}
+    if(g.matches('.tarot')) return null;   // store cards already explain themselves
+    const tt=g.getAttribute('title'); return tt&&tt.length>2?{h:tt}:null};
+  const hide=()=>{clearTimeout(T); if(card){card.classList.remove('on'); const c=card; setTimeout(()=>c.remove(),180); card=null}};
+  const show=()=>{const d=info(el); if(!d) return; shown=true; haptic('select');
+    card=document.createElement('div'); card.className='tipcard'+(d.bad?' bad':'');
+    card.innerHTML=`${d.i?`<span class="tc-i">${d.i}\uFE0E</span>`:''}<b>${d.h}</b>${d.s?`<em>${d.s}</em>`:''}${d.b?`<p>${d.b}</p>`:''}`;
+    document.body.appendChild(card);
+    const r=el.getBoundingClientRect(), w=card.offsetWidth, h=card.offsetHeight;
+    let x=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2)), y=r.top-h-10; if(y<8) y=r.bottom+10;
+    card.style.left=x+'px'; card.style.top=y+'px'; requestAnimationFrame(()=>card&&card.classList.add('on'))};
+  addEventListener('pointerdown',e=>{hide(); shown=false; if(e.button>0) return; el=e.target; sx=e.clientX; sy=e.clientY; if(!info(el)) return; T=setTimeout(show,430)},true);
+  addEventListener('pointermove',e=>{if(T&&!shown&&Math.hypot(e.clientX-sx,e.clientY-sy)>10) clearTimeout(T)},{passive:true});
+  addEventListener('pointerup',()=>{clearTimeout(T); if(shown) setTimeout(hide,1400)},true);
+  addEventListener('pointercancel',hide,true);
+  addEventListener('click',e=>{if(shown){e.stopPropagation(); e.preventDefault(); shown=false}},true);
+  addEventListener('contextmenu',e=>{if(info(e.target)) e.preventDefault()});
+})();
+
+/* ================= fold to peek: Duo open flat in landscape, your hand lies face down on the bottom screen ================= */
+function peekMode(){document.documentElement.classList.toggle('peekmode',!!meta.peek&&document.documentElement.classList.contains('duo-wide'))}
+(function(){
+  let held=null, t=0;
+  const up=()=>{clearTimeout(t); if(held){const h=held; held=null; t=setTimeout(()=>h.classList.remove('peek'),120)}};
+  addEventListener('pointerdown',e=>{if(!document.documentElement.classList.contains('peekmode')) return; const c=e.target.closest&&e.target.closest('.seat.human .cards,.seat.human .plate');
+    if(!c) return; const cards=c.closest('.seat').querySelector('.cards'); if(!cards||cards.classList.contains('shown')) return;
+    clearTimeout(t); held=cards; cards.classList.add('peek'); haptic('soft'); sfx('card',0,1.15)},true);
+  addEventListener('pointerup',up,true); addEventListener('pointercancel',up,true);
+})();
+addEventListener('resize',()=>setTimeout(peekMode,260)); setTimeout(peekMode,300);

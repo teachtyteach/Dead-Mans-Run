@@ -165,3 +165,77 @@ const DEEDS={
   belt:{name:'Bandolier',desc:'Carry one more trick.',price:50},
   dealer:{name:'Friendly Clerk',desc:'Rerolls cost only 5 gold.',price:45}
 };
+
+/* ---- chapter cards: a few lines of dime-novel narration for each town ---- */
+const CHAPTER_TEXT=[
+  "Dry Creek ain't seen rain in three years, but the whiskey never runs out. The man at the back table has been drunk since spring, and somehow he's still winning.",
+  "Copper Bend is one long street, and Ma Spurlock owns every door on it. Out here the rent comes due every hand.",
+  "In Hollow Rock they tell you about a man who has never folded. They tell you twice, because nobody believes it the first time.",
+  "The sun sets red over the mesa and the undertaker is already outside, measuring. The blinds climb fast here. Nobody stays long.",
+  "Every mirror in Cutter's Gulch hangs at just the right angle. Snake Crane likes to see your cards before you do.",
+  "The bank in Silver Fork never closes. Banker Ellsworth sits behind a wall of chips, waiting to find out what you're worth.",
+  "Bitterwater is a river town, and the river decides everything. Lady Vesper has never once lost to the river.",
+  "Graves End. The end of the line. Every road you've ridden led here, to a rat with an extra card up his sleeve."];
+
+/* ---- more to say: every boss gets more lines, and new moments to say them ---- */
+const BOSS_MORE={
+  pete:{win:["Drinks on me! ...On you, I mean.","I had nothin'. Or somethin'. Can't remember.","Barkeep! Celebration whiskey!"],
+    lose:["Who moved my chips?","I'm seein' two of you, and you're both lucky.","That's fine. I got a flask."],
+    raise:["I'm all... wait, how much is all?","Raise! I think. Did I say raise?","Bet you don't believe me."],
+    fold:["Nah. Too sober for that hand.","Fold. Gotta save for whiskey."],call:["Sure, why not.","I'll see that. Barely."],
+    allin:["Everything! Even the boots!","All of it. Hic. Every last coin."],
+    idle:["Anyone seen my hat? I'm wearin' it? Huh.","This deck's spinnin' a little.","Deal 'em slow. Real slow."],
+    hurt:["Gettin' thin over here, friends.","Don't tell my horse about this."],cocky:["Look at all these pretty chips!","Drunk and winnin'. Best kind of night."]},
+  ma:{win:["Every penny accounted for.","Late fees, sugar.","Ma always gets paid."],
+    lose:["That's coming out of your deposit.","I'll remember that come rent day."],
+    raise:["Rent just went up.","Can you afford the neighborhood?","Pay up or move out."],
+    fold:["I'll let that one go. This once.","Not worth the paperwork."],call:["I'll cover it.","Put it on my ledger."],
+    allin:["I'm putting the whole house on it.","Every room, every bed. All in."],
+    idle:["Boots off the table, please.","Breakfast ain't included, by the way.","Somebody's behind on their ante."],
+    hurt:["Don't you dare evict me from my own table.","I've had worse tenants than you."],cocky:["I own this town, sugar. And now your chips.","Shall I draw you up a lease?"]},
+  iron:{win:["Still standing.","Hit me again. See what happens.","Stone don't bend."],
+    lose:["Doesn't hurt.","I've been shot worse."],raise:["Push.","Harder.","Again."],
+    call:["Called.","I'm here.","Not moving."],allin:["All of it. Same as always.","Come and take it."],
+    idle:["...","Deal.","You talk a lot."],hurt:["Still here.","Walls crack. They don't fall."],cocky:["Told you I don't move.","You're running out of hammer."]},
+  under:{win:["Dust to dust.","I'll send flowers.","One more stone for the yard."],
+    lose:["I can wait. I'm good at waiting.","The ground is patient."],
+    raise:["Time's shorter than you think.","Let's hurry this along.","Tick. Tock."],
+    fold:["Not your time yet.","I'll bury that one later."],call:["I'll see it through.","To the end."],
+    allin:["I dug a hole big enough for both of us.","Everything. You won't need yours."],
+    idle:["The blinds go up soon. Everything ends.","You look pale, friend.","I measured the whole table this morning."],
+    hurt:["Even gravediggers die. Not tonight.","Interesting. Most men don't fight back."],cocky:["You're already cold.","I've picked out a nice spot for you."]},
+  snake:{win:["Read you like a newspaper.","Ssso predictable.","I had a feeling. A real good feeling."],
+    lose:["You hid that well. Don't do it again.","Hm. My eyes must be tired."],
+    raise:["I know you've got nothing.","Your card says fold.","Let's see you sweat."],
+    fold:["I saw what you had. Smart of me.","Not this time, friend."],call:["I already know how this ends.","Show me what I already saw."],
+    allin:["I know every card on this table. All in.","Ssseen enough. Everything."],
+    idle:["Lovely hands you got. Real steady.","Shuffle it again. I insist.","Your left eye twitches when you bluff. Did you know?"],
+    hurt:["Somebody's been peeking back.","Snakes bite hardest in a corner."],cocky:["I see right through you, friend.","This is too easy. Almost boring."]},
+  banker:{win:["Added to your debt.","The vault grows.","Thank you for your deposit."],
+    lose:["Petty cash.","I'll write that off."],raise:["Let's adjust the rate.","Can you cover the margin?","A modest investment."],
+    fold:["A poor investment. Declined.","The bank doesn't chase losses."],call:["Approved.","Funds available."],
+    allin:["The whole vault, then.","I'm liquidating everything. Your move."],
+    idle:["Do you know what I paid for this cigar?","Interest compounds while we wait.","Everyone in this room owes me something."],
+    hurt:["This is... irregular.","Someone audit this table."],cocky:["I could buy this town twice.","Your whole run is my pocket change."]},
+  vesper:{win:["Did you think luck was on your side?","Lucky me. As always.","The stars adore me, darling."],
+    lose:["Luck is only lending to you.","A small favor. I'll want it back."],
+    raise:["Shall we tempt fate?","Feeling lucky, darling?","The cards whisper to me."],
+    fold:["Not tonight, darling.","Fate says no."],call:["Fate says yes.","I'll indulge you."],
+    allin:["Fortune, don't fail me now.","Everything, darling. Luck never leaves me."],
+    idle:["You have a lucky face. Pity.","I've never lost a river I cared about.","Cut the deck for me, would you?"],
+    hurt:["Luck is fickle tonight. How unusual.","Don't get used to this, darling."],cocky:["You can't beat fate, darling.","Luck is a lady, and she's mine."]},
+  bicah:{win:["Ha! Read 'em and weep!","Old Bicah's still got it!","That's what you get for trustin' folks."],
+    lose:["Somebody's cheatin'! ...Besides me.","You'll regret that, cowpoke."],
+    raise:["Bet you ain't got the stones.","Whatcha gonna do about it?","Raise. Cry about it."],
+    fold:["Fine! Take it. For now.","I'm savin' my bullets."],call:["Sure, sure. Let's see it.","I'll call that bluff, rat."],
+    allin:["Everything! I ain't scared of you!","All in. And I got a few extra up my sleeve."],
+    idle:["Every one of you's a rat. Not me, though.","Somebody check that deck. Not me.","Loyalty's for dogs, cowpoke."],
+    hurt:["This ain't over! Ain't nothin' over!","I've crawled outta worse holes."],cocky:["Look at ya! All sad and broke!","Bicah Mell, king of the West!"]}};
+for(const b of BOSSES){const m=BOSS_MORE[b.key]; if(m) for(const k in m) b.lines[k]=(Array.isArray(b.lines[k])?b.lines[k]:[]).concat(m[k])}
+
+/* ---- the regulars talk too ---- */
+const REG_LINES={win:["Well, I'll be.","Come to papa.","Finally!","That's supper paid for.","Don't mind if I do."],
+  bigwin:["Yee-haw!","Drinks on me tonight!","Somebody write that one down!"],
+  lose:["Dang it.","Every time.","Should've stayed home."],
+  bust:["That's me done.","Well, it was fun while it lasted.","Good luck, stranger. You'll need it.","Back to diggin' ditches."],
+  idle:["Long ride in today.","Heard the boss here cheats.","My horse is smarter than me.","Who shuffled this mess?"]};

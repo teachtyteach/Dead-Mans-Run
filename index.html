@@ -1423,14 +1423,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
   background:radial-gradient(circle at 50% 50%,var(--bm) 0 9%,transparent 10%),radial-gradient(circle at 50% 50%,transparent 0 15%,rgba(242,216,143,.55) 16% 17%,transparent 18%),
     repeating-linear-gradient(45deg,var(--bl) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1),var(--b2));
   box-shadow:0 1px 0 rgba(0,0,0,.25),0 6px 14px rgba(0,0,0,.5),inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2),inset 0 0 0 4px rgba(242,216,143,.6)}
-html[data-back="2"] .card.back{--b1:#b0592a;--b2:#5a2410;--bl:rgba(120,210,200,.22);--bm:#5fb3a8}
-html[data-back="3"] .card.back{--b1:#3d5168;--b2:#1a2532;--bl:rgba(200,215,235,.2);--bm:#b8c6d6}
-html[data-back="4"] .card.back{--b1:#c0582a;--b2:#5e1a0c;--bl:rgba(255,200,120,.24);--bm:#f2b45a}
-html[data-back="5"] .card.back{--b1:#2c5a3a;--b2:#0f2a18;--bl:rgba(210,230,170,.2);--bm:#c9a24e}
-html[data-back="6"] .card.back{--b1:#26386a;--b2:#0e1630;--bl:rgba(220,225,240,.24);--bm:#e2e6ee}
-html[data-back="7"] .card.back{--b1:#5a2a5e;--b2:#24102a;--bl:rgba(230,170,220,.2);--bm:#e0a0d8}
-html[data-back="8"] .card.back{--b1:#2a2422;--b2:#0a0808;--bl:rgba(230,220,200,.16);--bm:#e8dcc4}
-html[data-back="9"] .card.back{--b1:#d8b45c;--b2:#7a5a1e;--bl:rgba(255,250,220,.35);--bm:#fff4c8}
+html[data-back="2"] .card.back,html[data-back="2"] .board .card.turn,html[data-back="2"] .seat.human .card{--b1:#b0592a;--b2:#5a2410;--bl:rgba(120,210,200,.22);--bm:#5fb3a8}
+html[data-back="3"] .card.back,html[data-back="3"] .board .card.turn,html[data-back="3"] .seat.human .card{--b1:#3d5168;--b2:#1a2532;--bl:rgba(200,215,235,.2);--bm:#b8c6d6}
+html[data-back="4"] .card.back,html[data-back="4"] .board .card.turn,html[data-back="4"] .seat.human .card{--b1:#c0582a;--b2:#5e1a0c;--bl:rgba(255,200,120,.24);--bm:#f2b45a}
+html[data-back="5"] .card.back,html[data-back="5"] .board .card.turn,html[data-back="5"] .seat.human .card{--b1:#2c5a3a;--b2:#0f2a18;--bl:rgba(210,230,170,.2);--bm:#c9a24e}
+html[data-back="6"] .card.back,html[data-back="6"] .board .card.turn,html[data-back="6"] .seat.human .card{--b1:#26386a;--b2:#0e1630;--bl:rgba(220,225,240,.24);--bm:#e2e6ee}
+html[data-back="7"] .card.back,html[data-back="7"] .board .card.turn,html[data-back="7"] .seat.human .card{--b1:#5a2a5e;--b2:#24102a;--bl:rgba(230,170,220,.2);--bm:#e0a0d8}
+html[data-back="8"] .card.back,html[data-back="8"] .board .card.turn,html[data-back="8"] .seat.human .card{--b1:#2a2422;--b2:#0a0808;--bl:rgba(230,220,200,.16);--bm:#e8dcc4}
+html[data-back="9"] .card.back,html[data-back="9"] .board .card.turn,html[data-back="9"] .seat.human .card{--b1:#d8b45c;--b2:#7a5a1e;--bl:rgba(255,250,220,.35);--bm:#fff4c8}
 
 /* ================= materials: woven felt, padded leather rail, wood, tooled leather panels ================= */
 :root{
@@ -1985,8 +1985,8 @@ html.duo-v:not(.duo-wide) #sGame .console .say-btn{left:auto;right:14px;top:42%;
 html.duo-wide #sTitle .heat:not([hidden]){display:flex!important}
 html.duo-wide #heatPick .hp-mid em{display:none}
 .tp-stars{font-style:normal;color:#ff6a4a;font-size:11px;letter-spacing:1px}
-html[data-back="10"] .card.back{--b1:#e0b44a;--b2:#5a2a0a;--bl:rgba(255,220,140,.4);--bm:#2a1406}
-html[data-back="11"] .card.back{--b1:#1a1614;--b2:#050404;--bl:rgba(200,30,20,.3);--bm:#c9a24e}
+html[data-back="10"] .card.back,html[data-back="10"] .board .card.turn,html[data-back="10"] .seat.human .card{--b1:#e0b44a;--b2:#5a2a0a;--bl:rgba(255,220,140,.4);--bm:#2a1406}
+html[data-back="11"] .card.back,html[data-back="11"] .board .card.turn,html[data-back="11"] .seat.human .card{--b1:#1a1614;--b2:#050404;--bl:rgba(200,30,20,.3);--bm:#c9a24e}
 .bk-swatch[data-bk="10"]{--s1:#e0b44a;--s2:#5a2a0a}.bk-swatch[data-bk="11"]{--s1:#1a1614;--s2:#050404}
 
 /* ================= bosses remember; how far you rode; the ending ================= */
@@ -2192,6 +2192,189 @@ html[data-fx="2"] .store-cat .cat-tail{animation:none}
 html[data-screen="sChapter"] .film{display:block}
 html[data-fx="1"][data-screen="sChapter"] .film,html[data-fx="2"][data-screen="sChapter"] .film{display:none}
 
+/* ================= real card handling: a deck sits in front of the dealer, cards leave it, the board lands face down and turns ================= */
+.shoe{position:absolute;z-index:2;translate:-50% -50%;rotate:-9deg;pointer-events:none;transition:left .6s var(--ease-out),top .6s var(--ease-out)}
+.shoe .card{display:block;scale:.74;transform-origin:50% 50%;
+  box-shadow:0 1px 0 #efe3c4,0 2px 0 #cdbf9f,0 calc(var(--n)*.5px + 2px) 0 #b9aa88,0 calc(var(--n)*.5px + 3px) 0 rgba(0,0,0,.35),0 calc(var(--n)*.5px + 8px) 12px rgba(0,0,0,.5),
+    inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2),inset 0 0 0 4px rgba(242,216,143,.6)!important;
+  translate:0 calc(var(--n) * -.5px);animation:none!important}
+.shoe[hidden]{display:none}
+html[data-screen="sGame"] .table:not(.narrow) .shoe .card{scale:.8}
+/* the turn: a quick rise, the card rolls over, light runs across the fresh face */
+.card.turn{animation:turnOver .46s cubic-bezier(.3,1.25,.5,1) both}
+@keyframes turnOver{0%{rotate:y 180deg;translate:0 -4px;scale:1.06}60%{rotate:y -10deg;translate:0 -2px;scale:1.05}100%{rotate:y 0deg;translate:0 0;scale:1}}
+.card.turn:not(.gold)::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.75) 50%,transparent 65%) 0 0/260% 100% no-repeat;animation:glintRun .55s ease-out both;animation-delay:inherit}
+@keyframes glintRun{0%{background-position:120% 0;opacity:1}100%{background-position:-30% 0;opacity:0}}
+@media (prefers-reduced-motion:reduce){.card.turn,.card.turn::after{animation:none}}
+
+/* ================= physical chips: the pot is real stacks by colour, pushed in a little crooked ================= */
+.pstacks{display:inline-flex;align-items:flex-end;gap:1px;margin-right:2px}
+.pstacks .stack{translate:var(--jx,0) 0;rotate:var(--jr,0deg);margin-left:-9px}
+.pstacks .stack:nth-child(even){translate:var(--jx,0) 3px}
+.pstacks .stack:first-child{margin-left:0}
+.pstacks .chip{translate:var(--o,0) 0}
+.potrow.thud .pstacks{animation:potSettle .32s cubic-bezier(.3,1.7,.5,1)}
+@keyframes potSettle{0%{scale:1 1}40%{scale:1.06 .9}100%{scale:1 1}}
+/* the back is painted over the face for the first half of the turn (backs are symmetric, so mirroring doesn't show) */
+.board .card.turn{--b1:#8f2b20;--b2:#561510;--bm:var(--brass)}
+.board .card.turn::before{opacity:1;transition:none;z-index:4;background-position:0 0;background-size:auto;border-radius:inherit;animation:backOff .46s steps(1) both;animation-delay:inherit;
+  background:radial-gradient(circle at 50% 50%,var(--bm,#c9a24e) 0 9%,transparent 10%),repeating-linear-gradient(45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1,#8f2b20),var(--b2,#561510));
+  box-shadow:inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2,#561510),inset 0 0 0 4px rgba(242,216,143,.6)}
+@keyframes backOff{0%{opacity:1}42%{opacity:0}100%{opacity:0}}
+
+/* ================= chapter cards: the narrator ================= */
+.ch-text{max-width:min(560px,86vw);margin:clamp(10px,2.2vh,20px) auto 0;font-family:var(--f-body);font-size:clamp(15px,2.2vw,19px);line-height:1.5;color:#cdb991;text-align:center;text-wrap:pretty}
+.ch-text span{display:inline-block;opacity:0;translate:0 3px;animation:chWord .5s ease forwards}
+@keyframes chWord{to{opacity:1;translate:0 0}}
+.ch-carry{margin-top:clamp(10px,2vh,18px);font-family:var(--f-label);font-weight:700;font-size:clamp(10.5px,1.5vw,12.5px);letter-spacing:.2em;text-transform:uppercase;color:var(--brass);opacity:0;animation:chWord .9s ease forwards;text-wrap:balance;max-width:86vw;margin-inline:auto}
+html.duo-wide .ch-text{max-width:min(620px,80vw)}
+@media (max-height:520px){.ch-text{font-size:14px;margin-top:6px}.ch-carry{margin-top:6px}}
+@media (prefers-reduced-motion:reduce){.ch-text span,.ch-carry{animation-duration:.01s!important;animation-delay:0s!important}}
+/* chapter card on the Duo, open flat: the town's name on the top screen, the story on the bottom one */
+.ch-top,.ch-bot{display:contents}
+html.duo-wide #sChapter{padding:0!important;justify-content:flex-start}
+html.duo-wide #sChapter .chapter{display:grid;grid-template-rows:calc((var(--appH,100svh) - var(--hinge,28px)) / 2) var(--hinge,28px) calc((var(--appH,100svh) - var(--hinge,28px)) / 2);
+  height:var(--appH,100svh);padding:0 clamp(16px,5vw,56px);width:min(760px,calc(100vw - 32px));gap:0}
+html.duo-wide .ch-top{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;grid-row:1;min-height:0}
+html.duo-wide .ch-bot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;grid-row:3;min-height:0}
+html.duo-wide .ch-tap{bottom:14px}
+
+/* ================= the menu sky follows the clock (only on screens outside a saloon) ================= */
+html[data-saloon=""][data-tod="dawn"] #vista{--sky1:#232647;--sky2:#7a5068;--sky3:#f0a273;--orb:#ffe1a8;--orb-glow:rgba(255,205,140,.45);--orb-y:70%;--orb-x:24%;--orb-s:clamp(80px,13vmin,150px);--craters:0;--stars:.12;--cloud:rgba(255,190,170,.32);--far:#4a3044;--mid:#2c1c2a;--near:#100a0c;--haze:rgba(255,170,140,.3);--win:#ffcf80}
+html[data-saloon=""][data-tod="day"] #vista{--sky1:#2f5d8c;--sky2:#6e9cc4;--sky3:#e2c294;--orb:#fff7dc;--orb-glow:rgba(255,246,210,.55);--orb-y:15%;--orb-x:70%;--orb-s:clamp(60px,9vmin,110px);--craters:0;--stars:0;--cloud:rgba(255,250,240,.55);--far:#5f4537;--mid:#3d2a20;--near:#1a100b;--haze:rgba(245,205,160,.22);--win:rgba(30,20,14,.9)}
+html[data-saloon=""][data-tod="dusk"] #vista{--sky1:#1a1c3c;--sky2:#743a4c;--sky3:#ee8442;--orb:#ffb062;--orb-glow:rgba(255,150,70,.5);--orb-y:76%;--orb-x:66%;--orb-s:clamp(100px,16vmin,180px);--craters:0;--stars:.25;--cloud:rgba(255,150,110,.3);--far:#3e2232;--mid:#24131d;--near:#0b0708;--haze:rgba(255,140,90,.32)}
+html[data-saloon=""][data-tod="day"] .vs-lights{display:none}
+html[data-saloon=""][data-tod="day"] #sTitle .tagline{text-shadow:0 2px 0 #3a2410,0 4px 18px rgba(20,10,0,.75)}
+
+/* ================= wildlife ================= */
+.vs-near .vs-tail{transform-box:fill-box;transform-origin:0 0;animation:tailSwish 6s steps(1) infinite}
+@keyframes tailSwish{0%,80%{transform:rotate(0)}83%{transform:rotate(-14deg)}86%{transform:rotate(8deg)}89%{transform:rotate(-6deg)}92%,100%{transform:rotate(0)}}
+.vs-near g+g .vs-tail{animation-delay:-2.7s}
+.vs-coyote{display:none}
+html[data-tod="night"] .vs-coyote,html[data-tod="dusk"] .vs-coyote,html[data-saloon="3"] .vs-coyote,html[data-saloon="6"] .vs-coyote,html[data-saloon="8"] .vs-coyote{display:inline}
+/* hawks wheel high over the mesas in daylight */
+.vs-hawks{inset:0!important;width:auto!important;pointer-events:none;display:none}
+html[data-tod="day"] .vs-hawks,html[data-tod="dawn"] .vs-hawks,html[data-tod="dusk"] .vs-hawks,html[data-saloon="1"] .vs-hawks,html[data-saloon="2"] .vs-hawks,html[data-saloon="4"] .vs-hawks{display:block}
+html[data-saloon=""][data-tod="night"] .vs-hawks{display:none}
+.hk{position:absolute;left:30%;top:20%;width:0;height:0;animation:hawkCircle 34s linear infinite;will-change:transform}
+.hk.two{left:58%;top:14%;animation-duration:46s;animation-direction:reverse}
+.hk i{position:absolute;left:clamp(50px,9vw,120px);top:0;width:clamp(16px,2.2vw,26px);display:block;rotate:90deg}
+.hk.two i{left:clamp(70px,12vw,160px);width:clamp(12px,1.7vw,20px);rotate:-90deg}
+.hk svg{display:block;width:100%;fill:color-mix(in srgb,var(--near) 80%,var(--sky2));animation:hawkFlap 5s steps(1) infinite}
+@keyframes hawkCircle{to{transform:rotate(360deg)}}
+@keyframes hawkFlap{0%,70%{transform:scaleY(1)}73%{transform:scaleY(-.6)}76%{transform:scaleY(1)}79%{transform:scaleY(-.6)}82%,100%{transform:scaleY(1)}}
+
+/* ================= dust storm ================= */
+.vs-storm{inset:0!important;width:auto!important;opacity:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent 0%,rgba(150,105,65,.5) 22%,rgba(185,135,85,.72) 42%,rgba(160,112,70,.62) 62%,rgba(140,95,60,.35) 80%,transparent 100%);
+  background-size:100% 100%;translate:110% 0}
+#vista.storm .vs-storm{animation:stormPass 14s cubic-bezier(.45,.05,.55,.95) forwards}
+@keyframes stormPass{0%{translate:110% 0;opacity:0}15%{opacity:1}50%{translate:-5% 0;opacity:1}85%{opacity:.9}100%{translate:-120% 0;opacity:0}}
+#vista.storm .vs-weed{animation-duration:3.2s!important}
+html[data-fx="2"] .hk,html[data-fx="2"] .vs-near .vs-tail{animation:none}
+@media (prefers-reduced-motion:reduce){.hk,.hk svg,.vs-near .vs-tail,#vista.storm .vs-storm{animation:none}}
+html[data-saloon=""][data-tod="day"] #sTitle h1.brass{filter:drop-shadow(0 0 14px rgba(25,12,2,.85)) drop-shadow(0 2px 2px rgba(0,0,0,.6))}
+html[data-saloon=""][data-tod="day"] .vs-orb i::after{opacity:0}
+
+/* ================= chip tricks: your stack by your nameplate ================= */
+.mystack{position:absolute;right:-14px;bottom:-2px;width:20px;height:34px;pointer-events:auto;cursor:pointer;scale:.82;transform-origin:bottom center;z-index:2}
+.mystack .chip{bottom:calc(var(--i)*3px);will-change:auto}
+.mystack.riffle .chip{animation:riffle 1.6s ease-in-out infinite;animation-delay:calc(var(--i) * .12s)}
+@keyframes riffle{0%,55%,100%{translate:0 0}62%{translate:-7px -4px}70%{translate:-3px 6px}78%{translate:0 0}}
+.mystack.flick .chip{animation:flickUp .5s cubic-bezier(.3,1.5,.5,1);animation-delay:calc((4 - var(--i)) * .07s)}
+@keyframes flickUp{0%{translate:0 0}35%{translate:0 -14px;rotate:x 180deg}100%{translate:0 0;rotate:x 360deg}}
+.seat.human .plate{overflow:visible}
+html.lefty .mystack{right:auto;left:-14px}
+html[data-fx="2"] .mystack.riffle .chip{animation:none}
+
+/* ================= the balcony at Graves End ================= */
+.table-wrap{position:relative}
+.balcony{position:absolute;inset:0;pointer-events:none;z-index:0}
+.balcony[hidden]{display:none}
+.bal-side{position:absolute;top:50%;translate:0 -50%;display:flex;flex-direction:column;gap:clamp(6px,1.4vh,12px);align-items:center;
+  padding:10px 8px;border-radius:12px;background:linear-gradient(90deg,rgba(20,10,6,.75),rgba(20,10,6,.35));border:1px solid rgba(201,162,78,.18)}
+.bal-side.l{left:max(6px,1.5%)}
+.bal-side.r{right:max(6px,1.5%);background:linear-gradient(270deg,rgba(20,10,6,.75),rgba(20,10,6,.35))}
+.bal-b{display:flex;flex-direction:column;align-items:center;gap:2px;animation:balIdle 4.5s ease-in-out infinite;animation-delay:calc(var(--d,0) * -1s)}
+.bal-b:nth-child(2){--d:1.3}.bal-b:nth-child(3){--d:2.7}.bal-b:nth-child(4){--d:.6}
+.bal-b .medal{width:clamp(28px,4.4vmin,40px);height:clamp(28px,4.4vmin,40px);filter:saturate(.75) brightness(.85)}
+.bal-b i{font-style:normal;font-family:var(--f-label);font-weight:700;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(232,210,160,.55)}
+@keyframes balIdle{0%,100%{translate:0 0}50%{translate:0 -2px}}
+.balcony.lean .bal-b{animation:balLean .5s ease-out both}
+@keyframes balLean{to{translate:0 -4px;scale:1.08}}
+.balcony.gone .bal-b{animation:balCheer .6s ease-in-out 3 both}
+@keyframes balCheer{50%{translate:0 -7px}}
+/* phones and tall layouts: no room at the sides, so they lean over the rail along the top */
+html:not(.duo-wide) .bal-side{top:max(2px,env(safe-area-inset-top));translate:0 0;flex-direction:row;padding:4px 8px;background:linear-gradient(rgba(20,10,6,.7),rgba(20,10,6,.2))}
+html:not(.duo-wide) .bal-b i{display:none}
+html:not(.duo-wide) .bal-b .medal{width:24px;height:24px}
+html:not(.duo-wide) .bal-side.l{left:2%}
+html:not(.duo-wide) .bal-side.r{right:2%}
+html[data-fx="2"] .bal-b{animation:none}
+
+/* ================= parchment tip cards ================= */
+.tipcard{position:fixed;z-index:9000;max-width:min(280px,80vw);padding:10px 14px 11px;border-radius:6px;pointer-events:none;
+  background:linear-gradient(180deg,#f3e6c6,#e3cfa2);color:#2a1708;box-shadow:0 0 0 1px rgba(90,60,20,.45),0 12px 30px rgba(0,0,0,.6);
+  opacity:0;scale:.9;translate:0 6px;transform-origin:50% 100%;transition:opacity .16s,scale .35s var(--spring,cubic-bezier(.3,1.5,.5,1)),translate .35s var(--spring,cubic-bezier(.3,1.5,.5,1));text-align:left}
+.tipcard.on{opacity:1;scale:1;translate:0 0}
+.tipcard b{display:block;font-family:var(--f-display);font-weight:400;font-size:18px;line-height:1.1;color:#3a1c08}
+.tipcard em{display:block;font-family:var(--f-label);font-style:normal;font-weight:700;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#7a4a1a;margin-top:2px}
+.tipcard p{margin:6px 0 0;font-family:var(--f-body);font-size:14.5px;line-height:1.35;color:#3d2610}
+.tipcard .tc-i{float:right;margin-left:10px;font-size:22px;color:#8a5a1e}
+.tipcard.bad b{color:#6a1408}
+
+/* ================= spring physics: sheets and menus arrive with a little weight ================= */
+:root{--spring:linear(0,.009,.035 2.1%,.141,.281 6.7%,.723 12.9%,.938 16.7%,1.017,1.077 21.4%,1.121,1.149 24.3%,1.159,1.163 27%,1.154,1.129 32.8%,1.051 39.6%,1.017 43.1%,.991,.977 51%,.974 53.8%,.975 57.1%,.997 69.8%,1.003 76.9%,1)}
+@supports not (transition-timing-function:linear(0,1)){:root{--spring:cubic-bezier(.3,1.45,.45,1)}}
+.modal:not([hidden]):not(#poster)>.sheet{animation:sheetSpring .6s var(--spring) both}
+.modal:not([hidden]):not(#poster){animation:fadeBg .22s ease both}
+@keyframes sheetSpring{0%{opacity:0;scale:.92;translate:0 18px}25%{opacity:1}100%{opacity:1;scale:1;translate:0 0}}
+@keyframes fadeBg{from{opacity:0}}
+#raiseSheet:not([hidden]),.raisesheet:not([hidden]){animation:sheetSpring .5s var(--spring) both}
+.saymenu:not([hidden]),#sayMenu:not([hidden]){animation:sheetSpring .45s var(--spring) both;transform-origin:50% 100%}
+.sw i{transition:translate .45s var(--spring),background .2s}
+.btn,.chipbtn{transition:transform .5s var(--spring),filter .2s}
+.btn:not(:disabled):active,.chipbtn:active{transition-duration:.08s}
+@media (prefers-reduced-motion:reduce){.modal>.sheet,.modal,.tipcard{animation:none!important;transition:none!important}}
+
+/* ================= animated card backs: Ghost Deck and Brimstone ================= */
+html[data-back="12"] .card.back,html[data-back="12"] .board .card.turn,html[data-back="12"] .seat.human .card{--b1:#5d6b78;--b2:#1c242c;--bl:rgba(220,235,245,.22);--bm:#dfeaf2}
+html[data-back="13"] .card.back,html[data-back="13"] .board .card.turn,html[data-back="13"] .seat.human .card{--b1:#3a0c06;--b2:#120302;--bl:rgba(255,120,40,.28);--bm:#ff9a3a}
+.bk-swatch[data-bk="12"]{--s1:#5d6b78;--s2:#1c242c}.bk-swatch[data-bk="13"]{--s1:#3a0c06;--s2:#120302}
+html[data-back="12"] .card.back::after,html[data-back="13"] .card.back::after,.bk-swatch[data-bk="12"]::after,.bk-swatch[data-bk="13"]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;will-change:opacity}
+html[data-back="12"] .card.back::after,.bk-swatch[data-bk="12"]::after{background:radial-gradient(ellipse 70% 55% at 50% 45%,rgba(230,245,255,.55),transparent 70%);animation:ghostBreath 4.2s ease-in-out infinite alternate}
+html[data-back="12"] .card.back:nth-child(2)::after{animation-delay:-2.1s}
+@keyframes ghostBreath{0%{opacity:.05}100%{opacity:.75}}
+html[data-back="13"] .card.back::after,.bk-swatch[data-bk="13"]::after{box-shadow:inset 0 0 0 1.5px rgba(255,140,40,.85),inset 0 0 7px 1px rgba(255,90,20,.55);animation:brimFlicker 2.6s steps(1) infinite}
+html[data-back="13"] .card.back:nth-child(2)::after{animation-delay:-1.3s}
+@keyframes brimFlicker{0%{opacity:.85}12%{opacity:.45}18%{opacity:1}40%{opacity:.6}46%{opacity:.95}70%{opacity:.5}76%{opacity:1}}
+.bk-swatch{position:relative}
+html[data-fx="2"] .card.back::after{animation:none!important}
+@media (prefers-reduced-motion:reduce){html[data-back="12"] .card.back::after,html[data-back="13"] .card.back::after{animation:none}}
+
+/* ================= fold to peek ================= */
+html.peekmode .seat.human .cards .card:not(.back){transform:perspective(700px) rotateY(0deg);transition:transform .45s var(--spring,cubic-bezier(.3,1.4,.5,1))}
+html.peekmode .seat.human .cards:not(.shown) .card:not(.back){transform:perspective(700px) rotateY(180deg)}
+html.peekmode .seat.human .cards .card:not(.back)::before{z-index:4;transition:opacity 0s .12s;background-size:auto;background-position:0 0;border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%,var(--bm,#c9a24e) 0 9%,transparent 10%),repeating-linear-gradient(45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,var(--bl,rgba(242,216,143,.22)) 0 1px,transparent 1px 5px),linear-gradient(160deg,var(--b1,#8f2b20),var(--b2,#561510));
+  box-shadow:inset 0 0 0 2px #f3e8cc,inset 0 0 0 3px var(--b2,#561510),inset 0 0 0 4px rgba(242,216,143,.6)}
+html.peekmode .seat.human .cards:not(.shown) .card:not(.back)::before{opacity:1}
+html.peekmode .seat.human .cards.peek:not(.shown) .card:not(.back)::before{opacity:0}
+/* holding them: the cards lift toward you and turn up, like checking your hand under the brim of your hat */
+html.peekmode .seat.human .cards.peek:not(.shown) .card:not(.back){transform:perspective(700px) translateY(-10px) rotateX(16deg) rotateY(0deg);transition-duration:.32s}
+html.peekmode .seat.human .cards.peek .card:nth-child(2){transition-delay:.04s}
+html.peekmode .seat.human .cards:not(.shown){cursor:grab}
+html.peekmode .seat.human .cards:not(.shown)::after{content:"Hold to peek";position:absolute;left:50%;top:-18px;translate:-50% 0;white-space:nowrap;font-family:var(--f-label);font-weight:700;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(232,210,160,.45);pointer-events:none}
+html.peekmode .seat.human .cards.peek::after{opacity:0}
+html.peekmode .seat.human .cards{position:relative}
+/* daylight behind the title on phones: a soft shade so the words stay crisp */
+html[data-saloon=""][data-tod="day"]:not(.duo-wide)[data-screen="sTitle"] .vs-dim{opacity:.42;background:radial-gradient(ellipse 90% 70% at 50% 55%,#000 30%,rgba(0,0,0,.55))}
+html[data-saloon=""][data-tod="dawn"]:not(.duo-wide)[data-screen="sTitle"] .vs-dim,html[data-saloon=""][data-tod="dusk"]:not(.duo-wide)[data-screen="sTitle"] .vs-dim{opacity:.22}
+.title-links{width:min(420px,calc(100vw - 28px))!important;margin-inline:auto}
+@media (min-width:700px){.title-links{width:auto!important}}
+@media (max-width:420px){.title-links button{letter-spacing:.06em;gap:5px;font-size:12px}.title-links button svg{width:13px;height:13px}}
+
 </style>
 </head>
 <body>
@@ -2272,10 +2455,12 @@ html[data-fx="1"][data-screen="sChapter"] .film,html[data-fx="2"][data-screen="s
 <section class="screen center" id="sChapter" hidden>
   <div class="chapter" role="button" tabindex="0" aria-label="Continue">
     <span class="ch-corner tl"></span><span class="ch-corner tr"></span><span class="ch-corner bl"></span><span class="ch-corner br"></span>
-    <div class="ch-num" id="chNum">Chapter I</div>
-    <div id="chInk"></div>
-    <div class="ch-rule"><i></i></div>
+    <div class="ch-top"><div class="ch-num" id="chNum">Chapter I</div>
+    <div id="chInk"></div></div>
+    <div class="ch-bot"><div class="ch-rule"><i></i></div>
     <div class="ch-sub" id="chSub"></div>
+    <p class="ch-text" id="chText"></p>
+    <div class="ch-carry" id="chCarry"></div></div>
   </div>
   <div class="ch-tap">Tap to continue</div>
 </section>
@@ -2606,6 +2791,80 @@ const DEEDS={
   belt:{name:'Bandolier',desc:'Carry one more trick.',price:50},
   dealer:{name:'Friendly Clerk',desc:'Rerolls cost only 5 gold.',price:45}
 };
+
+/* ---- chapter cards: a few lines of dime-novel narration for each town ---- */
+const CHAPTER_TEXT=[
+  "Dry Creek ain't seen rain in three years, but the whiskey never runs out. The man at the back table has been drunk since spring, and somehow he's still winning.",
+  "Copper Bend is one long street, and Ma Spurlock owns every door on it. Out here the rent comes due every hand.",
+  "In Hollow Rock they tell you about a man who has never folded. They tell you twice, because nobody believes it the first time.",
+  "The sun sets red over the mesa and the undertaker is already outside, measuring. The blinds climb fast here. Nobody stays long.",
+  "Every mirror in Cutter's Gulch hangs at just the right angle. Snake Crane likes to see your cards before you do.",
+  "The bank in Silver Fork never closes. Banker Ellsworth sits behind a wall of chips, waiting to find out what you're worth.",
+  "Bitterwater is a river town, and the river decides everything. Lady Vesper has never once lost to the river.",
+  "Graves End. The end of the line. Every road you've ridden led here, to a rat with an extra card up his sleeve."];
+
+/* ---- more to say: every boss gets more lines, and new moments to say them ---- */
+const BOSS_MORE={
+  pete:{win:["Drinks on me! ...On you, I mean.","I had nothin'. Or somethin'. Can't remember.","Barkeep! Celebration whiskey!"],
+    lose:["Who moved my chips?","I'm seein' two of you, and you're both lucky.","That's fine. I got a flask."],
+    raise:["I'm all... wait, how much is all?","Raise! I think. Did I say raise?","Bet you don't believe me."],
+    fold:["Nah. Too sober for that hand.","Fold. Gotta save for whiskey."],call:["Sure, why not.","I'll see that. Barely."],
+    allin:["Everything! Even the boots!","All of it. Hic. Every last coin."],
+    idle:["Anyone seen my hat? I'm wearin' it? Huh.","This deck's spinnin' a little.","Deal 'em slow. Real slow."],
+    hurt:["Gettin' thin over here, friends.","Don't tell my horse about this."],cocky:["Look at all these pretty chips!","Drunk and winnin'. Best kind of night."]},
+  ma:{win:["Every penny accounted for.","Late fees, sugar.","Ma always gets paid."],
+    lose:["That's coming out of your deposit.","I'll remember that come rent day."],
+    raise:["Rent just went up.","Can you afford the neighborhood?","Pay up or move out."],
+    fold:["I'll let that one go. This once.","Not worth the paperwork."],call:["I'll cover it.","Put it on my ledger."],
+    allin:["I'm putting the whole house on it.","Every room, every bed. All in."],
+    idle:["Boots off the table, please.","Breakfast ain't included, by the way.","Somebody's behind on their ante."],
+    hurt:["Don't you dare evict me from my own table.","I've had worse tenants than you."],cocky:["I own this town, sugar. And now your chips.","Shall I draw you up a lease?"]},
+  iron:{win:["Still standing.","Hit me again. See what happens.","Stone don't bend."],
+    lose:["Doesn't hurt.","I've been shot worse."],raise:["Push.","Harder.","Again."],
+    call:["Called.","I'm here.","Not moving."],allin:["All of it. Same as always.","Come and take it."],
+    idle:["...","Deal.","You talk a lot."],hurt:["Still here.","Walls crack. They don't fall."],cocky:["Told you I don't move.","You're running out of hammer."]},
+  under:{win:["Dust to dust.","I'll send flowers.","One more stone for the yard."],
+    lose:["I can wait. I'm good at waiting.","The ground is patient."],
+    raise:["Time's shorter than you think.","Let's hurry this along.","Tick. Tock."],
+    fold:["Not your time yet.","I'll bury that one later."],call:["I'll see it through.","To the end."],
+    allin:["I dug a hole big enough for both of us.","Everything. You won't need yours."],
+    idle:["The blinds go up soon. Everything ends.","You look pale, friend.","I measured the whole table this morning."],
+    hurt:["Even gravediggers die. Not tonight.","Interesting. Most men don't fight back."],cocky:["You're already cold.","I've picked out a nice spot for you."]},
+  snake:{win:["Read you like a newspaper.","Ssso predictable.","I had a feeling. A real good feeling."],
+    lose:["You hid that well. Don't do it again.","Hm. My eyes must be tired."],
+    raise:["I know you've got nothing.","Your card says fold.","Let's see you sweat."],
+    fold:["I saw what you had. Smart of me.","Not this time, friend."],call:["I already know how this ends.","Show me what I already saw."],
+    allin:["I know every card on this table. All in.","Ssseen enough. Everything."],
+    idle:["Lovely hands you got. Real steady.","Shuffle it again. I insist.","Your left eye twitches when you bluff. Did you know?"],
+    hurt:["Somebody's been peeking back.","Snakes bite hardest in a corner."],cocky:["I see right through you, friend.","This is too easy. Almost boring."]},
+  banker:{win:["Added to your debt.","The vault grows.","Thank you for your deposit."],
+    lose:["Petty cash.","I'll write that off."],raise:["Let's adjust the rate.","Can you cover the margin?","A modest investment."],
+    fold:["A poor investment. Declined.","The bank doesn't chase losses."],call:["Approved.","Funds available."],
+    allin:["The whole vault, then.","I'm liquidating everything. Your move."],
+    idle:["Do you know what I paid for this cigar?","Interest compounds while we wait.","Everyone in this room owes me something."],
+    hurt:["This is... irregular.","Someone audit this table."],cocky:["I could buy this town twice.","Your whole run is my pocket change."]},
+  vesper:{win:["Did you think luck was on your side?","Lucky me. As always.","The stars adore me, darling."],
+    lose:["Luck is only lending to you.","A small favor. I'll want it back."],
+    raise:["Shall we tempt fate?","Feeling lucky, darling?","The cards whisper to me."],
+    fold:["Not tonight, darling.","Fate says no."],call:["Fate says yes.","I'll indulge you."],
+    allin:["Fortune, don't fail me now.","Everything, darling. Luck never leaves me."],
+    idle:["You have a lucky face. Pity.","I've never lost a river I cared about.","Cut the deck for me, would you?"],
+    hurt:["Luck is fickle tonight. How unusual.","Don't get used to this, darling."],cocky:["You can't beat fate, darling.","Luck is a lady, and she's mine."]},
+  bicah:{win:["Ha! Read 'em and weep!","Old Bicah's still got it!","That's what you get for trustin' folks."],
+    lose:["Somebody's cheatin'! ...Besides me.","You'll regret that, cowpoke."],
+    raise:["Bet you ain't got the stones.","Whatcha gonna do about it?","Raise. Cry about it."],
+    fold:["Fine! Take it. For now.","I'm savin' my bullets."],call:["Sure, sure. Let's see it.","I'll call that bluff, rat."],
+    allin:["Everything! I ain't scared of you!","All in. And I got a few extra up my sleeve."],
+    idle:["Every one of you's a rat. Not me, though.","Somebody check that deck. Not me.","Loyalty's for dogs, cowpoke."],
+    hurt:["This ain't over! Ain't nothin' over!","I've crawled outta worse holes."],cocky:["Look at ya! All sad and broke!","Bicah Mell, king of the West!"]}};
+for(const b of BOSSES){const m=BOSS_MORE[b.key]; if(m) for(const k in m) b.lines[k]=(Array.isArray(b.lines[k])?b.lines[k]:[]).concat(m[k])}
+
+/* ---- the regulars talk too ---- */
+const REG_LINES={win:["Well, I'll be.","Come to papa.","Finally!","That's supper paid for.","Don't mind if I do."],
+  bigwin:["Yee-haw!","Drinks on me tonight!","Somebody write that one down!"],
+  lose:["Dang it.","Every time.","Should've stayed home."],
+  bust:["That's me done.","Well, it was fun while it lasted.","Good luck, stranger. You'll need it.","Back to diggin' ditches."],
+  idle:["Long ride in today.","Heard the boss here cheats.","My horse is smarter than me.","Who shuffled this mess?"]};
 
 /* ================= storage + meta ================= */
 function sget(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
@@ -3625,7 +3884,7 @@ const VAULT={n:{"menu": "b2c485a1f7515257e722", "boss_pete": "be3571a96f8e18b804
 
 /* ================= audio: recorded-style score, rain, real foley ================= */
 const SND={ctx:null,buf:{},decoding:false,want:false,loops:[],holdMenu:true};
-const SFX_GAIN={toll:1,card:.5,chip:.62,chips:.72,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
+const SFX_GAIN={clink:.16,toll:1,card:.5,chip:.62,chips:.72,win:.55,bigwin:.7,lose:.5,boss:.6,paid:.7,stamp:.55,door:.45,gun:.9,heart:.7,pen:.5,tick:.22,whoosh:.35};
 // a boss can bring their own song to their table; it replaces the room piano there
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
@@ -3718,7 +3977,7 @@ function sfx(type,delay=0,pitch=1){
   const c=SND.ctx;
   let key=type;
   // real chips on felt: four set-downs for bets, one heavy throw for big pushes and payouts
-  if(type==='chip'){key='chipd'+Math.floor(Math.random()*4); if(!SND.buf[key]) key='chip'+Math.floor(Math.random()*5)}
+  if(type==='chip'||type==='clink'){key='chipd'+Math.floor(Math.random()*4); if(!SND.buf[key]) key='chip'+Math.floor(Math.random()*5)}
   else if(type==='chips'){key=SND.buf.chipt?'chipt':'chip'+Math.floor(Math.random()*5)}
   else if(type==='card') key='card'+Math.floor(Math.random()*4);
   else if(type==='gun') key='gun'+Math.floor(Math.random()*3);
@@ -3726,12 +3985,20 @@ function sfx(type,delay=0,pitch=1){
   const s=c.createBufferSource(); s.buffer=b;
   let rate=pitch;
   if(type==='chip'||type==='card') rate*=0.96+Math.random()*0.08;
+  if(type==='clink') rate*=1.06+Math.random()*0.16;   // a single chip settling on the pile: lighter and brighter than a bet
   if(type==='tick') rate=0.85+(pitch-1)*0.35;
   s.playbackRate.value=rate;
   const g=c.createGain(); g.gain.value=(SFX_GAIN[type]||.5)*(type==='chip'||type==='card'?0.85+Math.random()*0.3:1);
   s.connect(g).connect(SND.fx); s.start(c.currentTime+delay/1000);
   const rec={s,g,at:performance.now()}; (SND.live=SND.live||new Set()).add(rec); s.onended=()=>SND.live.delete(rec);
 }
+// wind for the dust storm: filtered noise that swells, gusts and dies away
+function wind(sec=12){if(!meta.sound||!SND.ctx||SND.hush) return; const c=SND.ctx, t=c.currentTime, len=2;
+  const b=c.createBuffer(1,c.sampleRate*len,c.sampleRate), d=b.getChannelData(0); let l=0; for(let i=0;i<d.length;i++){l=l*.97+(Math.random()*2-1)*.03; d[i]=l*6}
+  const src=c.createBufferSource(); src.buffer=b; src.loop=true; const f=c.createBiquadFilter(); f.type='bandpass'; f.Q.value=.7; f.frequency.value=380;
+  const g=c.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.16,t+sec*.3); g.gain.linearRampToValueAtTime(.22,t+sec*.5); g.gain.linearRampToValueAtTime(0,t+sec);
+  const lfo=c.createOscillator(), lg=c.createGain(); lfo.frequency.value=.23; lg.gain.value=160; lfo.connect(lg).connect(f.frequency);
+  src.connect(f).connect(g).connect(SND.fx); src.start(t); src.stop(t+sec+.1); lfo.start(t); lfo.stop(t+sec+.1)}
 // the room reacts: a murmur of voices, built from filtered noise (cheer = brighter and rising, groan = low and falling)
 function crowd(kind='cheer',vol=.5){if(!meta.sound||!SND.ctx||SND.hush) return; const c=SND.ctx, t=c.currentTime, len=1.8;
   const b=c.createBuffer(1,c.sampleRate*len,c.sampleRate), d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
@@ -4053,6 +4320,10 @@ function buildVista(){
   const poles=[120,300,1130,1360,1520].map(x=>`<path d="M${x} ${ground+6} V${ground-74} M${x-14} ${ground-66} h28" stroke-width="3" fill="none"/>`).join('');
   const wire=`<path class="wire" d="M120 ${ground-66} Q210 ${ground-40} 300 ${ground-66} M1130 ${ground-66} Q1245 ${ground-40} 1360 ${ground-66} Q1440 ${ground-44} 1520 ${ground-66}" fill="none" stroke-width="1.2"/>`;
   const cactus=(x,s)=>`<path transform="translate(${x} ${ground+4}) scale(${s})" d="M-5 0 V-62 a5 5 0 0 1 10 0 V0z M-5 -30 h-10 a4 4 0 0 1 -4 -4 v-14 a4 4 0 0 1 8 0 v10 h6z M5 -22 h10 v-18 a4 4 0 0 1 8 0 v20 a6 6 0 0 1 -6 6 h-12z"/>`;
+  // two horses tied at a rail outside town; a coyote on the rise after dark
+  const horse=(x,s,flip)=>`<g transform="translate(${x} ${ground+2}) scale(${flip?-s:s} ${s})"><path d="M-14 -18 Q-14 -27 0 -27 Q14 -27 15 -19 Q15 -12 8 -11 L-10 -11 Q-15 -12 -14 -18Z M-12 -22 L-19 -36 Q-20 -39 -24 -38 L-30 -33 Q-31 -31 -28 -30 L-22 -32 L-15 -19Z M-20 -38 l1 -4 l2 3z"/><path d="M-11 -12 V0 M-7 -12 V-1 M8 -12 V0 M12 -12 V-1" stroke-width="2.6" fill="none"/><path class="vs-tail" d="M15 -22 Q23 -18 20 -5 Q17 -11 13 -17Z"/></g>`;
+  const horses=`<path d="M318 ${ground-20} h86 M322 ${ground-20} v22 M400 ${ground-20} v22" stroke-width="2.6" fill="none"/>`+horse(346,1,false)+horse(382,.94,true);
+  const coyote=`<g class="vs-coyote" transform="translate(1318 ${ground+1}) scale(1.05)"><path d="M0 0 Q-3 -9 1 -15 L5 -25 L8 -30 L7 -35 L10 -31 L12 -33 L12 -28 L17 -33 L17 -29 L12 -23 Q9 -13 12 -5 Q14 0 8 0Z M1 -1 Q-10 2 -15 -3 Q-8 -3 1 -5Z"/></g>`;
   const svg=(cls,inner,extra='')=>`<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMax slice" ${extra}>${inner}</svg>`;
   const TF='translate(800 792) scale(.72) translate(-800 -792)';
   v.innerHTML=`<div class="vs-sky"></div>`+
@@ -4063,11 +4334,12 @@ function buildVista(){
     svg('vs-mid',`<path d="${ridge(720,120,.45)}"/>`)+
     `<div class="vs-haze"></div>`+
     `<div class="vs-nearw">`+
-      svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}<g transform="${TF}">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
+      svg('vs-near',`<path d="M-40 ${H} L-40 ${ground+8} Q400 ${ground-6} 800 ${ground+4} T1640 ${ground} L1640 ${H}Z"/>${poles}${wire}${cactus(250,1)}${cactus(1430,.8)}${horses}${coyote}<g transform="${TF}">${tw}${mill}${town}${cactus(1050,.55)}<g class="vs-win">${win}</g></g>`)+
       svg('vs-lights',`<g transform="${TF}">${flick}</g>`)+
       `<div class="vs-mill">${blades}</div>`+
       `<div class="vs-weed"><i><svg viewBox="-30 -30 60 60"><g fill="none" stroke-width="2.4">${Array.from({length:11},(_,i)=>`<ellipse rx="${rr(14,26).toFixed(0)}" ry="${rr(8,22).toFixed(0)}" transform="rotate(${i*33})"/>`).join('')}</g></svg></i></div>`+
-    `</div><div class="vs-dim"></div><div class="vs-floor"></div>`;
+    `</div><div class="vs-hawks"><b class="hk"><i><svg viewBox="-13 -6 26 9"><path d="M-12 0 Q-6 -5 0 0 Q6 -5 12 0 Q6 -2 0 2 Q-6 -2 -12 0Z"/></svg></i></b><b class="hk two"><i><svg viewBox="-13 -6 26 9"><path d="M-12 0 Q-6 -5 0 0 Q6 -5 12 0 Q6 -2 0 2 Q-6 -2 -12 0Z"/></svg></i></b></div>`+
+    `<div class="vs-storm"></div><div class="vs-dim"></div><div class="vs-floor"></div>`;
   // place the windmill blades and the tumbleweed on the same ground the town stands on (the art is "slice"-scaled)
   const nearw=v.querySelector('.vs-nearw'), millEl=v.querySelector('.vs-mill'), weed=v.querySelector('.vs-weed');
   const place=()=>{const w=nearw.clientWidth||innerWidth+140, h=nearw.clientHeight||innerHeight, s=Math.max(w/W,h/H), ox=(w-W*s)/2, oy=h-H*s;
@@ -4084,6 +4356,16 @@ function buildVista(){
     addEventListener('pointermove',e=>{if(e.pointerType!=='mouse') return; tx=e.clientX/innerWidth-.5; ty=e.clientY/innerHeight-.5; if(!run){run=true; requestAnimationFrame(step)}},{passive:true})}
 }
 buildVista();
+/* the menu sky follows your clock: dawn, afternoon, dusk or night */
+function setTod(){const h=new Date().getHours(); document.documentElement.dataset.tod=h>=5&&h<8?'dawn':h>=8&&h<17?'day':h>=17&&h<20?'dusk':'night'}
+setTod(); setInterval(setTod,5*60*1000);
+/* now and then a dust storm rolls across the menu: the sky goes brown, the tumbleweed runs, the wind picks up */
+let STORM_T=0, STORM_LAST=0;
+function maybeStorm(){clearTimeout(STORM_T); if(REDUCED||FX.tier>=2) return;
+  STORM_T=setTimeout(()=>{const v=$('vista'); if(!v||document.documentElement.dataset.screen!=='sTitle'||document.hidden) return;
+    if(Date.now()-STORM_LAST<180000||Math.random()>.35) return; STORM_LAST=Date.now();
+    v.classList.remove('storm'); void v.offsetWidth; v.classList.add('storm'); const was=AIR.mode; AIR.mode='sand';
+    if(typeof wind==='function') wind(13); setTimeout(()=>{v.classList.remove('storm'); if(AIR.mode==='sand') AIR.mode=was},14000)},6000+Math.random()*6000)}
 
 /* ================= rendering helpers ================= */
 let SOUNDQ=[];
@@ -4105,8 +4387,11 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
     const key=loc+':'+c.id, prev=G.seen.get(key);
     if(prev===undefined){
       G.seen.set(key,up);
-      if(!REDUCED){const a=anim||{}; cls=' deal'; style=` style="--fx:${a.fx||0}px;--fy:${a.fy==null?-40:a.fy}px;animation-delay:${a.delay||0}ms"`; SOUNDQ.push(a.delay||0)}
-    } else if(prev!==up){G.seen.set(key,up); if(!REDUCED){cls=' flip'; SOUNDQ.push(0)}}
+      if(!REDUCED){const a=anim||{}; cls=' deal'; style=` style="--fx:${a.fx||0}px;--fy:${a.fy==null?-40:a.fy}px;animation-delay:${a.delay||0}ms"`; SOUNDQ.push(a.delay||0)
+        if(a.down&&up&&!G.slowmo){G.seen.set(key,'down'); FLIPQ.push((a.delay||0)+560); up=false}}
+    } else if(prev==='down'&&up){const a=anim||{}; G.seen.set(key,up); if(!REDUCED){cls=' flip turn'; style=` style="animation-delay:${a.flipDelay||0}ms"`; SOUNDQ.push(a.flipDelay||0)}}
+    else if(prev==='down'){up=false}
+    else if(prev!==up){G.seen.set(key,up); if(!REDUCED){cls=' flip'; SOUNDQ.push(0)}}
   }
   if(!up) return `<div class="card back${cls} ${extra}"${style}>${/marked/.test(extra)?`<span class="mk${c.s===1||c.s===2?' red':''}">${SUITS[c.s]}</span>`:''}</div>`;
   const red=c.s===1||c.s===2, rk=RN[c.r]||String(c.r), su=SUITS[c.s], face=c.r>=11&&c.r<=13;
@@ -4116,6 +4401,11 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
     `<div class="ix">${ix}</div>`+(face?`<div class="face court">${courtArt(c.r,c.s)}<i>${su}</i></div>`:c.r===14?`<div class="pip ace">${su}</div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
 }
 function chipCls(a){return a>=500?'k':a>=150?'g':a>=50?'b':'r'}
+function potStacks(a){
+  if(a<=0) return ''; const bb=G.bb||20; let u=Math.round(a/bb); const den=[['k',25],['g',5],['b',1]], cols=[];
+  for(const [c,v] of den){let n=Math.floor(u/v); u-=n*v; while(n>0&&cols.length<4){const h=Math.min(8,n); cols.push([c,h]); n-=h}}
+  if(!cols.length) cols.push(['r',1]);
+  return '<span class="pstacks">'+cols.map(([c,h],j)=>{let t=`<span class="stack" style="--n:${h-1};--jx:${((j*37)%7)-3}px;--jr:${((j*53)%9)-4}deg">`; for(let k=0;k<h;k++) t+=`<span class="chip ${c}" style="--i:${k};--o:${(((j+1)*(k+3)*29)%5)-2}px"></span>`; return t+'</span>'}).join('')+'</span>'}
 function chipStack(a){const k=Math.max(1,Math.min(6,Math.ceil(Math.log10(a+1)*1.5))); let h=`<span class="stack" style="--n:${k-1}">`; for(let j=0;j<k;j++) h+=`<span class="chip ${chipCls(a)}" style="--i:${j}"></span>`; return h+'</span>'}
 function drawFan(el){
   const cards=[{r:14,s:0,id:1},{r:14,s:3,id:2},{r:8,s:0,id:3},{r:8,s:3,id:4}];
@@ -4206,8 +4496,8 @@ function dailyDone(won){
 }
 
 /* ================= trophy room: wanted posters, card backs, achievements ================= */
-const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded','Outlaw Gold','Black Hat'];
-function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===10) return (meta.wantedWon??-1)>=4; if(n===11) return (meta.wantedWon??-1)>=8; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
+const BACK_NAMES=['Dry Creek','Copper Bend','Hollow Rock','Red Mesa',"Cutter's Gulch",'Silver Fork','Bitterwater','Graves End','Gilded','Outlaw Gold','Black Hat','Ghost Deck','Brimstone'];
+function backUnlocked(n){const b=meta.beaten||{}; if(n===9) return meta.wins>0; if(n===10) return (meta.wantedWon??-1)>=4; if(n===11) return (meta.wantedWon??-1)>=8; if(n===12) return (meta.wins||0)>=3; if(n===13) return (meta.wantedWon??-1)>=6; if(n===1) return true; return !!b[BOSSES[n-2]&&BOSSES[n-2].key]||!!b[BOSSES[n-1].key]}
 const ACH=[
   ['First blood','Take down your first boss',()=>meta.stats.bosses>=1],
   ['Halfway there','Reach the fifth saloon',()=>meta.best>=5],
@@ -4288,7 +4578,7 @@ const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{const
 addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
 if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
-function applyComfort(){const d=document.documentElement; d.classList.toggle('bigtext',!!meta.bigText); d.classList.toggle('four',!!meta.four); d.classList.toggle('reduce',!!meta.reduce); d.classList.toggle('lefty',!!meta.lefty);
+function applyComfort(){if(typeof peekMode==='function') setTimeout(peekMode,0);const d=document.documentElement; d.classList.toggle('bigtext',!!meta.bigText); d.classList.toggle('four',!!meta.four); d.classList.toggle('reduce',!!meta.reduce); d.classList.toggle('lefty',!!meta.lefty);
   REDUCED=SYS_REDUCED||!!meta.reduce; if(typeof applyVol==='function') applyVol()}
 function renderToggles(){
   const sw=(k,label,sub,on)=>`<button class="set-row" data-audio="${k}" role="switch" aria-checked="${on}"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><i class="sw${on?' on':''}"><i></i></i></button>`;
@@ -4309,10 +4599,11 @@ function renderToggles(){
       ${seg('fx','Effects',meta.fx==='low'?'Battery saver: lighter ambience, cooler phone':'Full: the game also eases off on its own if the phone gets warm',[['full','Full'],['low','Battery saver']],meta.fx==='low'?'low':'full')}</div>
       <div class="set-group"><div class="set-h">Play</div>
       ${seg('speed','Game speed','How fast the others act',[['normal','Normal'],['fast','Fast']],meta.speed==='fast'?'fast':'normal')}
-      ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
+      ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}
+      ${seg('peek','Peek at your hand','Duo open flat in landscape: your cards lie face down. Hold them to look.',[['off','Off'],['on','Hold to peek']],meta.peek?'on':'off')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 70 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 71 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -4320,6 +4611,7 @@ document.addEventListener('click',e=>{
   if(k==='speed') meta.speed=v||(meta.speed==='fast'?'normal':'fast');
   else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
   else if(k==='fx'){meta.fx=v||(meta.fx==='low'?'full':'low'); fxApply()}
+  else if(k==='peek'){meta.peek=(v||(meta.peek?'off':'on'))==='on'; peekMode()}
   else if(k==='duo'){meta.duo=v||{auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
   else if(['bigText','four','reduce','lefty'].includes(k)){meta[k]=!meta[k]; applyComfort(); if(G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
@@ -4348,6 +4640,7 @@ let RUMOR_T=null, RUMOR_I=Math.floor(Math.random()*10);
 function rumorTick(){const el=$('rumor'); if(!el) return; clearTimeout(RUMOR_T); if($('sTitle').hidden) return;
   el.classList.add('out'); setTimeout(()=>{RUMOR_I=(RUMOR_I+1)%RUMORS.length; el.textContent=RUMORS[RUMOR_I]; el.classList.remove('out')},600); RUMOR_T=setTimeout(rumorTick,7000)}
 function renderTitle(){
+  setTod(); maybeStorm();
   setTimeout(rumorTick,400);
   DAILY=null; TOKEN++; PAUSED=false; R=null; $('poster').hidden=true; $('menu').hidden=true;
   drawFan($('fan')); renderToggles();
@@ -4724,6 +5017,10 @@ function openChapter(){
   later(()=>writeHand($('chInk').firstElementChild),700);
   const words=CHAPTER_SUB[L-1].split(' ');
   $('chSub').innerHTML=words.map((w,k)=>`<span style="animation-delay:${4.1+k*.12}s">${w}</span>`).join(' ');
+  // then the narrator: a few lines about the town, and where you stand riding in
+  const t0=4.1+words.length*.12+.5;
+  $('chText').innerHTML=CHAPTER_TEXT[L-1].split(' ').map((w,k)=>`<span style="animation-delay:${(t0+k*.045).toFixed(2)}s">${w}</span>`).join(' ');
+  $('chCarry').textContent=chapterCarry(L); $('chCarry').style.animationDelay=(t0+CHAPTER_TEXT[L-1].split(' ').length*.045+.6).toFixed(2)+'s';
   const scr=$('sChapter'); scr.classList.remove('leaving');
   show('sChapter');
   sfx('whoosh');
@@ -4731,7 +5028,14 @@ function openChapter(){
   const go=()=>{if(done) return; done=true; scr.classList.add('leaving'); setTimeout(()=>{if(R) startTable()},REDUCED?0:650)};
   scr.onclick=go;
   scr.onkeydown=e=>{if(e.key==='Enter'||e.key===' ') go()};
-  later(go,8200);
+  later(go,REDUCED?7000:Math.round((t0+CHAPTER_TEXT[L-1].split(' ').length*.045+4.2)*1000));
+}
+function chapterCarry(L){
+  if(L===1) return `${R.charms.length?R.charms.length===1?'One charm':'Two charms':'Nothing'} in your saddlebag. A long way to go.`;
+  const prev=BOSSES[L-2], parts=[`${prev.name} is behind you`];
+  parts.push(`${num(R.gold)} gold in your pocket`);
+  const h=R.heat||0; if(h>=5) parts.push('and your face on every post office wall'); else if(h>=2) parts.push('and a price on your head');
+  return parts.length>2?`${parts[0]}. ${parts[1]}, ${parts.slice(2).join(', ')}.`:`${parts[0]}. ${parts[1]}.`;
 }
 
 /* ================= handwriting: a hand-drawn single-stroke cursive ================= */
@@ -4861,6 +5165,7 @@ function newHand(){
   G.dealUntil=performance.now()+G.dealCount*70+500;
   if(G.risen) shake(false);
   tip('start');
+  tableChatter();
   step();
   sfx('chip');
 }
@@ -4895,7 +5200,7 @@ function step(){
   }
   if(!p.isHuman){
     const t=G.turn, base=((human().folded||human().allIn||!human().inHand?320:820)+(p.bossDef?520:0))*speedMul();
-    later(()=>{if(G.turn!==t) return; const d=aiDecide(t); if(d.tell||d.line) say(d.line||'',d.tell||''); doAct(t,d.type,d.to)}, Math.max(base,G.dealUntil-performance.now()+120));
+    later(()=>{if(G.turn!==t) return; const d=aiDecide(t); bossBark(t,d); if(d.tell||d.line) say(d.line||'',d.tell||''); doAct(t,d.type,d.to)}, Math.max(base,G.dealUntil-performance.now()+120));
   }
 }
 function doAct(i,type,to){
@@ -4904,7 +5209,7 @@ function doAct(i,type,to){
   const put=applyAction(i,type,to);
   step();
   if(put>0){
-    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),2,280,chipCls(put)); sfx(p.allIn||put>=G.bb*10?'chips':'chip'); if(p.allIn||put>=G.bb*10) rumble(put/G.bb);
+    fly(seatEl(i,'.plate'),document.querySelector(`.bet[data-i="${i}"]`),Math.min(7,2+Math.floor(Math.log2(Math.max(1,put/G.bb)))),280,chipCls(put),3); sfx(p.allIn||put>=G.bb*10?'chips':'chip'); if(p.allIn||put>=G.bb*10) rumble(put/G.bb);
     if(p.allIn){const c=centerOfSeat(i); if(c) stampAt(c[0],c[1],'All in','#d8341f',p.isHuman?34:26); sfx('stamp',80); shake(false)}
   }
 }
@@ -4912,7 +5217,7 @@ function collectThen(fn){
   const bets=[...document.querySelectorAll('#seats .bet,#duoHand .bet')];
   if(!bets.length||REDUCED){fn(); return}
   const pot=$('potrow');
-  bets.forEach(b=>{fly(b,pot,2,340,'g'); b.style.visibility='hidden'});
+  bets.forEach((b,j)=>{fly(b,pot,3,340,['r','b','g'][j%3],j<3?2:0); b.style.visibility='hidden'});
   sfx('chip'); later(fn,360);
 }
 function handEnd(res){
@@ -4922,8 +5227,14 @@ function handEnd(res){
   const ev=finishHand(res);
   render();
   const me=human(), potEl=$('potrow');
-  res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(10,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt)));
+  res.winners.forEach(w=>fly(potEl,seatEl(w.i,'.plate'),Math.min(12,4+Math.round(w.amt/G.bb/3)),560,chipCls(w.amt),5));
   if(res.winners.length) sfx('chips',60);
+  // the regulars react: a winner crows, a busted man says his piece on the way out
+  {const n=performance.now(); if(n-(G.lastChat||0)>5000){
+    const bust=ev.kos.find(i=>!G.players[i].bossDef&&!G.players[i].isHuman);
+    const rw=res.winners.find(w=>{const q=G.players[w.i]; return q&&!q.isHuman&&!q.bossDef&&!q.out});
+    if(bust!=null&&where[bust]&&Math.random()<.7){G.lastChat=n; later(()=>seatSay(bust,pickLine(REG_LINES.bust),where[bust]),1300)}
+    else if(rw&&!ev.bossLine&&res.pot>=G.bb*6&&Math.random()<.35){G.lastChat=n; later(()=>seatSay(rw.i,pickLine(REG_LINES[res.pot>=G.bb*20?'bigwin':'win'])),800)}}}
   {const big=res.pot/G.bb; if(big>=12) rumble(big,120)}
   res.winners.forEach(w=>{const c=where[w.i]; if(c) floatNum(c[0],c[1]-4,'+'+money(w.amt),false,450)});
   if(me.inHand&&!me.winner&&me.total>0&&where[0]) floatNum(where[0][0],where[0][1]-4,'−'+money(me.total),true,450);
@@ -5194,8 +5505,10 @@ function procChain(list,at,start){
 function seatEl(i,sel){return document.querySelector(`.seat[data-i="${i}"] ${sel||''}`)}
 function relCenter(el){const t=$('table').getBoundingClientRect(), r=el.getBoundingClientRect(); return [r.left+r.width/2-t.left, r.top+r.height/2-t.top]}
 function centerOfSeat(i){if(i===0&&isDuoV()) return [50,90]; const el=seatEl(i,'.plate'); if(!el) return null; const t=$('table').getBoundingClientRect(); const [x,y]=relCenter(el); return [x/t.width*100,y/t.height*100]}
-function fly(fromEl,toEl,count,dur,cls){
+function fly(fromEl,toEl,count,dur,cls,clink){
   if(REDUCED||!fromEl||!toEl) return;
+  // each chip that lands makes its own small click, a little higher or lower than the last
+  if(clink) for(let k=0;k<Math.min(count,clink);k++) sfx('clink',Math.round(dur*1.15*.9+k*55+Math.random()*12),.92+Math.random()*.2);
   const [x1,y1]=relCenter(fromEl), [x2,y2]=relCenter(toEl);
   for(let k=0;k<count;k++){
     const s=document.createElement('span'); s.className='chip fly '+(cls||'g'); s.style.left=(x1-10)+'px'; s.style.top=(y1-10)+'px'; $('fx').appendChild(s);
@@ -5321,6 +5634,15 @@ function quote(text,tell){
   }
   QUOTE_FADE=setTimeout(()=>{el.classList.remove('on'); rb.classList.remove('speaking')},(4200+(text||'').length*30)*Math.max(.6,speedMul()));
 }
+// bosses talk through the hand: all-ins nearly always, folds and calls now and then
+function bossBark(t,d){const p=G.players[t]; if(!p||!p.bossDef||d.line) return; const L=p.bossDef.lines;
+  const k=d.type==='raise'&&d.to>=p.bet+p.chips?'allin':d.type==='fold'?'fold':d.type==='call'?'call':null;
+  if(k&&L[k]&&Math.random()<({allin:.7,fold:.3,call:.12})[k]) d.line=pickLine(L[k])}
+// between hands the room chatters: the boss needles you, or a regular mutters something
+function tableChatter(){if(!G||G.duel||R.tutorial||(G.tableHands||0)<1) return; const n=performance.now(); if(n-(G.lastChat||0)<9000) return;
+  const bp=boss();
+  if(bp&&!bp.out&&Math.random()<.28){const L=bp.bossDef.lines, k=bp.chips>G.bossStart*1.3?'cocky':bp.chips<G.bossStart*.35?'hurt':'idle'; if(L[k]){G.lastChat=n; later(()=>say(pickLine(L[k])),900); return}}
+  if(Math.random()<.14){const regs=G.players.map((p,i)=>[p,i]).filter(([p])=>!p.out&&!p.isHuman&&!p.bossDef); if(regs.length){const [,i]=regs[Math.floor(Math.random()*regs.length)]; G.lastChat=n; later(()=>seatSay(i,pickLine(REG_LINES.idle)),1100)}}}
 function say(text,tell){
   const bi=G&&G.players?G.players.findIndex(p=>p.bossDef&&!p.out):-1;
   if(bi>=0&&!$('sGame').hidden&&(text||tell)){seatSay(bi,text,null,tell,true); quote('',''); return}
@@ -5356,6 +5678,25 @@ function pillLife(i,text,keep){
   if(!prev||prev.text!==text){PILLS.set(i,{text,at:now}); return ''}
   return ` style="animation-delay:-${Math.round(now-prev.at)}ms"`;
 }
+const SHOE={x:50,y:48};
+/* the final table: every boss you put down this run is up in the balcony, watching you finish it */
+function balcony(){const on=R&&R.level===8&&!R.tutorial&&!G.duel&&!R.daily; let b=$('balcony');
+  if(!on){if(b) b.hidden=true; return}
+  if(!b){b=document.createElement('div'); b.id='balcony'; b.className='balcony'; b.setAttribute('aria-hidden','true');
+    const head=bd=>`<span class="bal-b"><span class="medal">${bossPortrait(bd)}</span><i>${bd.name.split(' ').slice(-1)[0]}</i></span>`;
+    b.innerHTML=`<div class="bal-side l">${BOSSES.slice(0,4).map(head).join('')}</div><div class="bal-side r">${BOSSES.slice(4,7).map(head).join('')}</div>`;
+    $('tableWrap').prepend(b)}
+  b.hidden=false;
+  const bp=boss(); b.classList.toggle('lean',!!(bp&&bp.allIn)); b.classList.toggle('gone',!!(bp&&bp.out))}
+/* your own chips sit by your nameplate; while you think, your fingers riffle them. Tap them to do it yourself. */
+function myStack(me){const pl=document.querySelector('.seat.human .plate'); if(!pl) return;
+  let st=pl.querySelector('.mystack'); if(!st){st=document.createElement('span'); st.className='mystack'; st.setAttribute('aria-hidden','true');
+    st.innerHTML=['k','g','b','r','g'].map((c,i)=>`<span class="chip ${c}" style="--i:${i}"></span>`).join(''); pl.appendChild(st)}
+  st.hidden=me.out||me.chips<=0;
+  clearTimeout(myStack.t); st.classList.remove('riffle');
+  if(G.turn===0&&!REDUCED&&live().length>1) myStack.t=setTimeout(()=>{if(G.turn===0) st.classList.add('riffle')},3200)}
+document.addEventListener('pointerdown',e=>{const st=e.target.closest&&e.target.closest('.mystack'); if(!st||REDUCED) return;
+  st.classList.remove('riffle','flick'); void st.offsetWidth; st.classList.add('flick'); [0,90,170,240].forEach(d=>sfx('clink',d,1+Math.random()*.15)); haptic('light')});
 function render(){
   if(!R||!G.players.length) return;
   const L=R.level, bd=BOSSES[L-1], bp=boss(), me=human();
@@ -5393,12 +5734,16 @@ function render(){
   const madeName=G.board.length>=3&&!me.folded&&me.inHand&&!blindfold?nameOf(evalHand(me.hand.concat(G.board))):'';
   // seats are kept between renders and only the parts that changed are rebuilt, so portraits, glows,
   // deals and number rolls never restart mid-animation
-  const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
+  {const d=pos[G.dealer]||[50,48]; SHOE.x=d[0]+(50-d[0])*.42; SHOE.y=d[1]+(48-d[1])*.42}
+  const shoe=$('shoe')||(()=>{const e=document.createElement('div'); e.id='shoe'; e.className='shoe'; e.innerHTML='<i class="card back"></i>'; tb.appendChild(e); return e})();
+  shoe.style.left=SHOE.x+'%'; shoe.style.top=SHOE.y+'%'; shoe.style.setProperty('--n',Math.max(1,Math.min(9,Math.round(G.deck.length/5))));
+  shoe.hidden=G.street==='idle'||!!G.duel&&false;
+  const seatsEl=$('seats'), SM=seatsEl._m||(seatsEl._m=new Map()), live=new Set(), quiet=h=>h.replace(/ (deal|flip|turn)(?=[ "])/g,'').replace(/ style="(--fx|animation-delay)[^"]*"/g,'');
   let bets='', duoBet='';
   G.players.forEach((p,i)=>{
     if(p.out) return;
     live.add(i);
-    const me0=duoV&&i===0, [x,y]=pos[i], fx=me0?0:(50-x)/100*W, fy=me0?-H*.75:(48-y)/100*H;
+    const me0=duoV&&i===0, [x,y]=pos[i], fx=me0?(SHOE.x-50)/100*W*.6:(SHOE.x-x)/100*W, fy=me0?-H*.75:(SHOE.y-y)/100*H;
     const cards=(p.hand||[]).map((c,k)=>{
       const anim={fx,fy,delay:(c.order||0)*70};
       if(p.isHuman) return cardHTML(c,!blindfold,(snakeOn&&k===0&&!blindfold)?'watched':'','h'+i,anim);
@@ -5441,10 +5786,10 @@ function render(){
   if(duoBet) $('duoHand').insertAdjacentHTML('beforeend',duoBet);  {const ss=[...seatsEl.querySelectorAll('.seat:not(.duo-me)')], ws=ss.map(s=>s.offsetWidth);  // read every width first, then move: one layout, not one per seat
     ss.forEach((s,j)=>{const x=parseFloat(s.style.left)/100*W, m=ws[j]/2+4; if(W>2*m){const cx=Math.max(m,Math.min(W-m,x)); if(Math.abs(cx-x)>.5) s.style.left=cx+'px'}})}
   const tellerOn=has('teller')&&['preflop','flop','turn'].includes(G.street)&&G.deck.length;
-  const bparts=[];
+  const bparts=[], bw=($('board')._w=$('board')._w||$('board').clientWidth/5||60);
   for(let k=0;k<5;k++){
     let b='';
-    if(G.board[k]) b+=cardHTML(G.board[k],true,'','b',{fx:0,fy:-50,delay:k<3?k*90:0});
+    if(G.board[k]){const sx=(SHOE.x-50)/100*W-(k-2)*bw, sy=(SHOE.y-48)/100*H; b+=cardHTML(G.board[k],true,'','b',{fx:Math.round(sx),fy:Math.round(sy),delay:k<3?k*90:0,down:true,flipDelay:k<3?k*120:0})}
     else if(G.street!=='done'&&G.street!=='showdown'&&k>=G.board.length&&k<G.board.length+Math.max(tellerOn?1:0,G.mirror||0)&&G.deck.length>k-G.board.length) b+=cardHTML(G.deck[G.deck.length-1-(k-G.board.length)],true,'ghost');
     else b+='<div class="slot"></div>';
     bparts.push(b);
@@ -5453,14 +5798,19 @@ function render(){
   if(boardEl.children.length!==5||!boardEl._q){boardEl.innerHTML=bparts.join(''); boardEl._q=bq}
   else bq.forEach((q,k)=>{if(boardEl._q[k]!==q){boardEl._q[k]=q; boardEl.children[k].outerHTML=bparts[k]}});
   const pot=G.street==='done'?(G.lastPot||0):potTotal();
-  const potH=(pot>0?chipStack(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
+  const potH=(pot>0?potStacks(pot):'')+`<div class="pot">Pot ${roll('pot',pot,'b')}</div>`, potEl2=$('potrow'); if(potEl2._h!==potH||!potEl2.firstChild){potEl2._h=potH; potEl2.innerHTML=potH}
   const sp=G.street!=='done'&&G.street!=='idle'&&G.players.some(p=>p.allIn&&p.inHand)?pots():[];
   $('sidepots').innerHTML=sp.length>1?sp.map((x,k)=>`${k?'Side':'Main'} <b>${money(x.amt)}</b>`).join(' · '):'';
+  myStack(me);
+  {const hc=document.querySelector('.seat.human .cards'); if(hc) hc.classList.toggle('shown',G.street==='done'||G.street==='showdown'||G.street==='idle'||me.folded||!!G.reveal)}
+  balcony();
   renderControls(); updateSay();
   runRolls();
   renderCoach();
   if(SOUNDQ.length){const q=SOUNDQ.slice(0,18); SOUNDQ=[]; q.forEach(d=>sfx('card',d))}
+  if(FLIPQ.length){const t=Math.max(...FLIPQ); FLIPQ=[]; clearTimeout(render.ft); render.ft=setTimeout(()=>{if(R&&G.players.length) render()},t)}
 }
+let FLIPQ=[];
 $('seats').addEventListener('click',e=>{
   const c=e.target.closest('.seat.human .card:not(.back)'); if(!c||c.classList.contains('deal')) return;
   c.classList.remove('wobble'); void c.offsetWidth; c.classList.add('wobble'); sfx('card'); setTimeout(()=>c.classList.remove('wobble'),520);
@@ -5809,6 +6159,45 @@ function tutFinale(){
   // if this browser already lets the page play sound, don't make anyone tap
   setTimeout(()=>{const c=ac(); if(!c) return; c.resume().then(()=>{if(!started&&c.state==='running') begin()}).catch(()=>{})},60);
 })();
+
+/* ================= long-press anything for a parchment card that explains it ================= */
+(function tips(){
+  let T=0, el=null, sx=0, sy=0, card=null, shown=false;
+  const info=t=>{
+    const g=t.closest('.gl[data-k],.cpill,.trickbtn,#bossbar,.seat.boss,.bal-b,.tarot,[title]'); if(!g) return null;
+    if(g.matches('.gl[data-k]')){const c=CHARMS[g.dataset.k]; return c&&{h:c.name+(lvl(g.dataset.k)>=2?' II':''),b:c.desc,i:c.icon}}
+    if(g.matches('.gl.trick')){const k=Object.keys(TRICKS).find(k=>TRICKS[k].name===g.title); return k&&{h:TRICKS[k].name,b:TRICKS[k].desc,i:TRICKS[k].icon}}
+    if(g.matches('.gl.cursed')){const k=Object.keys(CURSES).find(k=>CURSES[k].name===g.title); return k&&{h:CURSES[k].name,b:CURSES[k].desc,i:CURSES[k].icon,bad:1}}
+    if(g.matches('#bossbar,.seat.boss')&&R&&BOSSES[R.level-1]){const bd=BOSSES[R.level-1]; return {h:bd.name,s:bd.title,b:bd.twist}}
+    if(g.matches('.tarot')) return null;   // store cards already explain themselves
+    const tt=g.getAttribute('title'); return tt&&tt.length>2?{h:tt}:null};
+  const hide=()=>{clearTimeout(T); if(card){card.classList.remove('on'); const c=card; setTimeout(()=>c.remove(),180); card=null}};
+  const show=()=>{const d=info(el); if(!d) return; shown=true; haptic('select');
+    card=document.createElement('div'); card.className='tipcard'+(d.bad?' bad':'');
+    card.innerHTML=`${d.i?`<span class="tc-i">${d.i}\uFE0E</span>`:''}<b>${d.h}</b>${d.s?`<em>${d.s}</em>`:''}${d.b?`<p>${d.b}</p>`:''}`;
+    document.body.appendChild(card);
+    const r=el.getBoundingClientRect(), w=card.offsetWidth, h=card.offsetHeight;
+    let x=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2)), y=r.top-h-10; if(y<8) y=r.bottom+10;
+    card.style.left=x+'px'; card.style.top=y+'px'; requestAnimationFrame(()=>card&&card.classList.add('on'))};
+  addEventListener('pointerdown',e=>{hide(); shown=false; if(e.button>0) return; el=e.target; sx=e.clientX; sy=e.clientY; if(!info(el)) return; T=setTimeout(show,430)},true);
+  addEventListener('pointermove',e=>{if(T&&!shown&&Math.hypot(e.clientX-sx,e.clientY-sy)>10) clearTimeout(T)},{passive:true});
+  addEventListener('pointerup',()=>{clearTimeout(T); if(shown) setTimeout(hide,1400)},true);
+  addEventListener('pointercancel',hide,true);
+  addEventListener('click',e=>{if(shown){e.stopPropagation(); e.preventDefault(); shown=false}},true);
+  addEventListener('contextmenu',e=>{if(info(e.target)) e.preventDefault()});
+})();
+
+/* ================= fold to peek: Duo open flat in landscape, your hand lies face down on the bottom screen ================= */
+function peekMode(){document.documentElement.classList.toggle('peekmode',!!meta.peek&&document.documentElement.classList.contains('duo-wide'))}
+(function(){
+  let held=null, t=0;
+  const up=()=>{clearTimeout(t); if(held){const h=held; held=null; t=setTimeout(()=>h.classList.remove('peek'),120)}};
+  addEventListener('pointerdown',e=>{if(!document.documentElement.classList.contains('peekmode')) return; const c=e.target.closest&&e.target.closest('.seat.human .cards,.seat.human .plate');
+    if(!c) return; const cards=c.closest('.seat').querySelector('.cards'); if(!cards||cards.classList.contains('shown')) return;
+    clearTimeout(t); held=cards; cards.classList.add('peek'); haptic('soft'); sfx('card',0,1.15)},true);
+  addEventListener('pointerup',up,true); addEventListener('pointercancel',up,true);
+})();
+addEventListener('resize',()=>setTimeout(peekMode,260)); setTimeout(peekMode,300);
 
 })();
 </script>
