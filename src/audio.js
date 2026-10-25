@@ -5,6 +5,8 @@ const SFX_GAIN={toll:1,card:.5,chip:.62,chips:.72,win:.55,bigwin:.7,lose:.5,boss
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
 const SALOON_MIX={1:3600,2:2800,3:2200,4:3200,5:2600,6:4500,7:3000,8:1900};
+// player volume: music and effects each have their own dial
+function applyVol(){if(!SND.ctx) return; if(SND.musVol) SND.musVol.gain.value=Math.pow(meta.musVol??1,1.6); if(SND.fx) SND.fx.gain.value=Math.pow(meta.sfxVol??1,1.6)}
 function ac(){
   if(!SND.ctx){
     const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
@@ -16,7 +18,7 @@ function ac(){
     const comp=c.createDynamicsCompressor(); comp.threshold.value=-10; comp.ratio.value=3; comp.attack.value=.01; comp.release.value=.25;
     SND.master.connect(comp).connect(c.destination);
     SND.fx=c.createGain(); SND.fx.gain.value=1; SND.fx.connect(SND.master);
-    SND.music=c.createGain(); SND.music.gain.value=0; SND.music.connect(SND.master);
+    SND.music=c.createGain(); SND.music.gain.value=0; SND.musVol=c.createGain(); SND.music.connect(SND.musVol).connect(SND.master); applyVol();
     SND.musF=c.createBiquadFilter(); SND.musF.type='lowpass'; SND.musF.frequency.value=9000; SND.musF.Q.value=.5;
     SND.dry=c.createGain(); SND.dry.gain.value=1; SND.wet=c.createGain(); SND.wet.gain.value=.12;
     const L=Math.floor(c.sampleRate*2.2), ir=c.createBuffer(2,L,c.sampleRate);

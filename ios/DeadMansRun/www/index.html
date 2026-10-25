@@ -2103,6 +2103,36 @@ html.duo-wide .shopfront .lantern{display:block}
 .crowd{height:42%}
 .crowd .ch{width:clamp(44px,9.5cqw,92px);fill:#0a0604;filter:drop-shadow(0 -1.5px 0 rgba(255,196,120,.55)) drop-shadow(0 -6px 10px rgba(255,170,80,.18))}
 
+/* ================= comfort settings ================= */
+.vol-row{gap:16px}
+.vol-row input[type=range]{flex:1;max-width:220px;height:32px;touch-action:none}
+html.duo-wide .vol-row{flex-direction:column;align-items:stretch;gap:2px}
+html.duo-wide .vol-row input[type=range]{max-width:none}
+html.four .card.s2{color:#1f5fb8}
+html.four .card.s3{color:#1d7a3e}
+html.four .card.s2 .face i,html.four .card.s3 .face i{color:inherit}
+html.bigtext .nm,html.bigtext .chips,html.bigtext .line{font-size:1.14em}
+html.bigtext .status,html.bigtext .odds{font-size:1.15em}
+html.bigtext #actions .btn.fold,html.bigtext #actions .btn.raise,html.bigtext #actions .btn.call{font-size:clamp(16px,2.6vw,21px)}
+html.bigtext .pill,html.bigtext .seat-say,html.bigtext .keeper-say{font-size:1.12em}
+html.bigtext .tarot p,html.bigtext .tarot h3{font-size:1.1em}
+html.bigtext .set-l b{font-size:17px}html.bigtext .set-l em{font-size:13.5px}
+html.reduce *,html.reduce *::before,html.reduce *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+html.reduce #vista *{animation:none!important}
+html.lefty #actions .actrow{direction:rtl}
+html.lefty #actions .actrow .btn{direction:ltr}
+html.lefty .say-btn{left:auto!important;right:10px!important}
+/* Duo landscape settings: sound | comfort | play over story — four groups, no overlap, no scrolling */
+html.duo-wide .pane[data-mpane="settings"],html.duo-wide .pane[data-pane="settings"]{grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:max-content;align-items:stretch}
+html.duo-wide .audio-toggles>.set-group:nth-child(1){grid-column:1;grid-row:1/3}
+html.duo-wide .audio-toggles>.set-group:nth-child(2){grid-column:2;grid-row:1/3}
+html.duo-wide .audio-toggles>.set-group:nth-child(3){grid-column:3;grid-row:1}
+html.duo-wide .pane>.set-group{grid-column:3;grid-row:2}
+html.duo-wide .pane .set-foot{grid-column:1/-1;grid-row:3}
+html.duo-wide .set-group{overflow:visible}
+html.duo-wide #more .set-row,html.duo-wide #menu .set-row{min-height:40px;padding-block:5px}
+html.duo-wide .set-l em{display:none}
+
 </style>
 </head>
 <body>
@@ -3541,6 +3571,8 @@ const SFX_GAIN={toll:1,card:.5,chip:.62,chips:.72,win:.55,bigwin:.7,lose:.5,boss
 const BOSS_TRACKS={1:{key:'boss_pete',period:179,fade:3,vol:.28},2:{key:'boss_ma',period:174,fade:0,vol:.38},3:{key:'boss_iron',period:171.3,fade:0,vol:.3},4:{key:'boss_under',period:199.5,fade:0,vol:.3},5:{key:'boss_snake',period:195.5,fade:3,vol:.22},6:{key:'boss_banker',period:229,fade:2,vol:.24},7:{key:'boss_vesper',period:222,fade:0,vol:.22},8:{key:'boss_bicah',period:163,fade:3,vol:.24}};
 const MUSIC_PERIOD=183.825, MENU_PERIOD=139.6, AMB_PERIOD=40, AMB_FADE=3;
 const SALOON_MIX={1:3600,2:2800,3:2200,4:3200,5:2600,6:4500,7:3000,8:1900};
+// player volume: music and effects each have their own dial
+function applyVol(){if(!SND.ctx) return; if(SND.musVol) SND.musVol.gain.value=Math.pow(meta.musVol??1,1.6); if(SND.fx) SND.fx.gain.value=Math.pow(meta.sfxVol??1,1.6)}
 function ac(){
   if(!SND.ctx){
     const C=window.AudioContext||window.webkitAudioContext; if(!C) return null;
@@ -3552,7 +3584,7 @@ function ac(){
     const comp=c.createDynamicsCompressor(); comp.threshold.value=-10; comp.ratio.value=3; comp.attack.value=.01; comp.release.value=.25;
     SND.master.connect(comp).connect(c.destination);
     SND.fx=c.createGain(); SND.fx.gain.value=1; SND.fx.connect(SND.master);
-    SND.music=c.createGain(); SND.music.gain.value=0; SND.music.connect(SND.master);
+    SND.music=c.createGain(); SND.music.gain.value=0; SND.musVol=c.createGain(); SND.music.connect(SND.musVol).connect(SND.master); applyVol();
     SND.musF=c.createBiquadFilter(); SND.musF.type='lowpass'; SND.musF.frequency.value=9000; SND.musF.Q.value=.5;
     SND.dry=c.createGain(); SND.dry.gain.value=1; SND.wet=c.createGain(); SND.wet.gain.value=.12;
     const L=Math.floor(c.sampleRate*2.2), ir=c.createBuffer(2,L,c.sampleRate);
@@ -3773,7 +3805,8 @@ function introMusic(){
 /* ================= basics ================= */
 const $=id=>document.getElementById(id);
 document.documentElement.dataset.screen='sTitle';
-const REDUCED=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+const SYS_REDUCED=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+let REDUCED=SYS_REDUCED;
 let TOKEN=0, PAUSED=false;
 function later(fn,ms){const t=TOKEN; const run=()=>{if(t!==TOKEN) return; if(PAUSED){setTimeout(run,250); return} fn()}; setTimeout(run,ms)}
 function speedMul(){return meta.speed==='fast'?0.45:1}
@@ -3956,7 +3989,7 @@ function cardHTML(c,up,extra='',loc=null,anim=null){
   const red=c.s===1||c.s===2, rk=RN[c.r]||String(c.r), su=SUITS[c.s], face=c.r>=11&&c.r<=13;
   const ix=`<b${rk.length>1?' class="ten"':''}>${rk}</b><i>${su}</i>`, hot=G.winCards.has(c.id)?' hot':'';
   const gold=c.r>=11?' gold':'';
-  return `<div class="card${red?' red':''}${hot}${gold}${cls} ${extra}"${style} role="img" aria-label="${SG[c.r]} of ${SUITN[c.s]}">`+
+  return `<div class="card${red?' red':''} s${c.s}${hot}${gold}${cls} ${extra}"${style} role="img" aria-label="${SG[c.r]} of ${SUITN[c.s]}">`+
     `<div class="ix">${ix}</div>`+(face?`<div class="face court">${courtArt(c.r,c.s)}<i>${su}</i></div>`:c.r===14?`<div class="pip ace">${su}</div>`:`<div class="pip">${su}</div>`)+`<div class="ix br">${ix}</div></div>`;
 }
 function chipCls(a){return a>=500?'k':a>=150?'g':a>=50?'b':'r'}
@@ -4128,6 +4161,8 @@ const duoRefresh=()=>{clearTimeout(applyDuo.t); applyDuo.t=setTimeout(()=>{const
 addEventListener('resize',duoRefresh); addEventListener('orientationchange',duoRefresh); document.addEventListener('visibilitychange',()=>{if(!document.hidden) duoRefresh()});
 if(window.visualViewport) visualViewport.addEventListener('resize',duoRefresh);
 setTimeout(applyDuo,0);
+function applyComfort(){const d=document.documentElement; d.classList.toggle('bigtext',!!meta.bigText); d.classList.toggle('four',!!meta.four); d.classList.toggle('reduce',!!meta.reduce); d.classList.toggle('lefty',!!meta.lefty);
+  REDUCED=SYS_REDUCED||!!meta.reduce; if(typeof applyVol==='function') applyVol()}
 function renderToggles(){
   const sw=(k,label,sub,on)=>`<button class="set-row" data-audio="${k}" role="switch" aria-checked="${on}"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><i class="sw${on?' on':''}"><i></i></i></button>`;
   const seg=(k,label,sub,opts,cur)=>`<div class="set-row seg-row"><span class="set-l"><b>${label}</b>${sub?`<em>${sub}</em>`:''}</span><span class="seg">${opts.map(([v,t])=>`<button data-audio="${k}" data-val="${v}" aria-pressed="${cur===v}">${t}</button>`).join('')}</span></div>`;
@@ -4136,13 +4171,20 @@ function renderToggles(){
     el.innerHTML=`<div class="set-group"><div class="set-h">Sound &amp; feel</div>
       ${sw('sound','Sound effects','Cards, chips, the bell',!!meta.sound)}
       ${sw('music','Music','Saloon songs and the room',!!meta.music)}
-      ${sw('haptics','Haptics','Feel every chip and card',meta.haptics!==false)}</div>
+      ${sw('haptics','Haptics','Feel every chip and card',meta.haptics!==false)}
+      <div class="set-row vol-row"><span class="set-l"><b>Music volume</b></span><input type="range" min="0" max="100" step="5" value="${Math.round((meta.musVol??1)*100)}" data-vol="musVol" aria-label="Music volume"></div>
+      <div class="set-row vol-row"><span class="set-l"><b>Effects volume</b></span><input type="range" min="0" max="100" step="5" value="${Math.round((meta.sfxVol??1)*100)}" data-vol="sfxVol" aria-label="Effects volume"></div></div>
+      <div class="set-group"><div class="set-h">Comfort</div>
+      ${sw('bigText','Bigger text','Names, chips and buttons a size up',!!meta.bigText)}
+      ${sw('four','Four-colour deck','Blue diamonds, green clubs',!!meta.four)}
+      ${sw('reduce','Reduce motion','Fewer flourishes and shakes',!!meta.reduce)}
+      ${sw('lefty','Left-handed','Call on the left, Fold on the right',!!meta.lefty)}</div>
       <div class="set-group"><div class="set-h">Play</div>
       ${seg('speed','Game speed','How fast the others act',[['normal','Normal'],['fast','Fast']],meta.speed==='fast'?'fast':'normal')}
       ${seg('duo','iPhone Duo layout',duoNow,[['auto','Auto'],['on','On'],['off','Off']],meta.duo||'auto')}</div>
 `;
   });
-  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 67 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
+  document.querySelectorAll('.set-foot').forEach(f=>f.textContent=`Dead Man's Run · Version 68 · ${screen.width}×${screen.height} · ${innerWidth}×${innerHeight}`);
 }
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-audio]'); if(!b) return;
@@ -4150,9 +4192,12 @@ document.addEventListener('click',e=>{
   if(k==='speed') meta.speed=v||(meta.speed==='fast'?'normal':'fast');
   else if(k==='haptics'){meta.haptics=meta.haptics===false; haptic('medium')}
   else if(k==='duo'){meta.duo=v||{auto:'on',on:'off',off:'auto'}[meta.duo||'auto']; applyDuo()}
+  else if(['bigText','four','reduce','lefty'].includes(k)){meta[k]=!meta[k]; applyComfort(); if(G&&G.players&&G.players.length&&!$('sGame').hidden) render()}
   else {meta[k]=!meta[k]; ac(); if(k==='music'){meta.music?startMusic():stopMusic()} if(k==='sound'&&meta.sound) sfx('chip')}
   haptic('select'); saveMeta(); renderToggles();
 });
+document.addEventListener('input',e=>{const r=e.target.closest&&e.target.closest('[data-vol]'); if(!r) return; meta[r.dataset.vol]=(+r.value)/100; applyVol(); clearTimeout(r._s); r._s=setTimeout(()=>{saveMeta(); if(r.dataset.vol==='sfxVol') sfx('chip')},180)});
+applyComfort();
 const TIPS={
   start:'<b>Goal:</b> take all of the boss\'s chips.',
   turn:'<b>Your turn.</b> Fold, call, or raise.'
