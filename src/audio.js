@@ -93,6 +93,15 @@ function sfx(type,delay=0,pitch=1){
   s.connect(g).connect(SND.fx); s.start(c.currentTime+delay/1000);
   const rec={s,g,at:performance.now()}; (SND.live=SND.live||new Set()).add(rec); s.onended=()=>SND.live.delete(rec);
 }
+// the room reacts: a murmur of voices, built from filtered noise (cheer = brighter and rising, groan = low and falling)
+function crowd(kind='cheer',vol=.5){if(!meta.sound||!SND.ctx||SND.hush) return; const c=SND.ctx, t=c.currentTime, len=1.8;
+  const b=c.createBuffer(1,c.sampleRate*len,c.sampleRate), d=b.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  const src=c.createBufferSource(); src.buffer=b; const f1=c.createBiquadFilter(), f2=c.createBiquadFilter(), g=c.createGain(), lfo=c.createOscillator(), lg=c.createGain();
+  f1.type='bandpass'; f1.Q.value=3.5; f2.type='bandpass'; f2.Q.value=5;
+  const up=kind==='cheer'; f1.frequency.setValueAtTime(up?650:520,t); f1.frequency.linearRampToValueAtTime(up?1100:330,t+len); f2.frequency.setValueAtTime(up?1500:900,t); f2.frequency.linearRampToValueAtTime(up?2300:600,t+len);
+  lfo.frequency.value=up?9:5; lg.gain.value=.25; lfo.connect(lg).connect(g.gain);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.18); g.gain.setValueAtTime(vol,t+len*.55); g.gain.linearRampToValueAtTime(0,t+len);
+  src.connect(f1).connect(g); src.connect(f2).connect(g); g.connect(SND.fx); src.start(t); lfo.start(t); src.stop(t+len); lfo.stop(t+len)}
 // skip a screen, and its sounds go with it: fade out every effect that was set off more than `olderThan` ms ago
 function sfxCut(olderThan=120){if(!SND.ctx||!SND.live) return; const c=SND.ctx, now=performance.now();
   SND.live.forEach(r=>{if(now-r.at<olderThan) return; try{r.g.gain.cancelScheduledValues(c.currentTime); r.g.gain.setValueAtTime(r.g.gain.value,c.currentTime); r.g.gain.linearRampToValueAtTime(0,c.currentTime+.12); r.s.stop(c.currentTime+.14)}catch(e){} SND.live.delete(r)})}

@@ -2044,3 +2044,39 @@ html.duo-wide #sShop .keeper{margin-top:2px}
 html.duo-wide .shopfront .lantern{display:block}
 @media (max-width:520px){.lantern{display:none}.keeper-say{font-size:13.5px}}
 @media (max-width:700px){.store-cat{display:none}}
+
+/* ================= the room reacts ================= */
+.table-wrap{position:relative}
+.crowd{position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none;z-index:6;overflow:hidden}
+.crowd .ch{position:absolute;bottom:-4px;width:clamp(30px,7cqw,58px);height:auto;fill:#0b0705;transform:translate3d(0,110%,0) scale(var(--s));transform-origin:50% 100%;transition:transform .45s cubic-bezier(.2,1.3,.4,1) var(--d);will-change:transform}
+.crowd.up .ch{transform:translate3d(0,8%,0) scale(var(--s))}
+.crowd.cheer.up .ch{animation:cheerHop .5s calc(.45s + var(--d)) ease-in-out 3}
+@keyframes cheerHop{50%{translate:0 -10%}}
+.crowd.groan.up .ch{transform:translate3d(0,22%,0) scale(var(--s)) rotate(-4deg)}
+.crowd-say{position:absolute;left:50%;bottom:58%;translate:-50% 10px;padding:5px 12px;border-radius:999px;background:rgba(10,6,3,.82);border:1px solid rgba(201,162,78,.45);color:#f3e6c6;font-family:var(--f-body);font-style:italic;font-size:clamp(13px,2.2cqw,17px);opacity:0;transition:opacity .3s .35s,translate .4s .35s}
+.crowd.up .crowd-say{opacity:1;translate:-50% 0}
+.crowd.groan .crowd-say{color:#ffb3a6}
+
+/* ================= the poster burns ================= */
+@property --burn{syntax:'<percentage>';inherits:true;initial-value:0%}
+.bo-portrait.burn{-webkit-mask-image:radial-gradient(circle at 72% 108%,transparent var(--burn),#000 calc(var(--burn) + 5%));mask-image:radial-gradient(circle at 72% 108%,transparent var(--burn),#000 calc(var(--burn) + 5%))}
+@keyframes boBurn{to{--burn:92%}}
+.bo-fire{position:absolute;inset:0;z-index:9;pointer-events:none;background:radial-gradient(circle at 72% 108%,transparent calc(var(--burn) - 2%),rgba(255,214,120,.95) var(--burn),rgba(230,90,20,.9) calc(var(--burn) + 1.5%),rgba(40,12,4,.85) calc(var(--burn) + 3.5%),transparent calc(var(--burn) + 6%));mix-blend-mode:normal}
+.bo-ember{position:absolute;bottom:4%;width:4px;height:4px;border-radius:50%;background:#ffb04a;box-shadow:0 0 6px 2px rgba(255,140,40,.8);z-index:10;opacity:0;animation:ember 1.8s var(--d) ease-out forwards;pointer-events:none}
+@keyframes ember{0%{opacity:0}15%{opacity:1}100%{opacity:0;transform:translate3d(var(--x),-260px,0) scale(.4)}}
+
+/* ================= muzzle flash ================= */
+.muzzle{position:fixed;inset:0;z-index:90;pointer-events:none}
+.mz-flash{position:absolute;inset:0;background:radial-gradient(circle at 22% 78%,#fff 0,#ffe7a0 12%,rgba(255,170,60,.6) 30%,transparent 65%);opacity:0;animation:mzFlash .26s ease-out forwards}
+.muzzle.theirs .mz-flash{background:radial-gradient(circle at 78% 22%,#fff 0,#ffd0a0 10%,rgba(220,40,20,.65) 32%,transparent 70%)}
+@keyframes mzFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.mz-burst{position:absolute;left:22%;top:78%;width:140px;height:140px;margin:-70px;background:conic-gradient(from 0deg,transparent 0 6%,#fff6c8 7% 9%,transparent 10% 22%,#ffd27a 23% 25%,transparent 26% 40%,#fff6c8 41% 43%,transparent 44% 58%,#ffd27a 59% 61%,transparent 62% 76%,#fff6c8 77% 79%,transparent 80%);border-radius:50%;opacity:0;animation:mzBurst .22s ease-out forwards}
+.muzzle.theirs .mz-burst{left:78%;top:22%}
+@keyframes mzBurst{0%{opacity:1;transform:scale(.3) rotate(0)}100%{opacity:0;transform:scale(1.6) rotate(25deg)}}
+.mz-smoke{position:absolute;left:22%;top:78%;width:160px;height:160px;margin:-80px;border-radius:50%;background:radial-gradient(circle,rgba(220,210,190,.45),transparent 65%);opacity:0;animation:mzSmoke 1.5s .1s ease-out forwards}
+.muzzle.theirs .mz-smoke{left:78%;top:22%}
+@keyframes mzSmoke{0%{opacity:0;transform:scale(.4)}20%{opacity:1}100%{opacity:0;transform:scale(2.2) translateY(-40px)}}
+.mz-crack{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,transparent 30%,rgba(120,0,0,.35) 100%);animation:mzFlash 1.2s ease-out forwards}
+@media (prefers-reduced-motion:reduce){.crowd .ch,.bo-ember,.mz-burst,.mz-smoke{animation:none!important;transition:none!important}}
+.crowd{height:42%}
+.crowd .ch{width:clamp(44px,9.5cqw,92px);fill:#0a0604;filter:drop-shadow(0 -1.5px 0 rgba(255,196,120,.55)) drop-shadow(0 -6px 10px rgba(255,170,80,.18))}

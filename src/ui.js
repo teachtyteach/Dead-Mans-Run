@@ -998,6 +998,7 @@ function handEnd(res){
   if(ev.nemFled!=null){const c=where[ev.nemFled]; later(()=>{if(c) stampAt(c[0],c[1]-6,'Fled','#c9a24e',24)},1200)}
   if(R.gold>goldBefore) bumpGold();
   showReveal(res);
+  { const big=res.pot/G.bb; if(res.showdown&&big>=15&&!G.duel){const meWon=res.winners.some(w=>w.i===0), meIn=me.inHand&&!me.folded; later(()=>crowdReact(meWon?'cheer':meIn?'groan':'murmur',big),650)} }
   const meWon=res.winners.some(w=>w.i===0);
   if(G.duel&&G.outcome){const w=G.outcome==='win'; if(w){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46)} else {sfx('lose',300); flash(true); shake(true)} if(where[0]||where[1]) later(()=>{const c=w?where[1]:where[0]; if(c){stampAt(c[0],c[1]-6,w?'Settled':'Cleaned Out',w?'#f4cb5c':'#d8341f',34); sfx('stamp')}},500)}
   else   if(G.outcome==='win'){sfx('bigwin',300); flash(); burst(seatEl(0,'.plate'),46); $('table').classList.add('bust'); later(()=>bossOut(showPaid),1300)}
@@ -1118,6 +1119,7 @@ function bossOut(next){
   later(()=>{const el=$('boTag'); if(!el) return; let i=0; const t=th.epi; const step=()=>{if(!el.isConnected) return; el.textContent=t.slice(0,++i); if(i%2===0) sfx('tick',0,1.6); if(i<t.length) setTimeout(step,28)}; step()},1150);
   later(()=>{sfx('stamp'); shake(false); ov.classList.add('stamped')},1900);
   later(()=>sfx('bigwin'),2150);
+  later(()=>{const sh=ov.querySelector('.bo-portrait'); if(sh&&!REDUCED){const f=document.createElement('i'); f.className='bo-fire'; sh.appendChild(f); for(let k=0;k<14;k++){const e=document.createElement('i'); e.className='bo-ember'; e.style.left=(10+Math.random()*80)+'%'; e.style.setProperty('--d',(Math.random()*1.6)+'s'); e.style.setProperty('--x',(Math.random()*60-30)+'px'); sh.appendChild(e)} const cs=getComputedStyle(sh), keep=cs.animationName&&cs.animationName!=='none'?cs.animation+', ':''; sh.style.animation=keep+'boBurn 2.8s cubic-bezier(.4,0,.7,1) forwards'; sh.classList.add('burn'); sfx('whoosh'); crowd('cheer',.35)}},3000);
   let done=false; const close=()=>{if(done) return; done=true; TOKEN++; sfxCut(0); ov.classList.add('out'); setTimeout(()=>{ov.hidden=true; ov.classList.remove('go','out','stamped','shot'); sg.classList.remove('frozen')},420); next()};
   setTimeout(()=>{ov.onclick=close},1200);
 }
@@ -1320,6 +1322,14 @@ function floatNum(xPct,yPct,text,neg,delay){
 }
 function bumpGold(){const g=$('goldchip'); g.classList.remove('bump'); void g.offsetWidth; g.classList.add('bump'); sfx('chip')}
 let REVEAL_T=null;
+const CROWD_LINES={cheer:["Whoo-ee!","Hot damn!","Drinks on the stranger!","Did you SEE that?"],groan:["Ooooh.","That's gotta hurt.","Somebody fetch the undertaker.","Lord have mercy."],murmur:["Well, I'll be.","Big pot.","Somebody's eating tonight."]};
+function crowdReact(kind,big){
+  let el=$('crowd'); if(!el){el=document.createElement('div'); el.id='crowd'; el.className='crowd'; $('tableWrap').appendChild(el)}
+  const heads=Array.from({length:9},(_,k)=>{const x=4+k*11.5+((k*37)%7-3), hat=['c','b','n','c','b','c','n','c','b'][k], s=.8+((k*13)%5)/10;
+    return `<svg class="ch" style="left:${x}%;--s:${s};--d:${(k%4)*60}ms" viewBox="0 0 40 60"><path d="M8 60c0-14 5-22 12-22s12 8 12 22z"/><circle cx="20" cy="30" r="8"/>${hat==='c'?'<path d="M4 25c6-2 26-2 32 0-3-2-5-3-6-3l-2-9c-4-2-12-2-16 0l-2 9c-1 0-3 1-6 3z"/>':hat==='b'?'<path d="M9 24c4-1 18-1 22 0-1-6-5-10-11-10S10 18 9 24z"/>':''}</svg>`}).join('');
+  el.className='crowd '+kind; el.innerHTML=heads+`<div class="crowd-say">${CROWD_LINES[kind][Math.floor(Math.random()*CROWD_LINES[kind].length)]}</div>`;
+  void el.offsetWidth; el.classList.add('up'); crowd(kind==='cheer'?'cheer':'groan',Math.min(.7,.3+big/80)); if(kind==='cheer') haptic('success');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('up'),2600)}
 function showReveal(res){
   const w=res.winners[0]; if(!w) return;
   const p=G.players[w.i], el=$('reveal');
@@ -1544,11 +1554,15 @@ function standoff(ti){
   const win=drawWindow(p); let t0=0, done=false, timer=null;
   const finish=(won,why)=>{if(done) return; done=true; clearTimeout(timer); ov.onpointerdown=null;
     const r=settleDraw(ti,won); w.textContent=won?'You win the draw':why||'Too slow'; ov.classList.add(won?'won':'lost');
-    sfx(won?'gun':'boss'); haptic(won?'heavy':'error'); if(won){flash(true); shake(true)}
+    sfx(won?'gun':'boss'); haptic(won?'heavy':'error'); muzzle(won); if(won){flash(true); shake(true)}
     setTimeout(()=>{ov.hidden=true; PAUSED=false; const c=centerOfSeat(ti); if(c) stampAt(c[0],c[1]-8,r.tag,won?'#f4cb5c':'#d8341f',22); seatSay(ti,r.reply); render()},1300)};
   ov.onpointerdown=e=>{e.preventDefault(); if(!t0) finish(false,'Jumped the gun'); else finish(performance.now()-t0<=win,null)};
   timer=setTimeout(()=>{if(done) return; t0=performance.now(); w.textContent='DRAW!'; ov.classList.add('go'); hint.textContent=''; sfx('gun'); haptic('heavy');
     timer=setTimeout(()=>finish(false,'Too slow'),Math.max(700,win*2.2))},1400+Math.random()*1800);
+}
+function muzzle(won){
+  const m=document.createElement('div'); m.className='muzzle '+(won?'mine':'theirs'); m.innerHTML='<i class="mz-flash"></i><i class="mz-burst"></i><i class="mz-smoke"></i>'+(won?'':'<i class="mz-crack"></i>'); document.body.appendChild(m);
+  if(!won) sfx('gun',90); setTimeout(()=>m.remove(),1600)
 }
 
 /* ================= controls ================= */
